@@ -7,6 +7,7 @@ $("#the-client-file-input").change(function() {
   if(this.files[0]) {
     if(URL){
       var fileUrl = URL.createObjectURL(this.files[0]);
+      console.log(fileUrl);
     }
   }
 
