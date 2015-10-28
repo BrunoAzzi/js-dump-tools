@@ -20,14 +20,16 @@ The App expects the correct dump with no quotes and `;` as csv delimiter.
 - csv - json converter;
 - dump test;
 - dump clean;
+  - filter the dumps to have the same date interval ✅
 - diff reports;
 - html reports exporter;
 - jenkins publisher;
 
 
 ### What could have in the report:
- - Total of orders;
-  - Quantity of orders;
-  - Value of Orders;
+ - Total of orders; 
+  - Quantity of orders; ✅
+  - Amount of Orders;
  - Diference between orders;
-  - Diference of values;
+  - Diference of amount;
+  - Diference of quantity; ✅
