@@ -1,3 +1,5 @@
+[ ![Codeship Status for brunoazzi/js-dump-tools](https://codeship.com/projects/fbcca610-5f9e-0133-a8cb-369bf6f97780/status?branch=master)](https://codeship.com/projects/111848)
+
 # Instalation
 
 If you dont have node.js you can download [here](https://nodejs.org/en/).
@@ -27,7 +29,7 @@ The App expects the correct dump with no quotes and `;` as csv delimiter.
 
 
 ### What could have in the report:
- - Total of orders; 
+ - Total of orders;
   - Quantity of orders; ✅
   - Amount of Orders;
  - Diference between orders;
