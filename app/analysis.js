@@ -145,9 +145,10 @@ function transactionsByDay(data){
   var object = [];
   for (month of data) {
     for (i = 0; i < month.values.length; i++) {
-      object[i] = {}
-      object[i].date = month.key+"-"+month.values[i].key;
-      object[i].data = month.values[i].values.length;
+      object.push({
+        date : month.key+"-"+month.values[i].key,
+        data : month.values[i].values.length
+      });
     }
   }
   return object;
