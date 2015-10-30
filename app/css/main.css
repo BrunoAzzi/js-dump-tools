@@ -1,7 +1,12 @@
+#showBlackboard {
+  margin-bottom: 10px;
+}
+
 .btn-file {
   position: relative;
   overflow: hidden;
 }
+
 .btn-file input[type=file] {
   position: absolute;
   top: 0;
@@ -16,7 +21,31 @@
   cursor: inherit;
   display: block;
 }
+
 input[readonly] {
   background-color: white !important;
   cursor: text !important;
+}
+
+.bar {
+  fill: steelblue;
+}
+
+.bar:hover {
+  fill: brown;
+}
+
+.axis {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
 }
