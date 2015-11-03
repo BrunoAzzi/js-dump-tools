@@ -1,12 +1,11 @@
 var MISSING_QUOTES = "MissingQuotes";
 var URL = window.URL || window.webkitURL;
 var diff = {};
-diff.clientData = [];
 
 $("#the-client-file-input").change(function() {
 
-  if(this.files[0]) {
-    if(URL){
+  if (this.files[0]) {
+    if (URL){
       var fileUrl = URL.createObjectURL(this.files[0]);
     }
   }
@@ -26,13 +25,12 @@ $("#the-client-file-input").change(function() {
         timestamp: moment.utc(row.timestamp, ["YYYY-MM-DD HH:mm:SS", moment.ISO_8601])
       };
     }, function(data) {
-      diff.clientData = data;
-      diff.clientDump = makeDump(diff.clientData);
-      diff.clientDump.extentDays = d3.extent(diff.clientData, function(row) { return row.timestamp });
+      diff.clientDump = makeDump(data);
+      diff.clientDump.extentDays = d3.extent(data, function(row) { return row.timestamp });
 
       $("#platform-file-chooser-wrapper").removeClass("hidden");
-      $("#warning-tip").addClass("hidden");
-      $("#success-tip").removeClass("hidden");
+      $("#client-warning-tip").addClass("hidden");
+      $("#client-success-tip").removeClass("hidden");
       $("#client-progress-bar").addClass("hidden");
     }
   );
@@ -64,11 +62,9 @@ $("#the-platform-file-input").change(function() {
         timestamp: moment.utc(row.timestamp, ["YYYY-MM-DD HH:mm:SS", moment.ISO_8601])
       };
     }, function(data) {
-      diff.platformData = data;
-      data = data.filter(function(row){
-        return row.timestamp.isBetween(diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
-      });
       diff.platformDump = makeDump(data);
+      dateSlider();
+
       $("#report-board").removeClass("hidden");
       $("#platform-warning-tip").addClass("hidden");
       $("#platform-success-tip").removeClass("hidden");
@@ -81,26 +77,43 @@ $("#the-platform-file-input").change(function() {
 
 });
 
-function showInfo(){
-  var platformDataByOrder = d3.nest().key(function(d) { return d.oid; }).entries(diff.platformData);
-  var platformDataByDay = d3.nest().key(function(d) { return d.timestamp; }).entries(diff.platformData);
-  var platformDateInterval = diff.platformData.filter(function(row) {
+function showInfo() {
+  $("#platform-file-chooser-wrapper").addClass("hidden");
+  $("#client-file-chooser-wrapper").addClass("hidden");
+
+  calculate(diff.clientDump);
+  calculate(diff.platformDump);
+
+  // ###### FILTERS #######
+  // var platformDataByOrder = d3.nest().key(function(d) { return d.oid; }).entries(diff.platformDump.data);
+  // var platformDataByDay = d3.nest().key(function(d) { return d.timestamp; }).entries(diff.platformDump.data);
+
+  var platformDateInterval = diff.platformDump.data.filter(function(row) {
     return row.timestamp.isBetween(diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
   });
-  var platformDateIntervalByOrder = d3.nest().key(function(d) { return d.oid; }).entries(platformDateInterval);
+  var clientDateInterval = diff.clientDump.data.filter(function(row) {
+    return row.timestamp.isBetween(diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
+  });
 
-  diffplot(diffTransactionsByDay(transactionsByDay(diff.clientDump.productsByOrderByDate), transactionsByDay(diff.platformDump.productsByOrderByDate)));
+  diffplot(diffTransactionsByDay(transactionsByDay(filterOrderByDateInterval(clientDateInterval)), transactionsByDay(filterOrderByDateInterval(platformDateInterval))));
+
+  var platformDateIntervalByOrder = d3.nest().key(function(d) { return d.oid; }).entries(platformDateInterval);
+  var clientDateIntervalByOrder = d3.nest().key(function(d) { return d.oid; }).entries(clientDateInterval);
+
   // plot(transactionsByDay(diff.clientDump.productsByOrderByDate, transactionsByDay(diff.platformDump.productsByOrderByDate)));
 
   $("#blackboard").append(
+    "<div class='alert alert-info'>"+
     "<h3> Client Data </h3>"+
     "<p>Number of Rows: "+diff.clientDump.numberOfRows+"<p>"+
-    "<p>Number of Orders: "+diff.clientDump.numberOfTransactions+"<p>"+
-    "<p>Max Day: "+diff.clientDump.extentDays[1].toISOString()+"<p>"+
-    "<p>Min Day: "+diff.clientDump.extentDays[0].toISOString()+"<p>"+
+    "<p>Number of Orders: "+clientDateIntervalByOrder.length+"<p>"+
+    "<p>Max Day: "+diff.clientDump.extentDays[1].toString()+"<p>"+
+    "<p>Min Day: "+diff.clientDump.extentDays[0].toString()+"<p>"+
+
     "<h3> Platform Data </h3>"+
     "<p>Number of Rows: "+diff.platformDump.numberOfRows+"<p>"+
     "<p>Number of Orders(filtered by client days interval): "+platformDateIntervalByOrder.length+"<p>"+
+    "</div>"+
     ""
   );
 
@@ -109,28 +122,18 @@ function showInfo(){
   $("#report-progress-bar").addClass("hidden");
 }
 
-function makeDump(csvData, type){
-  var dataGroupedByOrder = d3.nest().key(function(d) { return d.oid; }).entries(csvData);
-  var productsByOrderByDate = d3.nest().key(function(d) { return d.timestamp.month(); })
-    .key(function(d) { return d.timestamp.date(); })
-    .key(function(d) { return d.oid; })
-    .rollup(function(v) { return v.length; })
-    .entries(csvData);
-
+function makeDump(csvData) {
   var object = {
     data: csvData,
-    type: type,
     numberOfRows: csvData.length,
-    numberOfTransactions: dataGroupedByOrder.length,
-    productsByOrderByDate: productsByOrderByDate
   }
   return object;
 }
 
-function transactionsByDay(data, array){
+function transactionsByDay(data, array) {
   var object = [];
-  if(array){
-    for(entry of array){
+  if (array) {
+    for (entry of array){
       object.push(entry);
     }
   }
@@ -145,16 +148,16 @@ function transactionsByDay(data, array){
   return object;
 }
 
-function diffTransactionsByDay(client, platform){
+function diffTransactionsByDay(client, platform) {
   var object = [];
-  for(i = 0; i < client.length; i++){
-    if(client[i].date == platform[i].date){
+  for (i = 0; i < client.length; i++) {
+    if (client[i].date == platform[i].date) {
       object.push({
         day : client[i].date,
         platform: platform[i].data,
         client: client[i].data,
       });
-    }else{
+    } else {
       showBigWarning(client[i].date, platform[i].date);
       break;
     }
@@ -162,7 +165,7 @@ function diffTransactionsByDay(client, platform){
   return object;
 }
 
-function plot(data){
+function plot(data) {
   $("#chart-wrapper").removeClass("hidden");
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
@@ -218,10 +221,11 @@ function plot(data){
 
 }
 
-function diffplot(data){
+function diffplot(data) {
   $("#chart-wrapper").removeClass("hidden");
+
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
-      width = 960 - margin.left - margin.right,
+      width = 992 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
   var x0 = d3.scale.ordinal()
@@ -308,4 +312,46 @@ function diffplot(data){
       .attr("dy", ".35em")
       .style("text-anchor", "end")
       .text(function(d) { return d; });
+}
+
+function dateSlider() {
+  $("#slider").dateRangeSlider({
+    arrows: false,
+    bounds:{
+      min: diff.clientDump.extentDays[0].toDate(),
+      max: diff.clientDump.extentDays[1].toDate()
+    },defaultValues:{
+      min: diff.clientDump.extentDays[0].toDate(),
+      max: diff.clientDump.extentDays[1].toDate()
+    },formatter:function(val){
+      var days = val.getDate(),
+      month = val.getMonth() + 1,
+      year = val.getFullYear(),
+      hour = val.getHours(),
+      minute = val.getMinutes(),
+      second = val.getSeconds();
+      return days + "/" + month + "/" + year ;
+    }, range:{
+    min: {days: 1}
+  }
+  });
+
+  $("#slider").bind("valuesChanged", function(e, data){
+    diff.dateRangeSlider = {};
+    diff.clientDump.extentDays[0] = data.values.min;
+    diff.clientDump.extentDays[1] = data.values.max;
+    console.log("Values just changed. min: " + diff.clientDump.extentDays[0] + " max: " + diff.clientDump.extentDays[1]);
+  });
+}
+
+function calculate(dump) {
+  dump.numberOfTransactions = d3.nest().key(function(d) { return d.oid; }).entries(dump.data).length;
+}
+
+function filterOrderByDateInterval(data){
+  return d3.nest().key(function(d) { return d.timestamp.month(); })
+    .key(function(d) { return d.timestamp.date(); })
+    .key(function(d) { return d.oid; })
+    .rollup(function(v) { return v.length; })
+    .entries(data);
 }

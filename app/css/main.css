@@ -2,6 +2,10 @@
   margin-bottom: 10px;
 }
 
+#slider {
+  margin-bottom: 20px;  
+}
+
 .btn-file {
   position: relative;
   overflow: hidden;
