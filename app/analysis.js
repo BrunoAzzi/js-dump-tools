@@ -151,14 +151,14 @@ function transactionsByDay(data, array) {
 function diffTransactionsByDay(client, platform) {
   var object = [];
   for (i = 0; i < client.length; i++) {
-    if (client[i].date == platform[i].date) {
+    if (client[i] && platform[i] && client[i].date == platform[i].date) {
       object.push({
         day : client[i].date,
         platform: platform[i].data,
         client: client[i].data,
       });
     } else {
-      showBigWarning(client[i].date, platform[i].date);
+      //showBigWarning(client[i].date, platform[i].date);
       break;
     }
   }
@@ -331,9 +331,9 @@ function dateSlider() {
       minute = val.getMinutes(),
       second = val.getSeconds();
       return days + "/" + month + "/" + year ;
-    }, range:{
-    min: {days: 1}
-  }
+    },range:{
+      min: {days: 1}
+    },step: {days: 1}
   });
 
   $("#slider").bind("valuesChanged", function(e, data){
