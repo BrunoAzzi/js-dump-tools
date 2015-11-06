@@ -1,6 +1,8 @@
 var MISSING_QUOTES = "MissingQuotes";
 var URL = window.URL || window.webkitURL;
 var diff = {};
+diff.platformData = [];
+diff.clientData = [];
 
 $("#the-client-file-input").change(function() {
 
@@ -10,30 +12,28 @@ $("#the-client-file-input").change(function() {
     }
   }
 
-  //TODO criar um worker para isso
-  var psv = d3.dsv(";", "text/plain");
+  Papa.parse(this.files[0], {
+    header: true,
+    dynamicTyping: true,
+    skipEmptyLines: true,
+    fastMode: true,
 
-  psv(fileUrl, function(row) {
-      return {
-        oid: +row.oid,
-        uid: +row.uid,
-        pid: +row.pid,
-        sku: +row.sku,
-        price: +row.price,
-        quantity: +row.quantity,
-        //Check if locale need to be changed before run the diff (platform locale is GMT -3)
-        timestamp: moment.utc(row.timestamp, ["YYYY-MM-DD HH:mm:SS", moment.ISO_8601])
-      };
-    }, function(data) {
-      diff.clientDump = makeDump(data);
-      diff.clientDump.extentDays = d3.extent(data, function(row) { return row.timestamp });
+    chunk: function(chunk){
+      diff.clientData = diff.clientData.concat(chunk.data);
+    },
 
+    error: function(err, reason) {
+      console.log(err, reason);
+    },
+
+    complete: function() {
+      setupClient();
       $("#platform-file-chooser-wrapper").removeClass("hidden");
       $("#client-warning-tip").addClass("hidden");
       $("#client-success-tip").removeClass("hidden");
       $("#client-progress-bar").addClass("hidden");
     }
-  );
+  });
 
   $("#client-progress").attr('aria-valuenow','100');
   $("#client-progress").css('width','100%');
@@ -47,35 +47,52 @@ $("#the-platform-file-input").change(function() {
     }
   }
 
-  //TODO criar um worker para isso
-  var psv = d3.dsv(";", "text/plain");
+  Papa.parse(this.files[0], {
+    header: true,
+    dynamicTyping: true,
+    skipEmptyLines: true,
+    fastMode: true,
 
-  psv(fileUrl, function(row) {
-      return {
-        oid: +row.oid,
-        uid: +row.uid,
-        pid: +row.pid,
-        sku: +row.sku,
-        price: +row.price,
-        quantity: +row.quantity,
-        //Check if locale need to be changed (platform GMT -3)
-        timestamp: moment.utc(row.timestamp, ["YYYY-MM-DD HH:mm:SS", moment.ISO_8601])
-      };
-    }, function(data) {
-      diff.platformDump = makeDump(data);
-      dateSlider();
+    chunk: function(chunk){
+      diff.platformData = diff.platformData.concat(chunk.data);
+    },
 
+    error: function(err, reason) {
+      console.log(err, reason);
+    },
+
+    complete: function() {
+      setupPlatform();
       $("#report-board").removeClass("hidden");
       $("#platform-warning-tip").addClass("hidden");
       $("#platform-success-tip").removeClass("hidden");
       $("#platform-progress-bar").addClass("hidden");
     }
-  );
+  });
 
   $("#platform-progress").attr('aria-valuenow','100');
   $("#platform-progress").css('width','100%');
-
 });
+
+function setupPlatform() {
+  diff.platformData.forEach(function(row) {
+    row.timestamp = moment.utc(row.timestamp, ["YYYY-MM-DD HH:mm:SS"]);
+    // console.log(row.timestamp);
+  });
+  diff.platformDump = makeDump(diff.platformData);
+  console.log(diff.platformDump);
+  dateSlider();
+}
+
+function setupClient() {
+  diff.clientData.forEach(function(row) {
+    row.timestamp = moment.utc(row.timestamp, ["YYYY-MM-DD HH:mm:SS"]);
+    // console.log(row.timestamp);
+  });
+  diff.clientDump = makeDump(diff.clientData);
+  // console.log(diff.clientDump);
+  diff.clientDump.extentDays = d3.extent(diff.clientData, function(row) { return row.timestamp });
+}
 
 function showInfo() {
   $("#platform-file-chooser-wrapper").addClass("hidden");
@@ -315,6 +332,7 @@ function diffplot(data) {
 }
 
 function dateSlider() {
+  console.log();
   $("#slider").dateRangeSlider({
     arrows: false,
     bounds:{
