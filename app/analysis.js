@@ -82,17 +82,23 @@ function setupClient(data) {
 }
 
 function showInfo() {
+  $("svg").remove();
+  $("#board-report").remove();
   $("#platform-file-chooser-wrapper").addClass("hidden");
   $("#client-file-chooser-wrapper").addClass("hidden");
 
   var platformDateInterval = filterByDateInterval(diff.platformDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
   var clientDateInterval = filterByDateInterval(diff.clientDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
+  innerData = whatever(clientDateInterval, platformDateInterval);
+  caculateAmountTotals(innerData);
+
 
   numberOfOrderDiffByDayPlot(clientDateInterval, platformDateInterval);
   amountOfOrderDiffByDayPlot(clientDateInterval, platformDateInterval);
 
-  calculateDumpNumberOfTransactions(diff.clientDump, platformDateInterval);
-  calculateDumpNumberOfTransactions(diff.platformDump, clientDateInterval);
+
+  calculateDumpNumberOfTransactions(diff.clientDump, clientDateInterval);
+  calculateDumpNumberOfTransactions(diff.platformDump, platformDateInterval);
 
   showReport();
 
@@ -109,19 +115,40 @@ function filterByDateInterval(data, beginDate, endDate){
 
 function showReport(){
   $("#blackboard").append(
-    "<div class='alert alert-info'>"+
+    "<div id='board-report' class='alert alert-info'>"+
     "<h3> Client Data </h3>"+
-    "<p>Number of Rows: "+diff.clientDump.numberOfRows+"<p>"+
+    // "<p>Number of Rows: "+diff.clientDump.numberOfRows+"<p>"+
     "<p>Number of Orders: "+diff.clientDump.numberOfOrders+"<p>"+
-    "<p>Max Day: "+diff.clientDump.extentDays[1].toString()+"<p>"+
-    "<p>Min Day: "+diff.clientDump.extentDays[0].toString()+"<p>"+
+    "<p>Amount of Orders: "+diff.clientDump.amountTotal.toFixed(2)+"<p>"+
+    // "<p>Max Day: "+diff.clientDump.extentDays[1].toString()+"<p>"+
+    // "<p>Min Day: "+diff.clientDump.extentDays[0].toString()+"<p>"+
 
     "<h3> Platform Data </h3>"+
-    "<p>Number of Rows: "+diff.platformDump.numberOfRows+"<p>"+
-    "<p>Number of Orders(filtered by client days interval): "+diff.platformDump.numberOfOrders+"<p>"+
+    // "<p>Number of Rows: "+diff.platformDump.numberOfRows+"<p>"+
+    "<p>Number of Orders: "+diff.platformDump.numberOfOrders+"<p>"+
+    "<p>Amount of Orders: "+diff.platformDump.amountTotal.toFixed(2)+"<p>"+
+
+    "<h3> Diff </h3>"+
+    "<p>Diff of Orders: "+Math.abs(diff.clientDump.numberOfOrders - diff.platformDump.numberOfOrders)+"<p>"+
+    "<p>Diff of Amount: "+Math.abs(diff.clientDump.amountTotal - diff.platformDump.amountTotal).toFixed(2)+"<p>"+
+
     "</div>"+
     ""
   );
+}
+
+function caculateAmountTotals(data) {
+  var clientTotal = 0;
+  var platformTotal = 0;
+  for(summary of data){
+    clientTotal += summary.client;
+    platformTotal += summary.platform;
+  }
+  console.log(data);
+  console.log(clientTotal);
+  console.log(platformTotal);
+  diff.clientDump.amountTotal = clientTotal;
+  diff.platformDump.amountTotal = platformTotal;
 }
 
 function makeDump(csvData) {
@@ -169,7 +196,6 @@ function summarizeOrdersAmountsByDay(data) {
   .key(function(d) { return d.date; })
   .rollup(function(v) { return d3.sum(v, function(d) { return d.value; }); })
   .entries(object);
-
   return expensesAvgAmount;
 }
 
@@ -198,6 +224,8 @@ function numberOfOrderDiffByDayPlot(clientData, platformData) {
   innerData = diffOrdersByDay(clientData, platformData);
 
   $("#chart-wrapper").removeClass("hidden");
+  // numberChart = $("#number-chart");
+  // console.log(numberChart);
 
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
       width = 992 - margin.left - margin.right,
@@ -293,6 +321,7 @@ function amountOfOrderDiffByDayPlot(clientData, platformData) {
   innerData = whatever(clientData, platformData);
 
   $("#chart-wrapper").removeClass("hidden");
+  $("#amount-chart").remove("svg");
 
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
       width = 992 - margin.left - margin.right,
@@ -403,7 +432,7 @@ function createDateSlider(minDate, maxDate) {
       return days + "/" + month + "/" + year ;
     },range:{
       min: {days: 1}
-    },step: {days: 1}
+    },step: {hours: 1}
   });
 
   $("#slider").bind("valuesChanged", function(e, data){
