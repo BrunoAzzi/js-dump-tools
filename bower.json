@@ -1,13 +1,13 @@
 {
   "name": "js-dump-tools",
-  "description": "",
+  "description": "a dump-diff tool in javascript",
   "main": "app/index.html",
   "authors": [
     "Bruno Azzi"
   ],
   "license": "MIT",
   "moduleType": [],
-  "homepage": "",
+  "homepage": "js-dump-tools.herokuapp.com",
   "private": true,
   "ignore": [
     "**/.*",
@@ -22,6 +22,7 @@
     "jquery": "~2.1.4",
     "bootstrap": "~3.3.5",
     "moment": "~2.10.6",
-    "papaparse": "~4.1.2"
+    "papaparse": "~4.1.2",
+    "jquery-ui": "~1.11.4"
   }
 }

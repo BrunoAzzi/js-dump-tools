@@ -34,5 +34,5 @@
     "express": "^4.13.3",
     "fs": "0.0.2"
   },
-  "description": ""
+  "description": "A dump-diff tool in javascript"
 }

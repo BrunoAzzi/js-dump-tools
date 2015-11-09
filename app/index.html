@@ -5,6 +5,7 @@
     <title>Teste</title>
     <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css" media="screen" title="no title" charset="utf-8">
     <link rel="stylesheet" href="css/main.css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="css/iThing-min.css" media="screen" title="no title" charset="utf-8">
   </head>
   <body>
 
@@ -14,91 +15,102 @@
       </div>
     </div>
 
-      <div id="client-file-chooser-wrapper" class="row">
-        <div class="container">
-          <label for="the-client-file-input">Client Dump</label>
-          <div class="input-group">
-              <span class="input-group-btn">
-                  <span class="btn btn-primary btn-file">
-                      Browse&hellip; <input id="the-client-file-input" type="file" >
-                  </span>
-              </span>
-              <input type="text" class="form-control" readonly>
-          </div>
-          <span class="help-block">
-              Choose your client dump file. (CSV)
-          </span>
-          <div id="client-progress-bar" class="progress">
-            <div id="client-progress" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
-          </div>
-          <div id="warning-tip" class="alert alert-warning">
-              Tip: If is taking too much time to load this file go make some stuff, then come back here, just dont close this page or the browser.
-          </div>
-          <div id="success-tip" class="alert alert-success hidden">
-              Parsing complete!
-          </div>
+    <div id="client-file-chooser-wrapper" class="row">
+      <div class="container">
+        <label for="the-client-file-input">Client Dump</label>
+        <div class="input-group">
+            <span class="input-group-btn">
+                <span class="btn btn-primary btn-file">
+                    Browse&hellip; <input id="the-client-file-input" type="file" >
+                </span>
+            </span>
+            <input type="text" class="form-control" readonly>
+        </div>
+        <span class="help-block">
+            Choose your client dump file. (CSV)
+        </span>
+        <div id="client-progress-bar" class="progress">
+          <div id="client-progress" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+        </div>
+        <div id="client-warning-tip" class="alert alert-warning">
+            Tip: If is taking too much time to load this file go make some stuff, then come back here, just dont close this page or the browser.
+        </div>
+        <div id="client-success-tip" class="alert alert-success hidden">
+            Parsing complete!
         </div>
       </div>
+    </div>
 
-      <div id="platform-file-chooser-wrapper" class="row hidden">
-        <div class="container">
-          <label for="the-platform-file-input">Platform Dump</label>
-          <div class="input-group">
-              <span class="input-group-btn">
-                  <span class="btn btn-primary btn-file">
-                      Browse&hellip; <input id="the-platform-file-input" type="file" >
-                  </span>
-              </span>
-              <input type="text" class="form-control" readonly>
-          </div>
-          <span class="help-block">
-              Choose your platform dump file. (CSV)
-          </span>
-          <div id="platform-progress-bar" class="progress">
-            <div id="platform-progress" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
-          </div>
-          <div id="platform-warning-tip" class="alert alert-warning">
-              Tip: If is taking too much time to load this file go make some stuff, then come back here, just dont close this page or the browser.
-          </div>
-          <div id="platform-success-tip" class="alert alert-success hidden">
-              Parsing complete!
-          </div>
+    <div id="platform-file-chooser-wrapper" class="row hidden">
+      <div class="container">
+        <label for="the-platform-file-input">Platform Dump</label>
+        <div class="input-group">
+            <span class="input-group-btn">
+                <span class="btn btn-primary btn-file">
+                    Browse&hellip; <input id="the-platform-file-input" type="file" >
+                </span>
+            </span>
+            <input type="text" class="form-control" readonly>
+        </div>
+        <span class="help-block">
+            Choose your platform dump file. (CSV)
+        </span>
+        <div id="platform-progress-bar" class="progress">
+          <div id="platform-progress" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+        </div>
+        <div id="platform-warning-tip" class="alert alert-warning">
+            Tip: If is taking too much time to load this file go make some stuff, then come back here, just dont close this page or the browser.
+        </div>
+        <div id="platform-success-tip" class="alert alert-success hidden">
+            Parsing complete!
         </div>
       </div>
+    </div>
 
-      <div id="report-board" class="row hidden">
-        <div class="container">
-          <input id="showBlackboard" class="btn btn-success" type="button" onclick="showInfo()" value="show info">
-          <div id="report-progress-bar" class="progress">
-            <div id="report-progress" class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
-          </div>
+    <div id="report-board" class="row hidden">
+      <div class="container">
+        <label for="slider">Choose a date interval for report:</label>
+        <div id="slider"></div>
+        <input id="showBlackboard" class="btn btn-success" type="button" onclick="showInfo()" value="show info">
+        <div id="report-progress-bar" class="progress">
+          <div id="report-progress" class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+        </div>
 
+      </div>
+    </div>
+
+    <div id="chart-wrapper" class="row hidden">
+      <div class="container">
+        <div class="alert alert-warning hidden-lg hidden-md">
+          Tip: If you aren't on a desktop device this plot wont be visible.
+        </div>
+        <div class="hidden-xs hidden-sm">
+          <label for="number-chart">Diff Orders By Day</label>
+          <div id="number-chart"></div>
+          <label for="amount-chart">Diff Amounts By Day</label>
+          <div id="amount-chart"></div>
         </div>
       </div>
+    </div>
 
-      <div id="chart-wrapper" class="row hidden">
-        <div class="container">
-          <label for="chart">Diff Orders By Day</label>
-          <div id="chart">
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="container">
-          <section id="report">
-            <div id="blackboard"></div>
-          </section>
-        </div>
+    <div class="row">
+      <div class="container">
+        <section id="report">
+          <div id="blackboard"></div>
+        </section>
       </div>
     </div>
 
     <script src="components/jquery/dist/jquery.min.js"> </script>
     <script src="components/bootstrap/dist/js/bootstrap.min.js"> </script>
+    <script src="components/jquery-ui/jquery-ui.min.js"> </script>
+    <script src="js/jQDateRangeSlider-withRuler-min.js"> </script>
     <script src="components/papaparse/papaparse.min.js"> </script>
     <script src="components/moment/min/moment.min.js"> </script>
     <script src="components/d3/d3.min.js"> </script>
+
     <script src="js/main.js"> </script>
+
     <script src="analysis.js"> </script>
 
   </body>
