@@ -60,6 +60,7 @@ $("#the-platform-file-input").change(function() {
       $("#platform-warning-tip").addClass("hidden");
       $("#platform-success-tip").removeClass("hidden");
       $("#platform-progress-bar").addClass("hidden");
+      $("#api-key-input-wrapper").removeClass("hidden");
       createDateSlider(diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
     }
   });
@@ -88,6 +89,7 @@ function setupClient(data) {
 function showInfo() {
   $("#platform-file-chooser-wrapper").addClass("hidden");
   $("#client-file-chooser-wrapper").addClass("hidden");
+  $("#api-key-input").prop( "disabled", true );
 
   var platformDateInterval = filterByDateInterval(diff.platformDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
   var clientDateInterval = filterByDateInterval(diff.clientDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
@@ -124,7 +126,7 @@ function filterByDateInterval(data, beginDate, endDate) {
 function createClientTitle() {
   $("#client-title").removeClass("hidden");
   $("#client-file-name").remove();
-  $("#file-title").append("<h3 id='client-file-name'>"+clientFileName+"</h3>");
+  $("#file-title").append("<h3 id='client-file-name'>Client File Name: "+clientFileName+"</h3>");
 }
 
 function showReport() {

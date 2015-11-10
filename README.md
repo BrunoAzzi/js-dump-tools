@@ -18,24 +18,4 @@ npm start
 ```
 Then go to http://localhost:8000/app/index.html
 
-The App expects the correct dump with no quotes and `;` as csv delimiter. It must have the oid, pid, uid, quantity, price and sku columns;
-
-### Features to be developed
-- csv - json converter;
-- dump test;
-- dump clean;
-  - auto filter the dumps to have the same date interval ✅
-  - a selector to the user delimit the date interval
-- diff reports;
-  - a diff chart (number of orders by day) ✅
-- html reports exporter;
-- jenkins publisher;
-
-
-### What could have in the report:
- - Total of orders;
-  - Quantity of orders; ✅
-  - Amount of Orders;
- - Diference between orders;
-  - Diference of amount;
-  - Diference of quantity; ✅
+The App expects the correct dump with no quotes. It must have the oid, pid, uid, quantity, price and sku columns;
