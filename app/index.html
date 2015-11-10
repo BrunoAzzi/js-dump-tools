@@ -69,13 +69,24 @@
 
     <div id="report-board" class="row hidden">
       <div class="container">
-        <label for="slider">Choose a date interval for report:</label>
-        <div id="slider"></div>
+        <label for="slider" class="col-md-12">Choose a date interval for report:</label>
+        <div class="col-md-12">
+          <h3><label id="beginDate" class="dateSlider-label label label-default text-right col-md-2">02-09-2015</label></h3>
+          <div class="col-md-7">
+            <div id="slider">
+            </div>
+          </div>
+          <h3><label id="endDate" class="dateSlider-label label label-default text-left col-md-2">02-09-2015</label></h3>
+        </div>
         <input id="showBlackboard" class="btn btn-success" type="button" onclick="showInfo()" value="show info">
         <div id="report-progress-bar" class="progress">
           <div id="report-progress" class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
         </div>
+      </div>
+    </div>
 
+    <div id="client-title" class="row hidden">
+      <div id="file-title" class="container">
       </div>
     </div>
 
@@ -84,11 +95,8 @@
         <div class="alert alert-warning hidden-lg hidden-md">
           Tip: If you aren't on a desktop device this plot wont be visible.
         </div>
-        <div class="hidden-xs hidden-sm">
-          <label for="number-chart">Diff Orders By Day</label>
-          <div id="number-chart"></div>
-          <label for="amount-chart">Diff Amounts By Day</label>
-          <div id="amount-chart"></div>
+        <div id="charts" class="hidden-xs hidden-sm">
+
         </div>
       </div>
     </div>

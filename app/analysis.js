@@ -1,8 +1,10 @@
 var diff = {};
+var clientFileName;
 // diff.platformData = [];
 // diff.clientData = [];
 
 $("#the-client-file-input").change(function() {
+  clientFileName = this.files[0].name;
   Papa.parse(this.files[0], {
     header: true,
     dynamicTyping: true,
@@ -15,6 +17,7 @@ $("#the-client-file-input").change(function() {
       console.log(err, reason);
     },
     complete: function(result) {
+      console.log(result);
       if(result.errors){
         for (var i = 0; i < result.errors.length; i++) {
           console.log(result.errors[i]);
@@ -46,6 +49,7 @@ $("#the-platform-file-input").change(function() {
       console.log(err, reason);
     },
     complete: function(result) {
+      console.log(result);
       if(result.errors){
         for (var i = 0; i < result.errors.length; i++) {
           console.log(result.errors[i]);
@@ -82,23 +86,20 @@ function setupClient(data) {
 }
 
 function showInfo() {
-  $("svg").remove();
-  $("#board-report").remove();
   $("#platform-file-chooser-wrapper").addClass("hidden");
   $("#client-file-chooser-wrapper").addClass("hidden");
 
   var platformDateInterval = filterByDateInterval(diff.platformDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
   var clientDateInterval = filterByDateInterval(diff.clientDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
-  innerData = whatever(clientDateInterval, platformDateInterval);
+  var innerData = whatever(clientDateInterval, platformDateInterval);
+
+  showCharts(clientDateInterval, platformDateInterval);
+
   caculateAmountTotals(innerData);
-
-
-  numberOfOrderDiffByDayPlot(clientDateInterval, platformDateInterval);
-  amountOfOrderDiffByDayPlot(clientDateInterval, platformDateInterval);
-
-
   calculateDumpNumberOfTransactions(diff.clientDump, clientDateInterval);
   calculateDumpNumberOfTransactions(diff.platformDump, platformDateInterval);
+
+  createClientTitle();
 
   showReport();
 
@@ -107,13 +108,27 @@ function showInfo() {
   $("#report-progress-bar").addClass("hidden");
 }
 
-function filterByDateInterval(data, beginDate, endDate){
+function showCharts(clientDateInterval, platformDateInterval) {
+  $("#charts").empty();
+  $("#chart-wrapper").removeClass("hidden");
+  reusableDiffChart(diffOrdersByDay(clientDateInterval, platformDateInterval), "Number of Orders");
+  reusableDiffChart(whatever(clientDateInterval, platformDateInterval), "Amount of Orders");
+}
+
+function filterByDateInterval(data, beginDate, endDate) {
   return data.filter(function(row) {
     return row.timestamp.isBetween(beginDate, endDate);
   });
 }
 
-function showReport(){
+function createClientTitle() {
+  $("#client-title").removeClass("hidden");
+  $("#client-file-name").remove();
+  $("#file-title").append("<h3 id='client-file-name'>"+clientFileName+"</h3>");
+}
+
+function showReport() {
+  $("#board-report").remove();
   $("#blackboard").append(
     "<div id='board-report' class='alert alert-info'>"+
     "<h3> Client Data </h3>"+
@@ -144,9 +159,6 @@ function caculateAmountTotals(data) {
     clientTotal += summary.client;
     platformTotal += summary.platform;
   }
-  console.log(data);
-  console.log(clientTotal);
-  console.log(platformTotal);
   diff.clientDump.amountTotal = clientTotal;
   diff.platformDump.amountTotal = platformTotal;
 }
@@ -202,14 +214,30 @@ function summarizeOrdersAmountsByDay(data) {
 function diffOrdersByDay(client, platform) {
   innerClient = summarizeOrdersByDay(client);
   innerPlatform = summarizeOrdersByDay(platform);
+  console.log(innerPlatform);
+  console.log(innerClient);
 
   var object = [];
+
+  // for(clientOrder of innerClient){
+  //   for(platformOrder of innerPlatform){
+  //     if (clientOrder.date == platformOrder.date) {
+  //       object.push({
+  //         day : clientOrder.date,
+  //         platform: innerPlatform[i].data,
+  //         client: innerClient[i].data,
+  //       }
+  //     }
+  //     if(clientOrder.date )
+  //   }
+  // }
+
   for (i = 0; i < innerClient.length; i++) {
     if (innerClient[i] && innerPlatform[i] && innerClient[i].date == innerPlatform[i].date) {
       object.push({
         day : innerClient[i].date,
-        platform: innerPlatform[i].data,
         client: innerClient[i].data,
+        platform: innerPlatform[i].data
       });
     } else {
       //showBigWarning(client[i].date, platform[i].date);
@@ -220,8 +248,94 @@ function diffOrdersByDay(client, platform) {
   return object;
 }
 
+function createDateSlider(minDate, maxDate) {
+
+  var beginDate = new Date(minDate.toDate());
+  beginDate.setHours(0);
+  beginDate.setMinutes(0);
+  beginDate.setSeconds(0);
+
+  var endDate = new Date(maxDate.toDate());
+  endDate.setHours(0);
+  endDate.setMinutes(0);
+  endDate.setSeconds(1);
+
+  var formattedBeginDate = beginDate.getDate()+"/"+(beginDate.getMonth()+1)+"/"+beginDate.getFullYear();
+
+  var formattedEndDate = endDate.getDate()+"/"+(endDate.getMonth()+1)+"/"+endDate.getFullYear();
+
+  $("#beginDate").text(formattedBeginDate);
+  $("#endDate").text(formattedEndDate);
+
+  $("#slider").dateRangeSlider({
+    arrows: false,
+    bounds:{
+      min: beginDate,
+      max: endDate
+    },
+    defaultValues:{
+      min: beginDate,
+      max: endDate
+    },
+    formatter:function(val){
+      var days = val.getDate(),
+      month = val.getMonth() + 1,
+      year = val.getFullYear();
+      // hour = val.getHours(),
+      // minute = val.getMinutes(),
+      // second = val.getSeconds();
+      return days + "/" + month + "/" + year ;
+    },
+    range:{
+      min: {days: 4}
+    },
+    step: {days: 1}
+  });
+
+  $("#slider").bind("valuesChanged", function(e, data){
+    diff.clientDump.extentDays[0] = data.values.min;
+    diff.clientDump.extentDays[1] = data.values.max;
+    console.log("Values just changed. min: " + diff.clientDump.extentDays[0] + " max: " + diff.clientDump.extentDays[1]);
+  });
+}
+
+function calculateDumpNumberOfTransactions(dump, data) {
+  dump.numberOfOrders = d3.nest().key(function(d) { return d.oid; }).entries(data).length;
+}
+
+function whatever(clientData, platformData) {
+  innerClient = summarizeOrdersAmountsByDay(clientData);
+  innerPlatform = summarizeOrdersAmountsByDay(platformData);
+
+  var object = [];
+  for (i = 0; i < innerClient.length; i++) {
+    if (innerClient[i] && innerPlatform[i] && innerClient[i].date == innerPlatform[i].date) {
+      object.push({
+        day : innerClient[i].key,
+        client: innerClient[i].values,
+        platform: innerPlatform[i].values
+      });
+    } else {
+      //showBigWarning(client[i].date, platform[i].date);
+      break;
+    }
+  }
+  return object;
+}
+
+function groupOrdersByDay(data){
+  return d3.nest().key(function(d) { return d.timestamp.month()+1; })
+    .key(function(d) { return d.timestamp.date(); })
+    .key(function(d) { return d.oid; })
+    .rollup(function(v) { return v; })
+    .entries(data);
+}
+
+/* ============ CHARTS ============ */
+
 function numberOfOrderDiffByDayPlot(clientData, platformData) {
   innerData = diffOrdersByDay(clientData, platformData);
+  console.log(innerData);
 
   $("#chart-wrapper").removeClass("hidden");
   // numberChart = $("#number-chart");
@@ -240,7 +354,7 @@ function numberOfOrderDiffByDayPlot(clientData, platformData) {
       .range([height, 0]);
 
   var color = d3.scale.ordinal()
-      .range(["#ffce54", "#3498db", "#ff8336", "#793091", "#d8192c", "#9aca40", "#ffa269"]);
+      .range(["#3498db", "#ffce54", "#ff8336", "#793091", "#d8192c", "#9aca40", "#ffa269"]);
 
   var xAxis = d3.svg.axis()
       .scale(x0)
@@ -298,7 +412,7 @@ function numberOfOrderDiffByDayPlot(clientData, platformData) {
       .style("fill", function(d) { return color(d.name); });
 
   var legend = svg.selectAll(".legend")
-      .data(ageNames.slice().reverse())
+      .data(ageNames.slice())
     .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
@@ -336,7 +450,7 @@ function amountOfOrderDiffByDayPlot(clientData, platformData) {
       .range([height, 0]);
 
   var color = d3.scale.ordinal()
-      .range(["#ffce54", "#3498db", "#ff8336", "#793091", "#d8192c", "#9aca40", "#ffa269"]);
+      .range(["#3498db", "#ffce54", "#ff8336", "#793091", "#d8192c", "#9aca40", "#ffa269"]);
 
   var xAxis = d3.svg.axis()
       .scale(x0)
@@ -394,7 +508,7 @@ function amountOfOrderDiffByDayPlot(clientData, platformData) {
       .style("fill", function(d) { return color(d.name); });
 
   var legend = svg.selectAll(".legend")
-      .data(ageNames.slice().reverse())
+      .data(ageNames.slice())
     .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
@@ -413,65 +527,99 @@ function amountOfOrderDiffByDayPlot(clientData, platformData) {
       .text(function(d) { return d; });
 }
 
-function createDateSlider(minDate, maxDate) {
-  $("#slider").dateRangeSlider({
-    arrows: false,
-    bounds:{
-      min: minDate.toDate(),
-      max: maxDate.toDate()
-    },defaultValues:{
-      min: minDate.toDate(),
-      max: maxDate.toDate()
-    },formatter:function(val){
-      var days = val.getDate(),
-      month = val.getMonth() + 1,
-      year = val.getFullYear(),
-      hour = val.getHours(),
-      minute = val.getMinutes(),
-      second = val.getSeconds();
-      return days + "/" + month + "/" + year ;
-    },range:{
-      min: {days: 1}
-    },step: {hours: 1}
+function reusableDiffChart(innerData, title) {
+  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+      width = 992 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+
+  var x0 = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .1);
+
+  var x1 = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .1);
+
+  var y = d3.scale.linear()
+      .range([height, 0]);
+
+  var color = d3.scale.ordinal()
+      .range(["#3498db", "#ffce54", "#ff8336", "#793091", "#d8192c", "#9aca40", "#ffa269"]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x0)
+      .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(d3.format(".2s"));
+
+  $("#charts").append("<h4>"+title+"</h4>");
+
+  var svg = d3.select("#charts")
+    .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var ageNames = d3.keys(innerData[0]).filter(function(key) { return key !== "day"; });
+
+  innerData.forEach(function(d) {
+    d.ages = ageNames.map(function(name) { return {name: name, value: +d[name]}; });
   });
 
-  $("#slider").bind("valuesChanged", function(e, data){
-    diff.clientDump.extentDays[0] = data.values.min;
-    diff.clientDump.extentDays[1] = data.values.max;
-    console.log("Values just changed. min: " + diff.clientDump.extentDays[0] + " max: " + diff.clientDump.extentDays[1]);
-  });
-}
+  x0.domain(innerData.map(function(d) { return d.day; }));
+  x1.domain(ageNames).rangeRoundBands([0, x0.rangeBand()]);
+  y.domain([0, d3.max(innerData, function(d) { return d3.max(d.ages, function(d) { return d.value; }); })]);
 
-function calculateDumpNumberOfTransactions(dump, data) {
-  dump.numberOfOrders = d3.nest().key(function(d) { return d.oid; }).entries(data).length;
-}
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
 
-function whatever(clientData, platformData) {
-  innerClient = summarizeOrdersAmountsByDay(clientData);
-  innerPlatform = summarizeOrdersAmountsByDay(platformData);
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Value");
 
-  var object = [];
-  for (i = 0; i < innerClient.length; i++) {
-    if (innerClient[i] && innerPlatform[i] && innerClient[i].date == innerPlatform[i].date) {
-      object.push({
-        day : innerClient[i].key,
-        platform: innerPlatform[i].values,
-        client: innerClient[i].values,
-      });
-    } else {
-      //showBigWarning(client[i].date, platform[i].date);
-      break;
-    }
-  }
-  return object;
-}
+  var state = svg.selectAll(".state")
+      .data(innerData)
+    .enter().append("g")
+      .attr("class", "g")
+      .attr("transform", function(d) { return "translate(" + x0(d.day) + ",0)"; });
 
-function groupOrdersByDay(data){
-  return d3.nest().key(function(d) { return d.timestamp.month(); })
-    .key(function(d) { return d.timestamp.date(); })
-    .key(function(d) { return d.oid; })
-    .rollup(function(v) { return v; })
-    .entries(data);
+  state.selectAll("rect")
+      .data(function(d) { return d.ages; })
+    .enter().append("rect")
+      .attr("width", x1.rangeBand())
+      .attr("x", function(d) { return x1(d.name); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("height", function(d) { return height - y(d.value); })
+      .style("fill", function(d) { return color(d.name); });
+
+  var legend = svg.selectAll(".legend")
+      .data(ageNames.slice())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  legend.append("rect")
+      .attr("x", width - 18)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", color);
+
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d; });
 }
 
 /* ======================= */

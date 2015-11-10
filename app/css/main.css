@@ -3,7 +3,11 @@
 }
 
 #slider {
-  margin-bottom: 20px;  
+  margin-bottom: 20px;
+}
+
+.dateSlider-label {
+  margin-top: 42px;
 }
 
 .btn-file {
