@@ -1,5 +1,6 @@
-var diff = {};
-var clientFileName;
+var diff = {},
+    clientFileName;
+
 // diff.platformData = [];
 // diff.clientData = [];
 
@@ -93,34 +94,27 @@ function showInfo() {
 
   var platformDateInterval = filterByDateInterval(diff.platformDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
   var clientDateInterval = filterByDateInterval(diff.clientDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
-  var innerData = whatever(clientDateInterval, platformDateInterval);
 
   showCharts(clientDateInterval, platformDateInterval);
 
-  caculateAmountTotals(innerData);
+  caculateAmountTotals(clientDateInterval, platformDateInterval);
+
   calculateDumpNumberOfTransactions(diff.clientDump, clientDateInterval);
   calculateDumpNumberOfTransactions(diff.platformDump, platformDateInterval);
 
+  whatever(clientDateInterval, platformDateInterval);
+
   createClientTitle();
 
-  showReport();
+  showReport(diff.clientDump, diff.platformDump);
+
+  $("#order-only-on-client").removeClass("hidden");
+  createClientOnlyOrdersReport(getAllOrdersById(diff.clientDump.onlyOrders, clientDateInterval));
+  createPlatformOnlyOrdersReport(getAllOrdersById(diff.platformDump.onlyOrders, platformDateInterval));
 
   $("#report-progress").attr('aria-valuenow','100');
   $("#report-progress").css('width','100%');
   $("#report-progress-bar").addClass("hidden");
-}
-
-function showCharts(clientDateInterval, platformDateInterval) {
-  $("#charts").empty();
-  $("#chart-wrapper").removeClass("hidden");
-  reusableDiffChart(diffOrdersByDay(clientDateInterval, platformDateInterval), "Number of Orders");
-  reusableDiffChart(whatever(clientDateInterval, platformDateInterval), "Amount of Orders");
-}
-
-function filterByDateInterval(data, beginDate, endDate) {
-  return data.filter(function(row) {
-    return row.timestamp.isBetween(beginDate, endDate);
-  });
 }
 
 function createClientTitle() {
@@ -129,35 +123,12 @@ function createClientTitle() {
   $("#file-title").append("<h3 id='client-file-name'>Client File Name: "+clientFileName+"</h3>");
 }
 
-function showReport() {
-  $("#board-report").remove();
-  $("#blackboard").append(
-    "<div id='board-report' class='alert alert-info'>"+
-    "<h3> Client Data </h3>"+
-    // "<p>Number of Rows: "+diff.clientDump.numberOfRows+"<p>"+
-    "<p>Number of Orders: "+diff.clientDump.numberOfOrders+"<p>"+
-    "<p>Amount of Orders: "+diff.clientDump.amountTotal.toFixed(2)+"<p>"+
-    // "<p>Max Day: "+diff.clientDump.extentDays[1].toString()+"<p>"+
-    // "<p>Min Day: "+diff.clientDump.extentDays[0].toString()+"<p>"+
-
-    "<h3> Platform Data </h3>"+
-    // "<p>Number of Rows: "+diff.platformDump.numberOfRows+"<p>"+
-    "<p>Number of Orders: "+diff.platformDump.numberOfOrders+"<p>"+
-    "<p>Amount of Orders: "+diff.platformDump.amountTotal.toFixed(2)+"<p>"+
-
-    "<h3> Diff </h3>"+
-    "<p>Diff of Orders: "+Math.abs(diff.clientDump.numberOfOrders - diff.platformDump.numberOfOrders)+"<p>"+
-    "<p>Diff of Amount: "+Math.abs(diff.clientDump.amountTotal - diff.platformDump.amountTotal).toFixed(2)+"<p>"+
-
-    "</div>"+
-    ""
-  );
-}
-
-function caculateAmountTotals(data) {
+function caculateAmountTotals(clientData, platformData) {
   var clientTotal = 0;
   var platformTotal = 0;
-  for(summary of data){
+  var innerData = diffAmountsByDay(clientData, platformData);
+
+  for(summary of innerData){
     clientTotal += summary.client;
     platformTotal += summary.platform;
   }
@@ -213,26 +184,10 @@ function summarizeOrdersAmountsByDay(data) {
   return expensesAvgAmount;
 }
 
-function diffOrdersByDay(client, platform) {
-  innerClient = summarizeOrdersByDay(client);
-  innerPlatform = summarizeOrdersByDay(platform);
-  console.log(innerPlatform);
-  console.log(innerClient);
-
+function diffOrdersByDay(clientData, platformData) {
+  var innerClient = summarizeOrdersByDay(clientData);
+  var innerPlatform = summarizeOrdersByDay(platformData);
   var object = [];
-
-  // for(clientOrder of innerClient){
-  //   for(platformOrder of innerPlatform){
-  //     if (clientOrder.date == platformOrder.date) {
-  //       object.push({
-  //         day : clientOrder.date,
-  //         platform: innerPlatform[i].data,
-  //         client: innerClient[i].data,
-  //       }
-  //     }
-  //     if(clientOrder.date )
-  //   }
-  // }
 
   for (i = 0; i < innerClient.length; i++) {
     if (innerClient[i] && innerPlatform[i] && innerClient[i].date == innerPlatform[i].date) {
@@ -302,10 +257,10 @@ function createDateSlider(minDate, maxDate) {
 }
 
 function calculateDumpNumberOfTransactions(dump, data) {
-  dump.numberOfOrders = d3.nest().key(function(d) { return d.oid; }).entries(data).length;
+  dump.numberOfOrders = groupByOrders(data).length;
 }
 
-function whatever(clientData, platformData) {
+function diffAmountsByDay(clientData, platformData) {
   innerClient = summarizeOrdersAmountsByDay(clientData);
   innerPlatform = summarizeOrdersAmountsByDay(platformData);
 
@@ -325,23 +280,301 @@ function whatever(clientData, platformData) {
   return object;
 }
 
-function groupOrdersByDay(data){
-  return d3.nest().key(function(d) { return d.timestamp.month()+1; })
+function formatCurrencyValue(value) {
+  return numeral(value).format('$0,0.00');
+}
+
+/* ============ FILTERS ============ */
+
+function filterByDateInterval(data, beginDate, endDate) {
+  return data.filter(function(row) {
+    return row.timestamp.isBetween(beginDate, endDate);
+  });
+}
+
+/* ============ REPORT ============ */
+
+function showCharts(clientDateInterval, platformDateInterval) {
+  $("#charts").empty();
+  $("#chart-wrapper").removeClass("hidden");
+
+  var clientPreparedData = diffOrdersByDay(clientDateInterval, platformDateInterval);
+  var platformPreparedData = diffAmountsByDay(clientDateInterval, platformDateInterval);
+
+  reusableDiffChart(clientPreparedData, "Number of Orders");
+  reusableDiffChart(platformPreparedData, "Amount of Orders");
+}
+
+function showReport(clientDump, platformDump) {
+  $("#board-report").remove();
+  $("#blackboard").append(
+    "<div id='board-report' class='alert alert-info'>"+
+    "<h3> Client Data </h3>"+
+    // "<p>Number of Rows: "+clientDump.numberOfRows+"<p>"+
+    "<p>Number of Orders: "+clientDump.numberOfOrders+"<p>"+
+    "<p>Amount of Orders: "+formatCurrencyValue(clientDump.amountTotal.toFixed(2))+"<p>"+
+    "<p>Orders only on client: "+diff.clientDump.onlyOrders.size+"<p>"+
+    // "<p>Max Day: "+clientDump.extentDays[1].toString()+"<p>"+
+    // "<p>Min Day: "+clientDump.extentDays[0].toString()+"<p>"+
+
+    "<h3> Platform Data </h3>"+
+    // "<p>Number of Rows: "+platformDump.numberOfRows+"<p>"+
+    "<p>Number of Orders: "+platformDump.numberOfOrders+"<p>"+
+    "<p>Amount of Orders: "+formatCurrencyValue(platformDump.amountTotal.toFixed(2))+"<p>"+
+    "<p>Orders only on platform: "+diff.platformDump.onlyOrders.size+"<p>"+
+
+    "<h3> Diff </h3>"+
+    "<p>Diff of Orders: "+Math.abs(clientDump.numberOfOrders - platformDump.numberOfOrders)+"<p>"+
+    "<p>Diff of Amount: "+formatCurrencyValue(Math.abs(clientDump.amountTotal - platformDump.amountTotal).toFixed(2))+"<p>"+
+
+    "</div>"+
+    ""
+  );
+}
+
+/* ============ GROUPS ============ */
+
+function groupOrdersByDay(data) {
+  return d3.nest()
+    .key(function(d) { return d.timestamp.month()+1; })
     .key(function(d) { return d.timestamp.date(); })
     .key(function(d) { return d.oid; })
     .rollup(function(v) { return v; })
     .entries(data);
 }
 
+function groupByOrders(data) {
+  return d3.nest()
+    .key(function(d) { return d.oid; })
+    .entries(data);
+}
+
 /* ============ CHARTS ============ */
+
+function reusableDiffChart(preparedData, title) {
+  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+      width = 992 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+
+  var x0 = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .1);
+
+  var x1 = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .1);
+
+  var y = d3.scale.linear()
+      .range([height, 0]);
+
+  var color = d3.scale.ordinal()
+      .range(["#3498db", "#ffce54", "#ff8336", "#793091", "#d8192c", "#9aca40", "#ffa269"]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x0)
+      .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(d3.format(".2s"));
+
+  $("#charts").append("<h4>"+title+"</h4>");
+
+  var svg = d3.select("#charts")
+    .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var ageNames = d3.keys(preparedData[0]).filter(function(key) { return key !== "day"; });
+
+  preparedData.forEach(function(d) {
+    d.ages = ageNames.map(function(name) { return {name: name, value: +d[name]}; });
+  });
+
+  x0.domain(preparedData.map(function(d) { return d.day; }));
+  x1.domain(ageNames).rangeRoundBands([0, x0.rangeBand()]);
+  y.domain([0, d3.max(preparedData, function(d) { return d3.max(d.ages, function(d) { return d.value; }); })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Value");
+
+  var state = svg.selectAll(".state")
+      .data(preparedData)
+    .enter().append("g")
+      .attr("class", "g")
+      .attr("transform", function(d) { return "translate(" + x0(d.day) + ",0)"; });
+
+  state.selectAll("rect")
+      .data(function(d) { return d.ages; })
+    .enter().append("rect")
+      .attr("width", x1.rangeBand())
+      .attr("x", function(d) { return x1(d.name); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("height", function(d) { return height - y(d.value); })
+      .style("fill", function(d) { return color(d.name); });
+
+  var legend = svg.selectAll(".legend")
+      .data(ageNames.slice())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  legend.append("rect")
+      .attr("x", width - 18)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", color);
+
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d; });
+}
+
+/* ============= TESTS ========== */
+
+function whatever(clientData, platformData) {
+  var clientOrders = groupByOrders(clientData).map(function(row){ return row.key; });
+  var platformOrders = groupByOrders(platformData).map(function(row){ return row.key; });
+
+  var a = new Set(clientOrders);
+  var b = new Set(platformOrders);
+  var clientDifference = new Set([...a].filter(x => !b.has(x)));
+  var platformDifference = new Set([...b].filter(x => !a.has(x)));
+
+  diff.platformDump.onlyOrders = platformDifference;
+  diff.clientDump.onlyOrders = clientDifference;
+}
+
+function createClientOnlyOrdersReport(data) {
+  $("#OrderOnlyClientReport").empty();
+  for(order of data){
+    var val = "";
+    for(var i = 0;i < order.values.length; i++){
+      val += "<tr>"+
+        "<th scope='row'>"+(i+1)+"</th>"+
+        "<td>"+order.values[i].pid+"</td> "+
+        "<td>"+order.values[i].sku+"</td> "+
+        "<td>"+formatCurrencyValue(order.values[i].price)+"</td>"+
+        "<td>"+order.values[i].quantity+"</td>"+
+      "</tr>"
+    }
+
+    $("#OrderOnlyClientReport").append("<div class='panel panel-default'>"+
+    "<div class='panel-heading' role='tab' id='heading"+order.key+"'>"+
+        "<h4 class='panel-title'>"+
+          "<a class='collapsed' role='button' data-toggle='collapse' data-parent='#OrderOnlyClientReport' href='#collapse"+order.key+"' aria-expanded='false' aria-controls='collapse"+order.key+"'>"+
+            order.key+
+          "</a>"+
+        "</h4>"+
+      "</div>"+
+      "<div id='collapse"+order.key+"' class='panel-collapse collapse' role='tabpanel' aria-labelledby='heading"+order.key+"'>"+
+        "<div class='panel-body'>"+
+          "<p>User Id: "+order.values[0].uid+"<p>"+
+          "<p>Timestamp: "+order.values[0].timestamp.format('YYYY/MM/DD HH:mm:SS')+"<p>"+
+          "<table class='table table-bordered'>"+
+        "<thead>"+
+          "<tr>"+
+            "<th>#</th>"+
+            "<th>Product Id</th>"+
+            "<th>SKU</th>"+
+            "<th>Price</th>"+
+            "<th>Quantity</th>"+
+          "</tr>"+
+        "</thead>"+
+        "<tbody>"+
+        val+
+        "</tbody>"+
+      "</table>"+
+        "</div>"+
+      "</div>"+
+    "</div>")
+  }
+}
+
+function createPlatformOnlyOrdersReport(data) {
+  $("#OrderOnlyPlatformReport").empty();
+  for(order of data){
+    var val = "";
+    for(var i = 0;i < order.values.length; i++){
+      val += "<tr>"+
+        "<th scope='row'>"+(i+1)+"</th>"+
+        "<td>"+order.values[i].pid+"</td> "+
+        "<td>"+order.values[i].sku+"</td> "+
+        "<td>"+formatCurrencyValue(order.values[i].price)+"</td>"+
+        "<td>"+order.values[i].quantity+"</td>"+
+      "</tr>"
+    }
+
+    $("#OrderOnlyPlatformReport").append("<div class='panel panel-default'>"+
+    "<div class='panel-heading' role='tab' id='heading"+order.key+"'>"+
+        "<h4 class='panel-title'>"+
+          "<a class='collapsed' role='button' data-toggle='collapse' data-parent='#OrderOnlyPlatformReport' href='#collapse"+order.key+"' aria-expanded='false' aria-controls='collapse"+order.key+"'>"+
+            order.key+
+          "</a>"+
+        "</h4>"+
+      "</div>"+
+      "<div id='collapse"+order.key+"' class='panel-collapse collapse' role='tabpanel' aria-labelledby='heading"+order.key+"'>"+
+        "<div class='panel-body'>"+
+          "<p>User Id: "+order.values[0].uid+"<p>"+
+          "<p>Timestamp: "+order.values[0].timestamp.format('YYYY/MM/DD HH:mm:SS')+"<p>"+
+          "<table class='table table-bordered'>"+
+        "<thead>"+
+          "<tr>"+
+            "<th>#</th>"+
+            "<th>Product Id</th>"+
+            "<th>SKU</th>"+
+            "<th>Price</th>"+
+            "<th>Quantity</th>"+
+          "</tr>"+
+        "</thead>"+
+        "<tbody>"+
+        val+
+        "</tbody>"+
+      "</table>"+
+        "</div>"+
+      "</div>"+
+    "</div>")
+  }
+}
+
+function getOrderById(oid, data){
+  for(order of groupByOrders(data)){
+    if(order.key == oid){
+      return order;
+    }
+  }
+}
+
+function getAllOrdersById(idData, data){
+  var array = [];
+  for(id of idData){
+    array.push(getOrderById(id, data));
+  }
+  return array;
+}
+
+/* ============= DEPRECATED ========== */
 
 function numberOfOrderDiffByDayPlot(clientData, platformData) {
   innerData = diffOrdersByDay(clientData, platformData);
-  console.log(innerData);
 
   $("#chart-wrapper").removeClass("hidden");
-  // numberChart = $("#number-chart");
-  // console.log(numberChart);
 
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
       width = 992 - margin.left - margin.right,
@@ -434,7 +667,7 @@ function numberOfOrderDiffByDayPlot(clientData, platformData) {
 }
 
 function amountOfOrderDiffByDayPlot(clientData, platformData) {
-  innerData = whatever(clientData, platformData);
+  innerData = diffAmountsByDay(clientData, platformData);
 
   $("#chart-wrapper").removeClass("hidden");
   $("#amount-chart").remove("svg");
@@ -528,103 +761,6 @@ function amountOfOrderDiffByDayPlot(clientData, platformData) {
       .style("text-anchor", "end")
       .text(function(d) { return d; });
 }
-
-function reusableDiffChart(innerData, title) {
-  var margin = {top: 20, right: 20, bottom: 30, left: 40},
-      width = 992 - margin.left - margin.right,
-      height = 500 - margin.top - margin.bottom;
-
-  var x0 = d3.scale.ordinal()
-      .rangeRoundBands([0, width], .1);
-
-  var x1 = d3.scale.ordinal()
-      .rangeRoundBands([0, width], .1);
-
-  var y = d3.scale.linear()
-      .range([height, 0]);
-
-  var color = d3.scale.ordinal()
-      .range(["#3498db", "#ffce54", "#ff8336", "#793091", "#d8192c", "#9aca40", "#ffa269"]);
-
-  var xAxis = d3.svg.axis()
-      .scale(x0)
-      .orient("bottom");
-
-  var yAxis = d3.svg.axis()
-      .scale(y)
-      .orient("left")
-      .tickFormat(d3.format(".2s"));
-
-  $("#charts").append("<h4>"+title+"</h4>");
-
-  var svg = d3.select("#charts")
-    .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-  var ageNames = d3.keys(innerData[0]).filter(function(key) { return key !== "day"; });
-
-  innerData.forEach(function(d) {
-    d.ages = ageNames.map(function(name) { return {name: name, value: +d[name]}; });
-  });
-
-  x0.domain(innerData.map(function(d) { return d.day; }));
-  x1.domain(ageNames).rangeRoundBands([0, x0.rangeBand()]);
-  y.domain([0, d3.max(innerData, function(d) { return d3.max(d.ages, function(d) { return d.value; }); })]);
-
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Value");
-
-  var state = svg.selectAll(".state")
-      .data(innerData)
-    .enter().append("g")
-      .attr("class", "g")
-      .attr("transform", function(d) { return "translate(" + x0(d.day) + ",0)"; });
-
-  state.selectAll("rect")
-      .data(function(d) { return d.ages; })
-    .enter().append("rect")
-      .attr("width", x1.rangeBand())
-      .attr("x", function(d) { return x1(d.name); })
-      .attr("y", function(d) { return y(d.value); })
-      .attr("height", function(d) { return height - y(d.value); })
-      .style("fill", function(d) { return color(d.name); });
-
-  var legend = svg.selectAll(".legend")
-      .data(ageNames.slice())
-    .enter().append("g")
-      .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-  legend.append("rect")
-      .attr("x", width - 18)
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", color);
-
-  legend.append("text")
-      .attr("x", width - 24)
-      .attr("y", 9)
-      .attr("dy", ".35em")
-      .style("text-anchor", "end")
-      .text(function(d) { return d; });
-}
-
-/* ======================= */
 
 function plot(data) {
   $("#chart-wrapper").removeClass("hidden");

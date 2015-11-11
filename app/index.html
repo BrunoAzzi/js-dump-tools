@@ -70,7 +70,7 @@
     </div>
 
     <div id="api-key-input-wrapper" class="row hidden">
-      <div class="container form-inline panel panel-default">
+      <div class="container form-inline panel panel-default wrapper-panel">
         <div class="col-md-12">
           <label for="api-key-input">Client Api Key :</label>
           <input id="api-key-input" type="text" class="form-control " >
@@ -79,15 +79,22 @@
     </div>
 
     <div id="report-board" class="row hidden">
-      <div class="container panel panel-default">
+      <div class="container panel panel-default wrapper-panel">
         <label for="slider" class="col-md-12">Choose a date interval for report:</label>
-        <div class="col-md-12">
-          <h3><label id="beginDate" class="dateSlider-label label label-default text-right col-md-2">02-09-2015</label></h3>
-          <div class="col-md-7">
-            <div id="slider">
-            </div>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="col-sm-2 hidden-xs">
+            <h3 class="text-right dateSlider-label">
+              <label id="beginDate" class="label label-default">02-09-2015</label>
+            </h3>
           </div>
-          <h3><label id="endDate" class="dateSlider-label label label-default text-left col-md-2">02-09-2015</label></h3>
+          <div class="col-sm-7 col-xs-12">
+            <div id="slider"></div>
+          </div>
+          <div class="col-sm-2 hidden-xs">
+              <h3 class="text-left dateSlider-label">
+                <label id="endDate" class="label label-default">02-09-2015</label>
+              </h3>
+          </div>
         </div>
         <div class="col-md-12">
           <input id="showBlackboard" class="btn btn-success" type="button" onclick="showInfo()" value="show info">
@@ -124,6 +131,46 @@
       </div>
     </div>
 
+    <div id="order-only-on-client" class="row hidden">
+      <div class="container">
+        <div class="panel-group" id="master-accordion" role="tablist" aria-multiselectable="true">
+
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+              <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#master-accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                  Orders Only in Client
+                </a>
+              </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+              <div class="panel-body">
+                <div class="panel-group" id="OrderOnlyClientReport" role="tablist" aria-multiselectable="true">
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="headingTwo">
+            <h4 class="panel-title">
+              <a class="collapsed" role="button" data-toggle="collapse" data-parent="#master-accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Orders Only in Platform
+              </a>
+            </h4>
+          </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+            <div class="panel-body">
+              <div class="panel-group" id="OrderOnlyPlatformReport" role="tablist" aria-multiselectable="true">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+
     <script src="components/jquery/dist/jquery.min.js"> </script>
     <script src="components/bootstrap/dist/js/bootstrap.min.js"> </script>
     <script src="components/jquery-ui/jquery-ui.min.js"> </script>
@@ -131,6 +178,7 @@
     <script src="components/papaparse/papaparse.min.js"> </script>
     <script src="components/moment/min/moment.min.js"> </script>
     <script src="components/d3/d3.min.js"> </script>
+    <script src="components/numeral/min/numeral.min.js"> </script>
 
     <script src="js/main.js"> </script>
     <script src="analysis.js"> </script>
