@@ -7,7 +7,10 @@ var diff = {},
         $("#api-key-input").prop( "disabled", true );
 
         var platformDateInterval = filterByDateInterval(diff.platformDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
-            clientDateInterval = filterByDateInterval(diff.clientDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
+            clientDateInterval = filterByDateInterval(diff.clientDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
+            teste = [];
+
+        createClientTitle(clientFileName);
 
         showCharts(clientDateInterval, platformDateInterval);
 
@@ -18,21 +21,21 @@ var diff = {},
 
         getOrdersDifference(clientDateInterval, platformDateInterval);
 
-        createClientTitle(clientFileName);
+        diff.inconsistentOrders = 0;
+
+        for(orderId of getOrdersIntersection(clientDateInterval, platformDateInterval)){
+            var clientOrder = getOrderById(orderId, clientDateInterval);
+            var platformOrder = getOrderById(orderId, platformDateInterval);
+            result = testOrder(clientOrder, platformOrder);
+            if(isOrderOk(result) < 1) diff.inconsistentOrders++;
+            teste.push(result);
+        }
 
         showReport(diff.clientDump, diff.platformDump);
 
         createClientOnlyOrdersReport(getAllOrdersById(diff.clientDump.onlyOrders, clientDateInterval));
         createPlatformOnlyOrdersReport(getAllOrdersById(diff.platformDump.onlyOrders, platformDateInterval));
-
-        var teste = [];
-
-        for(orderId of getOrdersIntersection(clientDateInterval, platformDateInterval)){
-            var clientOrder = getOrderById(orderId, clientDateInterval);
-            var platformOrder = getOrderById(orderId, platformDateInterval);
-                teste.push(testOrder(clientOrder, platformOrder));
-        }
-        console.log(teste);
+        createTestedOrdersResultReport(teste);
 
         $("#order-only-on-client").removeClass("hidden");
         $("#report-progress").attr('aria-valuenow','100');
@@ -129,33 +132,7 @@ var diff = {},
             diff.clientDump.extentDays[1] = data.values.max;
             console.log("Values just changed. min: " + diff.clientDump.extentDays[0] + " max: " + diff.clientDump.extentDays[1]);
         });
-    },
-
-    getOrdersDifference = function(clientData, platformData) {
-        var clientOrders = groupByOrders(clientData).map(function(row){ return row.key; }),
-            platformOrders = groupByOrders(platformData).map(function(row){ return row.key; }),
-
-            a = new Set(clientOrders),
-            b = new Set(platformOrders),
-
-            clientDifference = new Set([...a].filter(x => !b.has(x))),
-            platformDifference = new Set([...b].filter(x => !a.has(x)));
-
-        diff.platformDump.onlyOrders = platformDifference;
-        diff.clientDump.onlyOrders = clientDifference;
-    },
-
-    getOrdersIntersection = function(clientData, platformData) {
-        var clientOrders = groupByOrders(clientData).map(function(row){ return row.key; }),
-            platformOrders = groupByOrders(platformData).map(function(row){ return row.key; }),
-
-            a = new Set(clientOrders),
-            b = new Set(platformOrders),
-
-            intersection = new Set([...a].filter(x => b.has(x)));
-
-        return intersection;
-    }
+    };
 
 $("#the-client-file-input").change(function() {
     clientFileName = this.files[0].name;
