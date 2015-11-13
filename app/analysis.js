@@ -16,16 +16,25 @@ var diff = {},
         calculateDumpNumberOfTransactions(diff.clientDump, clientDateInterval);
         calculateDumpNumberOfTransactions(diff.platformDump, platformDateInterval);
 
-        fetchOrderThatAreAlone(clientDateInterval, platformDateInterval);
+        getOrdersDifference(clientDateInterval, platformDateInterval);
 
         createClientTitle(clientFileName);
 
         showReport(diff.clientDump, diff.platformDump);
 
-        $("#order-only-on-client").removeClass("hidden");
         createClientOnlyOrdersReport(getAllOrdersById(diff.clientDump.onlyOrders, clientDateInterval));
         createPlatformOnlyOrdersReport(getAllOrdersById(diff.platformDump.onlyOrders, platformDateInterval));
 
+        var teste = [];
+
+        for(orderId of getOrdersIntersection(clientDateInterval, platformDateInterval)){
+            var clientOrder = getOrderById(orderId, clientDateInterval);
+            var platformOrder = getOrderById(orderId, platformDateInterval);
+                teste.push(testOrder(clientOrder, platformOrder));
+        }
+        console.log(teste);
+
+        $("#order-only-on-client").removeClass("hidden");
         $("#report-progress").attr('aria-valuenow','100');
         $("#report-progress").css('width','100%');
         $("#report-progress-bar").addClass("hidden");
@@ -51,7 +60,7 @@ var diff = {},
     makeDump = function(csvData) {
         var object = {
             data: csvData,
-            numberOfRows: csvData.length,
+            numberOfRows: csvData.length
         }
         return object;
     }
@@ -61,7 +70,7 @@ var diff = {},
             platformTotal = 0,
             innerData = diffAmountsByDay(clientData, platformData);
 
-        for(summary of innerData){
+        for (summary of innerData) {
             clientTotal += summary.client;
             platformTotal += summary.platform;
         }
@@ -96,21 +105,21 @@ var diff = {},
         $("#slider").dateRangeSlider({
             arrows: false,
             bounds:{
-              min: beginDate,
-              max: endDate
+                min: beginDate,
+                max: endDate
             },
             defaultValues:{
-              min: beginDate,
-              max: endDate
+                min: beginDate,
+                max: endDate
             },
             formatter:function(val){
-              var days = val.getDate(),
-              month = val.getMonth() + 1,
-              year = val.getFullYear();
-              return days + "/" + month + "/" + year ;
+                var days = val.getDate(),
+                    month = val.getMonth() + 1,
+                    year = val.getFullYear();
+                return days + "/" + month + "/" + year ;
             },
             range:{
-              min: {days: 4}
+                min: {days: 4}
             },
             step: {days: 1}
         });
@@ -122,7 +131,7 @@ var diff = {},
         });
     },
 
-    fetchOrderThatAreAlone = function(clientData, platformData) {
+    getOrdersDifference = function(clientData, platformData) {
         var clientOrders = groupByOrders(clientData).map(function(row){ return row.key; }),
             platformOrders = groupByOrders(platformData).map(function(row){ return row.key; }),
 
@@ -134,7 +143,19 @@ var diff = {},
 
         diff.platformDump.onlyOrders = platformDifference;
         diff.clientDump.onlyOrders = clientDifference;
-    };
+    },
+
+    getOrdersIntersection = function(clientData, platformData) {
+        var clientOrders = groupByOrders(clientData).map(function(row){ return row.key; }),
+            platformOrders = groupByOrders(platformData).map(function(row){ return row.key; }),
+
+            a = new Set(clientOrders),
+            b = new Set(platformOrders),
+
+            intersection = new Set([...a].filter(x => b.has(x)));
+
+        return intersection;
+    }
 
 $("#the-client-file-input").change(function() {
     clientFileName = this.files[0].name;
@@ -151,7 +172,7 @@ $("#the-client-file-input").change(function() {
         },
         complete: function(result) {
             console.log(result);
-            if(result.errors){
+            if (result.errors){
                 for (var i = 0; i < result.errors.length; i++) {
                     console.log(result.errors[i]);
                 }
@@ -183,7 +204,7 @@ $("#the-platform-file-input").change(function() {
     },
     complete: function(result) {
       console.log(result);
-      if(result.errors){
+      if (result.errors){
         for (var i = 0; i < result.errors.length; i++) {
           console.log(result.errors[i]);
         }
