@@ -8,7 +8,14 @@ var diff = {},
 
         var platformDateInterval = filterByDateInterval(diff.platformDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
             clientDateInterval = filterByDateInterval(diff.clientDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
-            teste = [];
+            teste = {};
+
+        diff.inconsistentOrders = 0;
+
+        teste.results = []
+        teste.errorOrders = 0;
+        teste.warningOrders = 0;
+        teste.successOrders = 0;
 
         createClientTitle(clientFileName);
 
@@ -21,15 +28,20 @@ var diff = {},
 
         getOrdersDifference(clientDateInterval, platformDateInterval);
 
-        diff.inconsistentOrders = 0;
+
 
         for(orderId of getOrdersIntersection(clientDateInterval, platformDateInterval)){
             var clientOrder = getOrderById(orderId, clientDateInterval);
             var platformOrder = getOrderById(orderId, platformDateInterval);
             result = testOrder(clientOrder, platformOrder);
-            if(isOrderOk(result) < 1) diff.inconsistentOrders++;
-            teste.push(result);
+            orderResult = isOrderOk(result);
+            if(orderResult < 0) teste.errorOrders++;
+            if(orderResult == 0) teste.warningOrders++;
+            if(orderResult > 0) teste.successOrders++;
+            teste.results.push(result);
         }
+
+        diff.inconsistentOrders = teste.errorOrders;
 
         showReport(diff.clientDump, diff.platformDump);
 

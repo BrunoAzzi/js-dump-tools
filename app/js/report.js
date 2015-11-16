@@ -132,13 +132,13 @@ var createClientOnlyOrdersReport = function(data) {
                     "</div>"+
                     "<div class='col-sm-12'>"+
                         "<div class='col-sm-12'>"+
-                            "<h3> Results - They should be above of 10%</h3>"+
+                            "<h3> Results - They should be below of 10%</h3>"+
                         "</div>"+
                         "<div class='col-sm-12'>"+
                             "<div class='col-sm-6'>"+
                                 "<h4>Alone Orders</h4>"+
-                                "<p>Orders only in client: "+percentageOfOrderOnlyInCliente+"% of orders on client</p>"+
-                                "<p>Orders only in platform: "+percentageOfOrderOnlyInPlatform+"% of orders on platform</p>"+
+                                "<p>Orders only on client: "+percentageOfOrderOnlyInCliente+"% of orders on client</p>"+
+                                "<p>Orders only on platform: "+percentageOfOrderOnlyInPlatform+"% of orders on platform</p>"+
                             "</div>"+
                             "<div class='col-sm-6'>"+
                                 "<h4>Diff of Orders: "+Math.abs(clientDump.numberOfOrders - platformDump.numberOfOrders)+"</h4>"+
@@ -149,11 +149,11 @@ var createClientOnlyOrdersReport = function(data) {
                         "<div class='col-sm-12'>"+
                             "<div class='col-sm-6'>"+
                                 "<h4>Diff of Amount: "+formatCurrencyValue(Math.abs(clientDump.amountTotal - platformDump.amountTotal).toFixed(2))+"</h4>"+
-                                "<p>"+percentageOfDifferenceOfAmountInClient+"% of orders on client</p>"+
-                                "<p>"+percentageOfDifferenceOfAmountInPlatform+"% of orders on platform</p>"+
+                                "<p>"+percentageOfDifferenceOfAmountInClient+"% of amount on client</p>"+
+                                "<p>"+percentageOfDifferenceOfAmountInPlatform+"% of amount on platform</p>"+
                             "</div>"+
                             "<div class='col-sm-6'>"+
-                                "<h4>Inconsistent Orders: "+diff.inconsistentOrders+"</h4>"+
+                                "<h4>Inconsistent Orders in common orders: "+diff.inconsistentOrders+"</h4>"+
                                 "<p>"+percentageOfInconsistentOrdersInClient+"% of orders on client</p>"+
                                 "<p>"+percentageOfInconsistentOrdersInPlatform+"% of orders on platform</p>"+
                             "</div>"+
@@ -164,7 +164,7 @@ var createClientOnlyOrdersReport = function(data) {
             "<div id='alerts' class='col-md-12'>"+
                 // checkMaxPercentage(percentageOfOrderOnlyInCliente, "Orders only in client")+
                 // checkMaxPercentage(percentageOfOrderOnlyInPlatform, "Orders only in platform")+
-                checkMaxPercentage(percentageOfDiffOfOrderInCliente, "Difference of Orders in client")+
+                summarizeReport(percentageOfDiffOfOrderInCliente, percentageOfDifferenceOfAmountInClient)+
                 // checkMaxPercentage(percentageOfDiffOfOrderInPlatform, "Diff of Orders in platform")+
                 //
                 // checkMaxPercentage(percentageOfDifferenceOfAmountInClient, "Diff of Orders in platform")+
@@ -193,8 +193,9 @@ var createClientOnlyOrdersReport = function(data) {
     },
 
     createTestedOrdersResultReport = function(data) {
+        $("#accordion-test-results-header").text("Common Orders - Errors: "+data.errorOrders+" Warnings: "+data.warningOrders+" Success: "+data.successOrders);
         $("#tested-orders-result").empty();
-        for(teste of data) {
+        for(teste of data.results) {
 
             var clientVal = "",
                 platformVal = "";
@@ -319,5 +320,17 @@ var createClientOnlyOrdersReport = function(data) {
             }
         } else {
             return "<div class='alert alert-danger'><b>"+title+"</b> is above of the max percentage - We are loosing more than 10% of Orders!</div>";
+        }
+    },
+
+    summarizeReport = function(orderPercentage, amountPercentage){
+        if (orderPercentage < 10 && amountPercentage < 10) {
+            if (orderPercentage >= 5 && amountPercentage >= 5) {
+                return "<div class='alert alert-danger'><b>Difference of Orders on client</b> or <b>Difference of Amount on client</b> are close to the max percentage (Between 5% and 10%) - We need to take make some tests</div>";
+            } else {
+                return "<div class='alert alert-danger'><b>Difference of Orders on client</b> or <b>Difference of Amount on client</b> are less than a half of the max percentage - We are Ok</div>";
+            }
+        } else {
+            return "<div class='alert alert-danger'><b>Difference of Orders on client</b> or <b>Difference of Amount on client</b> are above of the max percentage (10%)</div>";
         }
     }

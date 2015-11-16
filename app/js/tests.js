@@ -74,7 +74,9 @@ var testOrder = function(clientOrders, platformOrders) {
     isProductPriceValid = function(reference, comparativeArray) {
             for (innerOrder of comparativeArray.values) {
                 if (order.price == innerOrder.price && order.pid == innerOrder.pid) {
-                    return true;
+                    if(order.price > 0 && innerOrder.price > 0){
+                            return true;
+                    }
                 }
             }
         return false;
@@ -83,7 +85,9 @@ var testOrder = function(clientOrders, platformOrders) {
     isProductQuantityValid = function(reference, comparativeArray) {
             for (innerOrder of comparativeArray.values) {
                 if (order.quantity == innerOrder.quantity && order.pid == innerOrder.pid) {
-                    return true;
+                    if(order.quantity > 0 && innerOrder.quantity > 0){
+                            return true;
+                    }
                 }
             }
         return false;
