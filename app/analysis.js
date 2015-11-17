@@ -1,5 +1,6 @@
 var diff = {},
     clientFileName,
+    xhttp = new XMLHttpRequest(),
 
     publishRelatory = function(){
         $("#date-range-slider-wrapper").addClass("hidden");
