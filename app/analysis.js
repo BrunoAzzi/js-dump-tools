@@ -3,11 +3,11 @@ var diff = {},
 
     publishRelatory = function(){
         $("#date-range-slider-wrapper").addClass("hidden");
-        console.log('data:text/attachment;,' + //here is the trick
-        document.documentElement.innerHTML);
-        // xhttp.open("POST", "http://server/job/myjob/buildWithParameters", true);
-        // xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        // xhttp.send("token=teste&API_KEY="+apiKey+"&DOM_STRING="+document.documentElement.innerHTML);
+        // console.log('data:text/attachment;,' + //here is the trick
+        // document.documentElement.innerHTML);
+        xhttp.open("POST", "http://server/job/myjob/buildWithParameters", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("token=teste&API_KEY="+apiKey+"&DOM_STRING="+document.documentElement.innerHTML);
     },
 
     utf8_to_b64 = function(str) {
