@@ -61,3 +61,7 @@ input[readonly] {
 .x.axis path {
   display: none;
 }
+
+#publish-report-button {
+    margin-top: 20px;
+}

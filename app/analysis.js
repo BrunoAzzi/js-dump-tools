@@ -1,10 +1,37 @@
 var diff = {},
     clientFileName,
 
+    publishRelatory = function(){
+        $("#date-range-slider-wrapper").addClass("hidden");
+        console.log('data:text/attachment;,' + //here is the trick
+        document.documentElement.innerHTML);
+        // xhttp.open("POST", "http://server/job/myjob/buildWithParameters", true);
+        // xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        // xhttp.send("token=teste&API_KEY="+apiKey+"&DOM_STRING="+document.documentElement.innerHTML);
+    },
+
+    utf8_to_b64 = function(str) {
+        return window.btoa(unescape(encodeURIComponent( str )));
+    },
+
+    confirmApiKey = function() {
+        diff.apiKey = $("#api-key-input").val();
+        $("#api-key-input-wrapper").addClass("hidden");
+
+        $("#client-title").text("Report of "+diff.apiKey);
+        $("#client-title-wrapper").removeClass("hidden");
+
+        $("#client-file-chooser-wrapper").removeClass("hidden");
+    },
+
+    editApiKey = function() {
+        $("#api-key-input-wrapper").removeClass("hidden");
+        $("#client-title-wrapper").addClass("hidden");
+    }
+
     showInfo = function() {
         $("#platform-file-chooser-wrapper").addClass("hidden");
         $("#client-file-chooser-wrapper").addClass("hidden");
-        $("#api-key-input").prop( "disabled", true );
 
         var platformDateInterval = filterByDateInterval(diff.platformDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
             clientDateInterval = filterByDateInterval(diff.clientDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
@@ -17,7 +44,7 @@ var diff = {},
         teste.warningOrders = 0;
         teste.successOrders = 0;
 
-        createClientTitle(clientFileName);
+        // createClientTitle(clientFileName);
 
         showCharts(clientDateInterval, platformDateInterval);
 
@@ -27,8 +54,6 @@ var diff = {},
         calculateDumpNumberOfTransactions(diff.platformDump, platformDateInterval);
 
         getOrdersDifference(clientDateInterval, platformDateInterval);
-
-
 
         for(orderId of getOrdersIntersection(clientDateInterval, platformDateInterval)){
             var clientOrder = getOrderById(orderId, clientDateInterval);
@@ -53,6 +78,7 @@ var diff = {},
         $("#report-progress").attr('aria-valuenow','100');
         $("#report-progress").css('width','100%');
         $("#report-progress-bar").addClass("hidden");
+        $("#publish-report-button").removeClass("hidden");
     },
 
     setupPlatform = function(data) {
@@ -199,11 +225,11 @@ $("#the-platform-file-input").change(function() {
         }
       }
       setupPlatform(result.data);
-      $("#report-board").removeClass("hidden");
+      $("#date-range-slider-wrapper").removeClass("hidden");
       $("#platform-warning-tip").addClass("hidden");
       $("#platform-success-tip").removeClass("hidden");
       $("#platform-progress-bar").addClass("hidden");
-      $("#api-key-input-wrapper").removeClass("hidden");
+    //   $("#api-key-input-wrapper").removeClass("hidden");
       createDateSlider(diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
     }
   });

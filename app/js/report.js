@@ -186,14 +186,14 @@ var createClientOnlyOrdersReport = function(data) {
         reusableDiffChart(platformPreparedData, "Amount of Orders");
     },
 
-    createClientTitle = function(name) {
-        $("#client-title").removeClass("hidden");
-        $("#client-file-name").remove();
-        $("#file-title").append("<h3 id='client-file-name'>Client File Name: "+name+"</h3>");
-    },
+    // createClientTitle = function(name) {
+    //     $("#client-title").removeClass("hidden");
+    //     $("#client-file-name").remove();
+    //     $("#file-title").append("<h3 id='client-file-name'>Client File Name: "+name+"</h3>");
+    // },
 
     createTestedOrdersResultReport = function(data) {
-        $("#accordion-test-results-header").text("Common Orders - Errors: "+data.errorOrders+" Warnings: "+data.warningOrders+" Success: "+data.successOrders);
+        $("#accordion-test-results-header").text("Common Orders - Errors: "+data.errorOrders+" - Warnings: "+data.warningOrders+" - Success: "+data.successOrders);
         $("#tested-orders-result").empty();
         for(teste of data.results) {
 
