@@ -4,11 +4,22 @@ var diff = {},
 
     publishRelatory = function(){
         $("#date-range-slider-wrapper").addClass("hidden");
-        // console.log('data:text/attachment;,' + //here is the trick
-        // document.documentElement.innerHTML);
+        console.log('data:text/attachment;,' + //here is the trick
+        document.documentElement.innerHTML);
         xhttp.open("POST", "http://roberval.chaordicsystems.com/job/js_dump_tools_homologation/buildWithParameters", true);
         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhttp.send("token=teste&API_KEY="+diff.apiKey+"&DOM_STRING="+document.documentElement.innerHTML);
+
+    },
+
+    prepareReport = function() {
+        $('#publish-report-button').addClass('hidden');
+        $('#date-range-slider-wrapper').addClass('hidden');
+    },
+
+    showResponse = function() {
+        $('#publish-report-button').removeClass('hidden');
+        $('#date-range-slider-wrapper').removeClass('hidden');
     },
 
     utf8_to_b64 = function(str) {

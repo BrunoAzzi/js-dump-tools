@@ -16,7 +16,10 @@
                         <h2>js-dump-tools</h2>
                     </div>
                     <div class="col-md-4">
-                        <a id="publish-report-button" class="btn btn-danger pull-right hidden" onclick="publishRelatory()">Publish</a>
+                        <!-- <a id="publish-report-button" class="btn btn-danger pull-right hidden" onclick="publishRelatory()">Publish</a> -->
+                        <a id="publish-report-button" class="btn btn-danger hidden pull-right" onclick="prepareReport();
+                        $(this).attr('href', 'data:text/plain;base64,' + utf8_to_b64($('html').clone().find('#generate').remove().end()[0].outerHTML));
+                        showResponse();" download="dump-tools-report.html" id="generate"><span class="glyphicon glyphicon-print"></a>
                     </div>
                 </div>
             </div>
