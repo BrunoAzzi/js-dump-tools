@@ -11,4 +11,10 @@ var groupOrdersByDay = function(data) {
         return d3.nest()
             .key(function(d) { return d.oid; })
             .entries(data);
+    },
+
+    groupByOrdersMap = function(data) {
+        return d3.nest()
+            .key(function(d) { return d.oid; })
+            .map(data);
     }

@@ -3,13 +3,46 @@ var diff = {},
     xhttp = new XMLHttpRequest(),
 
     publishRelatory = function(){
-        $("#date-range-slider-wrapper").addClass("hidden");
-        // console.log('data:text/attachment;,' + //here is the trick
-        // document.documentElement.innerHTML);
-        xhttp.open("POST", "http://roberval.chaordicsystems.com/job/js_dump_tools_homologation/buildWithParameters", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("token=teste&API_KEY="+diff.apiKey+"&DOM_STRING="+document.documentElement.innerHTML);
+        $('#date-range-slider-wrapper').addClass('hidden');
+        $('#publish-report-button').addClass('hidden');
+
+        var createObjectURL = (window.URL || window.webkitURL || {}).createObjectURL || function(){};
+        var blob = null;
+        var content = document.documentElement.outerHTML;
+        var mimeString = "application/octet-stream";
+        window.BlobBuilder = window.BlobBuilder ||
+                             window.WebKitBlobBuilder ||
+                             window.MozBlobBuilder ||
+                             window.MSBlobBuilder;
+
+
+        if(window.BlobBuilder){
+           var bb = new BlobBuilder();
+           bb.append(content);
+           blob = bb.getBlob(mimeString);
+        }else{
+           blob = new Blob([content], {type : mimeString});
+        }
+
+        var url = createObjectURL(blob);
+        var now = new Date();
+        var a = $("#publish-report-button");
+        a.attr("href", url);
+        a.attr("download", "js-dump-report-"+diff.apiKey+"-"+now.getDate()+"/"+now.getMonth()+"/"+now.getFullYear()+".html");
+
+        $('#publish-report-button').removeClass('hidden');
+        $('#date-range-slider-wrapper').removeClass('hidden');
     },
+
+    prepareReport = function() {
+        $('#publish-report-button').addClass('hidden');
+        $('#date-range-slider-wrapper').addClass('hidden');
+    },
+
+    showResponse = function() {
+        $('#publish-report-button').removeClass('hidden');
+        $('#date-range-slider-wrapper').removeClass('hidden');
+    }
 
     utf8_to_b64 = function(str) {
         return window.btoa(unescape(encodeURIComponent( str )));
@@ -36,6 +69,8 @@ var diff = {},
 
         var platformDateInterval = filterByDateInterval(diff.platformDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
             clientDateInterval = filterByDateInterval(diff.clientDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
+            groupedClientInterval = groupByOrders(clientDateInterval),
+            groupedPlatformInterval = groupByOrders(platformDateInterval),
             teste = {};
 
         diff.inconsistentOrders = 0;
@@ -45,25 +80,28 @@ var diff = {},
         teste.warningOrders = 0;
         teste.successOrders = 0;
 
-        // createClientTitle(clientFileName);
-
         showCharts(clientDateInterval, platformDateInterval);
 
         caculateAmountTotals(clientDateInterval, platformDateInterval);
 
-        calculateDumpNumberOfTransactions(diff.clientDump, clientDateInterval);
-        calculateDumpNumberOfTransactions(diff.platformDump, platformDateInterval);
+        calculateDumpNumberOfTransactions(diff.clientDump, groupedClientInterval);
+        calculateDumpNumberOfTransactions(diff.platformDump, groupedPlatformInterval);
 
-        getOrdersDifference(clientDateInterval, platformDateInterval);
+        getOrdersDifference(groupedClientInterval, groupedPlatformInterval);
 
-        for(orderId of getOrdersIntersection(clientDateInterval, platformDateInterval)){
-            var clientOrder = getOrderById(orderId, clientDateInterval);
-            var platformOrder = getOrderById(orderId, platformDateInterval);
+        for(orderId of getOrdersIntersection(groupedClientInterval, groupedPlatformInterval)){
+
+            var clientOrder = getOrderById(orderId, groupedClientInterval);
+            var platformOrder = getOrderById(orderId, groupedPlatformInterval);
+
             result = testOrder(clientOrder, platformOrder);
+            // console.log(result);
             orderResult = isOrderOk(result);
+
             if(orderResult < 0) teste.errorOrders++;
             if(orderResult == 0) teste.warningOrders++;
             if(orderResult > 0) teste.successOrders++;
+
             teste.results.push(result);
         }
 
@@ -71,8 +109,8 @@ var diff = {},
 
         showReport(diff.clientDump, diff.platformDump);
 
-        createClientOnlyOrdersReport(getAllOrdersById(diff.clientDump.onlyOrders, clientDateInterval));
-        createPlatformOnlyOrdersReport(getAllOrdersById(diff.platformDump.onlyOrders, platformDateInterval));
+        createClientOnlyOrdersReport(getAllOrdersById(diff.clientDump.onlyOrders, groupedClientInterval));
+        createPlatformOnlyOrdersReport(getAllOrdersById(diff.platformDump.onlyOrders, groupedPlatformInterval));
         createTestedOrdersResultReport(teste);
 
         $("#order-only-on-client").removeClass("hidden");
@@ -80,6 +118,8 @@ var diff = {},
         $("#report-progress").css('width','100%');
         $("#report-progress-bar").addClass("hidden");
         $("#publish-report-button").removeClass("hidden");
+
+
     },
 
     setupPlatform = function(data) {
@@ -121,8 +161,8 @@ var diff = {},
         diff.platformDump.amountTotal = platformTotal;
     },
 
-    calculateDumpNumberOfTransactions = function(dump, data) {
-        dump.numberOfOrders = groupByOrders(data).length;
+    calculateDumpNumberOfTransactions = function(dump, groupedData) {
+        dump.numberOfOrders = groupedData.length;
     },
 
     createDateSlider = function(minDate, maxDate) {
@@ -230,7 +270,6 @@ $("#the-platform-file-input").change(function() {
       $("#platform-warning-tip").addClass("hidden");
       $("#platform-success-tip").removeClass("hidden");
       $("#platform-progress-bar").addClass("hidden");
-    //   $("#api-key-input-wrapper").removeClass("hidden");
       createDateSlider(diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
     }
   });
