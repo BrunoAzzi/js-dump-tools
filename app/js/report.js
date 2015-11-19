@@ -102,65 +102,68 @@ var createClientOnlyOrdersReport = function(data) {
 
         $("#blackboard").empty();
         $("#blackboard").append(
-            "<div id='board-report' class='panel panel-info'>"+
-                "<div class='panel-body'>"+
-                    "<div class='col-md-12'>"+
-                        "<div class='col-sm-6'>"+
-                            "<h3> Client Data </h3>"+
-                            // "<p>Number of Rows: "+clientDump.numberOfRows+"</p>"+
-                            "<p>Number of Orders: "+clientDump.numberOfOrders+"</p>"+
-                            "<p>Amount of Orders: "+formatCurrencyValue(clientDump.amountTotal.toFixed(2))+"</p>"+
-                            "<p>Orders only on client: "+clientDump.onlyOrders.size+"</p>"+
-                            // "<p>Max Day: "+clientDump.extentDays[1].toString()+"</p>"+
-                            // "<p>Min Day: "+clientDump.extentDays[0].toString()+"</p>"+
-                        "</div>"+
-                        "<div class='col-sm-6'>"+
-                            "<h3> Platform Data </h3>"+
-                            // "<p>Number of Rows: "+platformDump.numberOfRows+"</p>"+
-                            "<p>Number of Orders: "+platformDump.numberOfOrders+"</p>"+
-                            "<p>Amount of Orders: "+formatCurrencyValue(platformDump.amountTotal.toFixed(2))+"</p>"+
-                            "<p>Orders only on platform: "+platformDump.onlyOrders.size+"</p>"+
-                        "</div>"+
+            "<table class='table table-bordered'>"+
+              "<thead>"+
+                "<tr>"+
+                  "<th>#</th>"+
+                  "<th>Client</th>"+
+                  "<th>Platform</th>"+
+                  "<th>Difference</th>"+
+                "</tr>"+
+              "</thead>"+
+              "<tbody>"+
+                "<tr>"+
+                  "<th scope='row'>Number Of Orders</th>"+
+                  "<td>"+clientDump.numberOfOrders+"</td>"+
+                  "<td>"+platformDump.numberOfOrders+"</td>"+
+                  "<td>"+Math.abs(clientDump.numberOfOrders - platformDump.numberOfOrders)+"</td>"+
+                "</tr>"+
+                "<tr>"+
+                  "<th scope='row'>Difference in Number of Orders</th>"+
+                  "<td>"+percentageOfDiffOfOrderInCliente+"%</td>"+
+                  "<td>"+percentageOfDiffOfOrderInPlatform+"%</td>"+
+                  "<td>#</td>"+
+                "</tr>"+
+                "<tr>"+
+                  "<th scope='row'>Amount Of Orders+</th>"+
+                  "<td>"+formatCurrencyValue(clientDump.amountTotal.toFixed(2))+"</td>"+
+                  "<td>"+formatCurrencyValue(platformDump.amountTotal.toFixed(2))+"</td>"+
+                  "<td>"+formatCurrencyValue(Math.abs(clientDump.amountTotal.toFixed(2) - platformDump.amountTotal.toFixed(2)))+"</td>"+
+                "</tr>"+
+                "<tr>"+
+                  "<th scope='row'>Difference in Amount of Orders</th>"+
+                  "<td>"+percentageOfDifferenceOfAmountInClient+"%</td>"+
+                  "<td>"+percentageOfDifferenceOfAmountInPlatform+"%</td>"+
+                  "<td>#</td>"+
+                "</tr>"+
+                "<tr>"+
+                  "<th scope='row'>Alone Orders</th>"+
+                  "<td>"+clientDump.onlyOrders.size+"</td>"+
+                  "<td>"+platformDump.onlyOrders.size+"</td>"+
+                  "<td>#</td>"+
+                "</tr>"+
+                "<tr>"+
+                  "<th scope='row'>Alone Orders Representation</th>"+
+                  "<td>"+percentageOfOrderOnlyInCliente+"%</td>"+
+                  "<td>"+percentageOfOrderOnlyInPlatform+"%</td>"+
+                  "<td>#</td>"+
+                "</tr>"+
+                "<tr>"+
+                  "<th scope='row'>Average Ticket</th>"+
+                  "<td>"+formatCurrencyValue((clientDump.amountTotal/clientDump.numberOfOrders).toFixed(2))+"</td>"+
+                  "<td>"+formatCurrencyValue((platformDump.amountTotal/platformDump.numberOfOrders).toFixed(2))+"</td>"+
+                  "<td>"+formatCurrencyValue(Math.abs((platformDump.amountTotal/platformDump.numberOfOrders).toFixed(2) - (clientDump.amountTotal/clientDump.numberOfOrders).toFixed(2)))+"</td>"+
+                "</tr>"+
 
-                    "</div>"+
-                    "<div class='col-md-12'>"+
-                        "<div class='col-sm-6'>"+
-                            "<h3> Ticket Médio </h3>"+
-                            "<p>Client: "+formatCurrencyValue((clientDump.amountTotal/clientDump.numberOfOrders).toFixed(2))+"</p>"+
-                            "<p>Platform: "+formatCurrencyValue((platformDump.amountTotal/platformDump.numberOfOrders).toFixed(2))+"</p>"+
-                        "</div>"+
-                    "</div>"+
-                    "<div class='col-sm-12'>"+
-                        "<div class='col-sm-12'>"+
-                            "<h3> Results - They should be below of 10%</h3>"+
-                        "</div>"+
-                        "<div class='col-sm-12'>"+
-                            "<div class='col-sm-6'>"+
-                                "<h4>Alone Orders</h4>"+
-                                "<p>Orders only on client: "+percentageOfOrderOnlyInCliente+"% of orders on client</p>"+
-                                "<p>Orders only on platform: "+percentageOfOrderOnlyInPlatform+"% of orders on platform</p>"+
-                            "</div>"+
-                            "<div class='col-sm-6'>"+
-                                "<h4>Diff of Orders: "+Math.abs(clientDump.numberOfOrders - platformDump.numberOfOrders)+"</h4>"+
-                                "<p>"+percentageOfDiffOfOrderInCliente+"% of orders on client</p>"+
-                                "<p>"+percentageOfDiffOfOrderInPlatform+"% of orders on platform</p>"+
-                            "</div>"+
-                        "</div>"+
-                        "<div class='col-sm-12'>"+
-                            "<div class='col-sm-6'>"+
-                                "<h4>Diff of Amount: "+formatCurrencyValue(Math.abs(clientDump.amountTotal - platformDump.amountTotal).toFixed(2))+"</h4>"+
-                                "<p>"+percentageOfDifferenceOfAmountInClient+"% of amount on client</p>"+
-                                "<p>"+percentageOfDifferenceOfAmountInPlatform+"% of amount on platform</p>"+
-                            "</div>"+
-                            "<div class='col-sm-6'>"+
-                                "<h4>Inconsistent Orders in common orders: "+diff.inconsistentOrders+"</h4>"+
-                                "<p>"+percentageOfInconsistentOrdersInClient+"% of orders on client</p>"+
-                                "<p>"+percentageOfInconsistentOrdersInPlatform+"% of orders on platform</p>"+
-                            "</div>"+
-                        "</div>"+
-                    "</div>"+
-                "</div>"+
-            "</div>"+
+                "<tr>"+
+                  "<th scope='row'>Inconsistent Orders in common orders: "+diff.inconsistentOrders+"</th>"+
+                  "<td>"+percentageOfInconsistentOrdersInClient+"%</td>"+
+                  "<td>"+percentageOfInconsistentOrdersInPlatform+"%</td>"+
+                  "<td>#</td>"+
+                "</tr>"+
+
+              "</tbody>"+
+            "</table>"+
             "<div id='alerts' class='col-md-12'>"+
                 // checkMaxPercentage(percentageOfOrderOnlyInCliente, "Orders only in client")+
                 // checkMaxPercentage(percentageOfOrderOnlyInPlatform, "Orders only in platform")+
