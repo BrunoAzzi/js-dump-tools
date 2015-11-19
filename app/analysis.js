@@ -3,12 +3,35 @@ var diff = {},
     xhttp = new XMLHttpRequest(),
 
     publishRelatory = function(){
-        // $("#date-range-slider-wrapper").addClass("hidden");
-        // console.log('data:text/attachment;,' + //here is the trick
-        // document.documentElement.innerHTML);
-        // xhttp.open("POST", "http://roberval.chaordicsystems.com/job/js_dump_tools_homologation/buildWithParameters", true);
-        // xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        // xhttp.send("token=teste&API_KEY="+diff.apiKey+"&DOM_STRING="+document.documentElement.innerHTML);
+        $('#date-range-slider-wrapper').addClass('hidden');
+        $('#publish-report-button').addClass('hidden');
+
+        var createObjectURL = (window.URL || window.webkitURL || {}).createObjectURL || function(){};
+        var blob = null;
+        var content = document.documentElement.outerHTML;
+        var mimeString = "application/octet-stream";
+        window.BlobBuilder = window.BlobBuilder ||
+                             window.WebKitBlobBuilder ||
+                             window.MozBlobBuilder ||
+                             window.MSBlobBuilder;
+
+
+        if(window.BlobBuilder){
+           var bb = new BlobBuilder();
+           bb.append(content);
+           blob = bb.getBlob(mimeString);
+        }else{
+           blob = new Blob([content], {type : mimeString});
+        }
+
+        var url = createObjectURL(blob);
+        var now = new Date();
+        var a = $("#publish-report-button");
+        a.attr("href", url);
+        a.attr("download", "js-dump-report-"+diff.apiKey+"-"+now.getDate()+"/"+now.getMonth()+"/"+now.getFullYear()+".html");
+
+        $('#publish-report-button').removeClass('hidden');
+        $('#date-range-slider-wrapper').removeClass('hidden');
     },
 
     prepareReport = function() {
@@ -57,8 +80,6 @@ var diff = {},
         teste.warningOrders = 0;
         teste.successOrders = 0;
 
-        // createClientTitle(clientFileName);
-
         showCharts(clientDateInterval, platformDateInterval);
 
         caculateAmountTotals(clientDateInterval, platformDateInterval);
@@ -98,34 +119,7 @@ var diff = {},
         $("#report-progress-bar").addClass("hidden");
         $("#publish-report-button").removeClass("hidden");
 
-        var createObjectURL = (window.URL || window.webkitURL || {}).createObjectURL || function(){};
-        var blob = null;
-        var content = document.documentElement.outerHTML;
-        var mimeString = "application/octet-stream";
-        window.BlobBuilder = window.BlobBuilder ||
-                             window.WebKitBlobBuilder ||
-                             window.MozBlobBuilder ||
-                             window.MSBlobBuilder;
 
-
-        if(window.BlobBuilder){
-           var bb = new BlobBuilder();
-           bb.append(content);
-           blob = bb.getBlob(mimeString);
-        }else{
-           blob = new Blob([content], {type : mimeString});
-        }
-
-        var url = createObjectURL(blob);
-        var now = new Date();
-        var a = document.createElement("a");
-        a.href = url
-        a.download = "js-dump-report-"+diff.apiKey+"-"+now.getDate()+"/"+now.getMonth()+"/"+now.getFullYear()+".html";
-        a.innerHTML = "download report";
-        a.id = "publish-button";
-        $("#publish-button-wrapper").append(a);
-        $("#publish-button").addClass("btn btn-danger pull-right");
-        $("#publish-button").css("margin-top", "20px");
     },
 
     setupPlatform = function(data) {
@@ -276,7 +270,6 @@ $("#the-platform-file-input").change(function() {
       $("#platform-warning-tip").addClass("hidden");
       $("#platform-success-tip").removeClass("hidden");
       $("#platform-progress-bar").addClass("hidden");
-    //   $("#api-key-input-wrapper").removeClass("hidden");
       createDateSlider(diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
     }
   });
