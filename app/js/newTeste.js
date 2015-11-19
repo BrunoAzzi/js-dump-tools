@@ -64,7 +64,7 @@ var testOrder = function(clientOrders, platformOrders) {
                     }
                 }
                 if (!innerObj.quantityPassed) {
-                    if (order.price == innerOrder.price && order.pid == innerOrder.pid){
+                    if (order.quantity == innerOrder.quantity && order.pid == innerOrder.pid){
                         if (order.quantity > 0 && innerOrder.quantity > 0) {
                             innerObj.quantityPassed = true;
                         }
