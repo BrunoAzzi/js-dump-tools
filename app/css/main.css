@@ -65,3 +65,7 @@ input[readonly] {
 #publish-report-button {
     margin-top: 20px;
 }
+
+.panel-heading span {
+    margin-left: 5px;
+}

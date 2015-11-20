@@ -125,6 +125,7 @@ var diff = {},
 
             teste.results.push(result);
         }
+        console.log(teste);
 
         diff.inconsistentOrders = teste.errorOrders;
 
