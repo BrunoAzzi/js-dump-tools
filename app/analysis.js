@@ -49,13 +49,34 @@ var diff = {},
     },
 
     confirmApiKey = function() {
-        diff.apiKey = $("#api-key-input").val();
-        $("#api-key-input-wrapper").addClass("hidden");
+        var apiKey = $("#api-key-input").val();
+        var activationDate = $("#activation-date-input").val();
 
-        $("#client-title").text("Report of "+diff.apiKey);
-        $("#client-title-wrapper").removeClass("hidden");
+        if (apiKey && activationDate) {
+            diff.apiKey = apiKey;
+            diff.activationDate = activationDate;
+            $("#api-key-input-wrapper").addClass("hidden");
 
-        $("#client-file-chooser-wrapper").removeClass("hidden");
+            $("#client-title").text("Report of "+diff.apiKey);
+            $("#client-title-wrapper").removeClass("hidden");
+
+            $("#client-file-chooser-wrapper").removeClass("hidden");
+        } else {
+            if(apiKey){
+                $("#activation-date-form-group").removeClass("has-error");
+                $("#api-key-form-group").addClass("has-success");
+            } else {
+                $("#activation-date-form-group").removeClass("has-success");
+                $("#api-key-form-group").addClass("has-error");
+            }
+            if(activationDate){
+                $("#activation-date-form-group").removeClass("has-error");
+                $("#activation-date-form-group").addClass("has-success");
+            } else {
+                $("#activation-date-form-group").removeClass("has-success");
+                $("#activation-date-form-group").addClass("has-error");
+            }
+        }
     },
 
     editApiKey = function() {
@@ -104,6 +125,7 @@ var diff = {},
 
             teste.results.push(result);
         }
+        console.log(teste);
 
         diff.inconsistentOrders = teste.errorOrders;
 
@@ -124,7 +146,7 @@ var diff = {},
 
     setupPlatform = function(data) {
         data.forEach(function(row) {
-            row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss", moment.ISO_8601]);
+            row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]);
         });
 
         diff.platformDump = makeDump(data);
@@ -132,7 +154,7 @@ var diff = {},
 
     setupClient = function(data) {
         data.forEach(function(row) {
-            row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss", moment.ISO_8601]);
+            row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]);
         });
 
         diff.clientDump = makeDump(data);
@@ -233,7 +255,8 @@ $("#the-client-file-input").change(function() {
                     console.log(result.errors[i]);
                 }
             }
-            setupClient(result.data);
+            var filteredResult = filterResultByActivationDate(result.data, diff.activationDate);
+            setupClient(filteredResult);
             $("#platform-file-chooser-wrapper").removeClass("hidden");
             $("#client-warning-tip").addClass("hidden");
             $("#client-success-tip").removeClass("hidden");
@@ -265,7 +288,8 @@ $("#the-platform-file-input").change(function() {
           console.log(result.errors[i]);
         }
       }
-      setupPlatform(result.data);
+      var filteredResult = filterResultByActivationDate(result.data, diff.activationDate);
+      setupPlatform(filteredResult);
       $("#date-range-slider-wrapper").removeClass("hidden");
       $("#platform-warning-tip").addClass("hidden");
       $("#platform-success-tip").removeClass("hidden");
@@ -276,4 +300,9 @@ $("#the-platform-file-input").change(function() {
 
   $("#platform-progress").attr('aria-valuenow','100');
   $("#platform-progress").css('width','100%');
+});
+
+$('#activation-date-input').datetimepicker({
+    format: 'YYYY-MM-DD',
+    extraFormats: [ 'YYYY-MM-DD HH:mm:SS', moment.ISO_8601 ]
 });
