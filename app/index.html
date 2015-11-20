@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css" media="screen" title="no title" charset="utf-8">
         <link rel="stylesheet" href="css/main.css" media="screen" title="no title" charset="utf-8">
         <link rel="stylesheet" href="css/iThing-min.css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
     </head>
     <body>
 
@@ -23,11 +24,27 @@
         </div>
 
         <div id="api-key-input-wrapper" class="row">
-            <div class="container form-inline panel panel-default wrapper-panel">
-                <div class="col-md-12">
-                    <label for="api-key-input">Client Api Key :</label>
-                    <input id="api-key-input" type="text" class="form-control" value="">
+            <div class="container panel panel-default wrapper-panel">
+                <div class="col-md-6">
+                    <div id="api-key-form-group" class="form-group">
+                        <label class="control-label" for="api-key-input">Client Api Key : </label>
+                        <input id="api-key-input" type="text" class="form-control" value="">
+                    </div>
                     <a id="api-key-confirm-button" class="btn btn-success" onclick="confirmApiKey()">Confirm</a>
+                </div>
+                <div class="col-md-6">
+                    <div id="activation-date-form-group" class="form-group">
+                        <label class="control-label" for="datetimepicker4">Choose the activation date of client: </label>
+                        <input type='text' class="form-control" id='activation-date-input' />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class='col-sm-6'>
+
                 </div>
             </div>
         </div>
@@ -203,6 +220,7 @@
         <script src="components/moment/min/moment.min.js"></script>
         <script src="components/d3/d3.min.js"></script>
         <script src="components/numeral/min/numeral.min.js"></script>
+        <script src="components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
 
         <script src="js/main.js"></script>
         <script src="js/charts.js"></script>
