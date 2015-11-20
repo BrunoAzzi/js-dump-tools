@@ -189,12 +189,6 @@ var createClientOnlyOrdersReport = function(data) {
         reusableDiffChart(platformPreparedData, "Amount of Orders");
     },
 
-    // createClientTitle = function(name) {
-    //     $("#client-title").removeClass("hidden");
-    //     $("#client-file-name").remove();
-    //     $("#file-title").append("<h3 id='client-file-name'>Client File Name: "+name+"</h3>");
-    // },
-
     createTestedOrdersResultReport = function(data) {
         $("#accordion-test-results-header").text("Common Orders - Errors: "+data.errorOrders+" - Warnings: "+data.warningOrders+" - Success: "+data.successOrders);
         $("#tested-orders-result").empty();
@@ -257,6 +251,7 @@ var createClientOnlyOrdersReport = function(data) {
                         "<a class='collapsed' role='button' data-toggle='collapse' data-parent='#tested-orders-result' href='#collapse"+teste.oid+"' aria-expanded='false' aria-controls='collapse"+teste.oid+"'>"+
                             "Order Id: "+teste.oid+
                         "</a>"+
+                        "<div class='pull-right'>"+productsTestResults(teste)+"</span></div>"+
                     "</h4>"+
                 "</div>"+
                 "<div id='collapse"+teste.oid+"' class='panel-collapse collapse' role='tabpanel' aria-labelledby='heading"+teste.oid+"'>"+
@@ -336,4 +331,17 @@ var createClientOnlyOrdersReport = function(data) {
         } else {
             return "<div class='alert alert-danger'><b>Difference of Orders on client</b> or <b>Difference of Amount on client</b> are above of the max percentage (10%)</div>";
         }
-    }
+    },
+
+    productsTestResults = function(teste) {
+        var result = "";
+        if (!teste.uidPassed) result += "<span class='glyphicon glyphicon-user'></span>";
+        if (!teste.timestampPassed) result += "<span class='glyphicon glyphicon-calendar'></span>";
+        if (!teste.productsPidPassed){
+            result += "<span class='glyphicon glyphicon-shopping-cart'></span>";
+            return result;
+        }
+        if (!teste.productsSkuPassed) result += "<span class='glyphicon glyphicon-tag'></span>";
+        if (!teste.productsAmountPassed) result += "<span class='glyphicon glyphicon-usd'></span>";
+        return result;
+    };

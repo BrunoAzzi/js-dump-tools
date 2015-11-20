@@ -8,11 +8,15 @@ var testOrder = function(clientOrders, platformOrders) {
             obj.timestampPassed = true;
             obj.uidPassed = true;
 
+            obj.productsPidPassed = true;
+            obj.productsSkuPassed = true;
+            obj.productsAmountPassed = true;
+
             isOrderUserIdAndTimestampValid(clientOrders, platformOrders, obj);
             // isOrderTimestampValid(clientOrders, platformOrders, obj);
 
-            obj.clientProductsPassed = testProduct(clientOrders, platformOrders);
-            obj.platformProductsPassed = testProduct(platformOrders, clientOrders);
+            obj.clientProductsPassed = testProduct(clientOrders, platformOrders, obj);
+            obj.platformProductsPassed = testProduct(platformOrders, clientOrders, obj);
 
             // console.log(obj);
 
@@ -38,7 +42,7 @@ var testOrder = function(clientOrders, platformOrders) {
         // return true;
     },
 
-    testProduct = function(reference, comparativeArray) {
+    testProduct = function(reference, comparativeArray, teste) {
         var obj = [];
         var innerObj = {};
 
@@ -50,12 +54,19 @@ var testOrder = function(clientOrders, platformOrders) {
             innerObj.pricePassed = false;
             innerObj.quantityPassed = false;
             for(innerOrder of comparativeArray.values) {
+
                 if (!innerObj.pidPassed) {
-                    if (order.pid == innerOrder.pid) innerObj.pidPassed = true;
+                    if (order.pid == innerOrder.pid){
+                        innerObj.pidPassed = true;
+                    }
                 }
+
                 if (!innerObj.skuPassed) {
-                    if (order.sku == innerOrder.sku && order.pid == innerOrder.pid) innerObj.skuPassed = true;
+                    if (order.sku == innerOrder.sku && order.pid == innerOrder.pid){
+                        innerObj.skuPassed = true;
+                    }
                 }
+
                 if (!innerObj.pricePassed) {
                     if (order.price == innerOrder.price && order.pid == innerOrder.pid){
                         if (order.price > 0 && innerOrder.price > 0) {
@@ -63,6 +74,7 @@ var testOrder = function(clientOrders, platformOrders) {
                         }
                     }
                 }
+
                 if (!innerObj.quantityPassed) {
                     if (order.quantity == innerOrder.quantity && order.pid == innerOrder.pid){
                         if (order.quantity > 0 && innerOrder.quantity > 0) {
@@ -70,8 +82,19 @@ var testOrder = function(clientOrders, platformOrders) {
                         }
                     }
                 }
-
             }
+            if (!innerObj.pidPassed) {
+                teste.productsPidPassed = false;
+            }
+
+            if (!innerObj.skuPassed) {
+                teste.productsSkuPassed = false;
+            }
+
+            if (!innerObj.quantityPassed || !innerObj.pricePassed) {
+                teste.productsAmountPassed = false;
+            }
+
             obj.push(innerObj);
         }
         return obj;
