@@ -1,20 +1,30 @@
 var diffAmountsByDay = function(clientData, platformData) {
-        innerClient = summarizeOrdersAmountsByDay(clientData);
-        innerPlatform = summarizeOrdersAmountsByDay(platformData);
+        var innerClient = summarizeOrdersAmountsByDay(clientData),
+            innerPlatform = summarizeOrdersAmountsByDay(platformData),
+            object = [];
 
-        var object = [];
-        for (i = 0; i < innerClient.length; i++) {
-            if (innerClient[i] && innerPlatform[i] && innerClient[i].date == innerPlatform[i].date) {
-                object.push({
-                    day : innerClient[i].key,
-                    client: innerClient[i].values,
-                    platform: innerPlatform[i].values
-                });
-            } else {
-                //showBigWarning(client[i].date, platform[i].date);
-                break;
-            }
+        // for (i = 0; i < innerClient.length; i++) {
+        //     if (innerClient[i] && innerPlatform[i] && innerClient[i].date == innerPlatform[i].date) {
+        //         object.push({
+        //             day : innerClient[i].key,
+        //             client: innerClient[i].values,
+        //             platform: innerPlatform[i].values
+        //         });
+        //     } else {
+        //         //showBigWarning(client[i].date, platform[i].date);
+        //         break;
+        //     }
+        // }
+
+        console.log(innerClient);
+        console.log(innerPlatform);
+
+        for (clientRow of innerClient) {
+            object.push(diffOrdersAmountByDayHelper(clientRow, innerPlatform));
         }
+
+        console.log(object);
+
         return object;
     },
 
@@ -23,20 +33,46 @@ var diffAmountsByDay = function(clientData, platformData) {
             innerPlatform = summarizeOrdersByDay(platformData),
             object = [];
 
-        for (i = 0; i < innerClient.length; i++) {
-            if (innerClient[i] && innerPlatform[i] && innerClient[i].date == innerPlatform[i].date) {
-                object.push({
-                    day : innerClient[i].date,
-                    client: innerClient[i].data,
-                    platform: innerPlatform[i].data
-                });
-            } else {
-                //showBigWarning(client[i].date, platform[i].date);
-                break;
-            }
+        for (clientRow of innerClient) {
+            object.push(diffOrdersByDayHelper(clientRow, innerPlatform));
         }
 
         return object;
+    },
+
+    diffOrdersByDayHelper = function(clientRow, innerPlatform) {
+        innerObject = {
+            day: clientRow.date,
+            client: clientRow.data,
+            platform: 0
+        };
+        for (platformRow of innerPlatform) {
+            if(clientRow.date === platformRow.date){
+                innerObject.day = clientRow.date;
+                innerObject.client = clientRow.data;
+                innerObject.platform = platformRow.data;
+                return innerObject;
+            }
+        }
+        return innerObject;
+    },
+
+    diffOrdersAmountByDayHelper = function(clientRow, innerPlatform) {
+        innerObject = {
+            day: clientRow.key,
+            client: clientRow.values,
+            platform: 0
+        };
+
+        for (platformRow of innerPlatform) {
+            if(clientRow.key === platformRow.key){
+                innerObject.day = clientRow.key;
+                innerObject.client = clientRow.values;
+                innerObject.platform = platformRow.values;
+                return innerObject;
+            }
+        }
+        return innerObject;
     },
 
     summarizeOrdersByDay = function(data) {

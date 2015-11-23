@@ -52,7 +52,7 @@ var diff = {},
         var apiKey = $("#api-key-input").val();
         var activationDate = $("#activation-date-input").val();
 
-        if (apiKey && activationDate) {
+        if (apiKey) {
             diff.apiKey = apiKey;
             diff.activationDate = activationDate;
             $("#api-key-input-wrapper").addClass("hidden");
@@ -62,20 +62,7 @@ var diff = {},
 
             $("#client-file-chooser-wrapper").removeClass("hidden");
         } else {
-            if(apiKey){
-                $("#activation-date-form-group").removeClass("has-error");
-                $("#api-key-form-group").addClass("has-success");
-            } else {
-                $("#activation-date-form-group").removeClass("has-success");
-                $("#api-key-form-group").addClass("has-error");
-            }
-            if(activationDate){
-                $("#activation-date-form-group").removeClass("has-error");
-                $("#activation-date-form-group").addClass("has-success");
-            } else {
-                $("#activation-date-form-group").removeClass("has-success");
-                $("#activation-date-form-group").addClass("has-error");
-            }
+            $("#api-key-form-group").addClass("has-error");
         }
     },
 
@@ -223,7 +210,7 @@ var diff = {},
                 return days + "/" + month + "/" + year ;
             },
             range:{
-                min: {days: 4}
+                min: {days: 1}
             },
             step: {days: 1}
         });
@@ -255,7 +242,10 @@ $("#the-client-file-input").change(function() {
                     console.log(result.errors[i]);
                 }
             }
-            var filteredResult = filterResultByActivationDate(result.data, diff.activationDate);
+            var filteredResult = result.data;
+            if(diff.activationDate){
+                filteredResult = filterResultByActivationDate(result.data, diff.activationDate);
+            }
             setupClient(filteredResult);
             $("#platform-file-chooser-wrapper").removeClass("hidden");
             $("#client-warning-tip").addClass("hidden");
@@ -288,7 +278,10 @@ $("#the-platform-file-input").change(function() {
           console.log(result.errors[i]);
         }
       }
-      var filteredResult = filterResultByActivationDate(result.data, diff.activationDate);
+      var filteredResult = result.data;
+      if(diff.activationDate){
+          filteredResult = filterResultByActivationDate(result.data, diff.activationDate);
+      }
       setupPlatform(filteredResult);
       $("#date-range-slider-wrapper").removeClass("hidden");
       $("#platform-warning-tip").addClass("hidden");
