@@ -3,27 +3,9 @@ var diffAmountsByDay = function(clientData, platformData) {
             innerPlatform = summarizeOrdersAmountsByDay(platformData),
             object = [];
 
-        // for (i = 0; i < innerClient.length; i++) {
-        //     if (innerClient[i] && innerPlatform[i] && innerClient[i].date == innerPlatform[i].date) {
-        //         object.push({
-        //             day : innerClient[i].key,
-        //             client: innerClient[i].values,
-        //             platform: innerPlatform[i].values
-        //         });
-        //     } else {
-        //         //showBigWarning(client[i].date, platform[i].date);
-        //         break;
-        //     }
-        // }
-
-        console.log(innerClient);
-        console.log(innerPlatform);
-
         for (clientRow of innerClient) {
             object.push(diffOrdersAmountByDayHelper(clientRow, innerPlatform));
         }
-
-        console.log(object);
 
         return object;
     },
@@ -106,7 +88,6 @@ var diffAmountsByDay = function(clientData, platformData) {
             for (i = 0; i < month.values.length; i++) {
                 for (var i2 = 0; i2 < month.values[i].values.length; i2++) {
                     for (var i3 = 0; i3 < month.values[i].values[i2].values.length; i3++) {
-                        // console.log(month.values[i].values[i2].values[i3]);
                         object.push({
                             date : month.key+"-"+month.values[i].key,
                             value : month.values[i].values[i2].values[i3].price * month.values[i].values[i2].values[i3].quantity

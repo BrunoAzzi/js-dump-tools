@@ -382,7 +382,7 @@ var createClientOnlyOrdersReport = function(data) {
             self.removeClass("label-default");
             self.addClass("label-danger");
         }
-        if (teste.errorOrders === 0) return false;
+        if (teste) if (teste.errorOrders === 0) return false;
         $("#tested-orders-result > div").each(function() {
             var self = $(this);
             if(self.hasClass("panel-danger")){
@@ -404,7 +404,7 @@ var createClientOnlyOrdersReport = function(data) {
             self.removeClass("label-default");
             self.addClass("label-warning");
         }
-        if (teste.errorOrders === 0) return false;
+        if (teste) if (teste.errorOrders === 0) return false;
         $("#tested-orders-result > div").each(function() {
             var self = $(this);
             if(self.hasClass("panel-warning")){
@@ -426,7 +426,7 @@ var createClientOnlyOrdersReport = function(data) {
             self.removeClass("label-default");
             self.addClass("label-success");
         }
-        if (teste.errorOrders === 0) return false;
+        if (teste) if (teste.errorOrders === 0) return false;
         $("#tested-orders-result > div").each(function() {
             var self = $(this);
             if(self.hasClass("panel-success")){
