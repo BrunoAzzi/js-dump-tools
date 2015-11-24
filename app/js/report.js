@@ -1,5 +1,6 @@
 var createClientOnlyOrdersReport = function(data) {
         $("#OrderOnlyClientReport").empty();
+        $("#orders-only-in-client-header").text("Orders only in "+diff.apiKey);
         for(order of data){
             var val = "";
             for(var i = 0;i < order.values.length; i++){
@@ -46,6 +47,7 @@ var createClientOnlyOrdersReport = function(data) {
 
     createPlatformOnlyOrdersReport = function(data) {
         $("#OrderOnlyPlatformReport").empty();
+        $("#orders-only-in-platform-header").text("Orders only in "+diff.platformName);
         for(order of data){
             var val = "";
             for(var i = 0;i < order.values.length; i++){
@@ -106,8 +108,8 @@ var createClientOnlyOrdersReport = function(data) {
               "<thead>"+
                 "<tr>"+
                   "<th>#</th>"+
-                  "<th>Client</th>"+
-                  "<th>Platform</th>"+
+                  "<th>"+diff.apiKey+"</th>"+
+                  "<th>"+diff.platformName+"</th>"+
                   "<th>Difference</th>"+
                 "</tr>"+
               "</thead>"+
@@ -257,7 +259,7 @@ var createClientOnlyOrdersReport = function(data) {
                 "<div id='collapse"+teste.oid+"' class='panel-collapse collapse' role='tabpanel' aria-labelledby='heading"+teste.oid+"'>"+
                     "<div class='panel-body'>"+
                         "<div class='col-md-6'>"+
-                            "<h3>Client</h3>"+
+                            "<h3>"+diff.apiKey+"</h3>"+
                             "<p class='text-"+checkSuccess(teste.uidPassed)+"'>User Id: "+teste.clientOrder.values[0].uid+"<p>"+
                             "<p class='text-"+checkSuccess(teste.timestampPassed)+"'>Timestamp: "+teste.clientOrder.values[0].timestamp.format('YYYY/MM/DD HH:mm:ss')+"<p>"+
 
@@ -278,7 +280,7 @@ var createClientOnlyOrdersReport = function(data) {
 
                         "</div>"+
                         "<div class='col-md-6'>"+
-                            "<h3>Platform</h3>"+
+                            "<h3>"+diff.platformName+"</h3>"+
                             "<p class='text-"+checkSuccess(teste.uidPassed)+"'>User Id: "+teste.platformOrder.values[0].uid+"<p>"+
                             "<p class='text-"+checkSuccess(teste.timestampPassed)+"'>Timestamp: "+teste.platformOrder.values[0].timestamp.format('YYYY/MM/DD HH:mm:ss')+"<p>"+
 
@@ -324,12 +326,12 @@ var createClientOnlyOrdersReport = function(data) {
     summarizeReport = function(orderPercentage, amountPercentage){
         if (orderPercentage < 10 && amountPercentage < 10) {
             if (orderPercentage >= 5 && amountPercentage >= 5) {
-                return "<div class='alert alert-danger'><b>Difference of Orders on client</b> or <b>Difference of Amount on client</b> are close to the max percentage (Between 5% and 10%) - We need to take make some tests</div>";
+                return "<div class='alert alert-warning'><b>Difference of Orders on "+diff.apiKey+"</b> or <b>Difference of Amount on "+diff.apiKey+"</b> are close to the max percentage (Between 5% and 10%) - We need to take make some tests</div>";
             } else {
-                return "<div class='alert alert-danger'><b>Difference of Orders on client</b> or <b>Difference of Amount on client</b> are less than a half of the max percentage - We are Ok</div>";
+                return "<div class='alert alert-danger'><b>Difference of Orders on "+diff.apiKey+"</b> or <b>Difference of Amount on "+diff.apiKey+"</b> are less than a half of the max percentage - We are Ok</div>";
             }
         } else {
-            return "<div class='alert alert-danger'><b>Difference of Orders on client</b> or <b>Difference of Amount on client</b> are above of the max percentage (10%)</div>";
+            return "<div class='alert alert-danger'><b>Difference of Orders on "+diff.apiKey+"</b> or <b>Difference of Amount on "+diff.apiKey+"</b> are above of the max percentage (10%)</div>";
         }
     },
 

@@ -1,5 +1,4 @@
-var diff = {},
-    clientFileName,
+var clientFileName,
     xhttp = new XMLHttpRequest(),
 
     publishRelatory = function(){
