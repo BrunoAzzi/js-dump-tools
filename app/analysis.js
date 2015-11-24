@@ -57,7 +57,8 @@ var clientFileName,
             $("#api-key-input-wrapper").addClass("hidden");
 
             $("#client-title").text("Report of "+diff.apiKey);
-            $("#client-title-wrapper").removeClass("hidden");
+            $("#the-client-file-input-label").text(diff.apiKey+" Dump");
+            $("#the-platform-file-input-label").text(diff.platformName+" Dump");
 
             $("#client-file-chooser-wrapper").removeClass("hidden");
         } else {
@@ -73,12 +74,12 @@ var clientFileName,
     showInfo = function() {
         $("#platform-file-chooser-wrapper").addClass("hidden");
         $("#client-file-chooser-wrapper").addClass("hidden");
+        $("#client-title-wrapper").removeClass("hidden");
 
         var platformDateInterval = filterByDateInterval(diff.platformDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
             clientDateInterval = filterByDateInterval(diff.clientDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
             groupedClientInterval = groupByOrders(clientDateInterval),
-            groupedPlatformInterval = groupByOrders(platformDateInterval),
-            teste = {};
+            groupedPlatformInterval = groupByOrders(platformDateInterval);
 
         diff.inconsistentOrders = 0;
 
@@ -103,7 +104,7 @@ var clientFileName,
 
             result = testOrder(clientOrder, platformOrder);
             // console.log(result);
-            orderResult = isOrderOk(result);
+            orderResult = newIsOrderOk(result);
 
             if(orderResult < 0) teste.errorOrders++;
             if(orderResult == 0) teste.warningOrders++;
@@ -161,8 +162,8 @@ var clientFileName,
             innerData = diffAmountsByDay(clientData, platformData);
 
         for (summary of innerData) {
-            clientTotal += summary.client;
-            platformTotal += summary.platform;
+            clientTotal += summary[diff.apiKey];
+            platformTotal += summary[diff.platformName];
         }
 
         diff.clientDump.amountTotal = clientTotal;

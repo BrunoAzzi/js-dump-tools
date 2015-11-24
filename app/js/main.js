@@ -1,4 +1,5 @@
-var diff = {};
+var diff = {},
+teste = {};
 diff.platformName = "Chaordic";
 
 $(document).on('change', '.btn-file :file', function() {

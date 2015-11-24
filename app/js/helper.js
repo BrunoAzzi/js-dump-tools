@@ -43,14 +43,18 @@ var diffAmountsByDay = function(clientData, platformData) {
     diffOrdersByDayHelper = function(clientRow, innerPlatform) {
         innerObject = {
             day: clientRow.date,
-            client: clientRow.data,
-            platform: 0
+            // client: clientRow.data,
+            // platform: 0
+            [diff.apiKey]: clientRow.data,
+            [diff.platformName]: 0
         };
         for (platformRow of innerPlatform) {
             if(clientRow.date === platformRow.date){
                 innerObject.day = clientRow.date;
-                innerObject.client = clientRow.data;
-                innerObject.platform = platformRow.data;
+                // innerObject.client = clientRow.data;
+                // innerObject.platform = platformRow.data;
+                innerObject[diff.apiKey] = clientRow.data;
+                innerObject[diff.platformName] = platformRow.data;
                 return innerObject;
             }
         }
@@ -60,15 +64,19 @@ var diffAmountsByDay = function(clientData, platformData) {
     diffOrdersAmountByDayHelper = function(clientRow, innerPlatform) {
         innerObject = {
             day: clientRow.key,
-            client: clientRow.values,
-            platform: 0
+            // client: clientRow.values,
+            // platform: 0
+            [diff.apiKey]: clientRow.values,
+            [diff.platformName]: 0
         };
 
         for (platformRow of innerPlatform) {
             if(clientRow.key === platformRow.key){
                 innerObject.day = clientRow.key;
-                innerObject.client = clientRow.values;
-                innerObject.platform = platformRow.values;
+                // innerObject.client = clientRow.values;
+                // innerObject.platform = platformRow.values;
+                innerObject[diff.apiKey] = clientRow.values;
+                innerObject[diff.platformName] = platformRow.values;
                 return innerObject;
             }
         }
@@ -118,4 +126,8 @@ var diffAmountsByDay = function(clientData, platformData) {
 
     formatCurrencyValue = function(value) {
         return numeral(value).format('$0,0.00');
+    },
+
+    formatIntegerValue = function(value) {
+        return numeral(value).format('0,0');
     }

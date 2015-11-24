@@ -1,6 +1,6 @@
 var createClientOnlyOrdersReport = function(data) {
         $("#OrderOnlyClientReport").empty();
-        $("#orders-only-in-client-header").text("Orders only in "+diff.apiKey);
+        $("#orders-only-in-client-header").text("Orders only in "+diff.apiKey+" - "+data.length);
         for(order of data){
             var val = "";
             for(var i = 0;i < order.values.length; i++){
@@ -9,14 +9,16 @@ var createClientOnlyOrdersReport = function(data) {
                     "<td>"+order.values[i].pid+"</td> "+
                     "<td>"+order.values[i].sku+"</td> "+
                     "<td>"+formatCurrencyValue(order.values[i].price)+"</td>"+
-                    "<td>"+order.values[i].quantity+"</td>"+
+                    "<td>"+formatIntegerValue(order.values[i].quantity)+"</td>"+
                 "</tr>"
             }
 
         $("#OrderOnlyClientReport").append("<div class='panel panel-default'>"+
             "<div class='panel-heading' role='tab' id='heading"+order.key+"'>"+
                 "<h4 class='panel-title'>"+
-                    "<a class='collapsed' role='button' data-toggle='collapse' data-parent='#OrderOnlyClientReport' href='#collapse"+order.key+"' aria-expanded='false' aria-controls='collapse"+order.key+"'>"+
+                    "<a class='collapsed' role='button' data-toggle='collapse'"+
+                    // "data-parent='#OrderOnlyClientReport'"+
+                    "href='#collapse"+order.key+"' aria-expanded='false' aria-controls='collapse"+order.key+"'>"+
                         "Order Id: "+order.key+
                     "</a>"+
                 "</h4>"+
@@ -47,7 +49,7 @@ var createClientOnlyOrdersReport = function(data) {
 
     createPlatformOnlyOrdersReport = function(data) {
         $("#OrderOnlyPlatformReport").empty();
-        $("#orders-only-in-platform-header").text("Orders only in "+diff.platformName);
+        $("#orders-only-in-platform-header").text("Orders only in "+diff.platformName+" - "+data.length);
         for(order of data){
             var val = "";
             for(var i = 0;i < order.values.length; i++){
@@ -56,14 +58,16 @@ var createClientOnlyOrdersReport = function(data) {
                     "<td>"+order.values[i].pid+"</td> "+
                     "<td>"+order.values[i].sku+"</td> "+
                     "<td>"+formatCurrencyValue(order.values[i].price)+"</td>"+
-                    "<td>"+order.values[i].quantity+"</td>"+
+                    "<td>"+formatIntegerValue(order.values[i].quantity)+"</td>"+
                 "</tr>"
             }
 
             $("#OrderOnlyPlatformReport").append("<div class='panel panel-default'>"+
                 "<div class='panel-heading' role='tab' id='heading"+order.key+"'>"+
                     "<h4 class='panel-title'>"+
-                        "<a class='collapsed' role='button' data-toggle='collapse' data-parent='#OrderOnlyPlatformReport' href='#collapse"+order.key+"' aria-expanded='false' aria-controls='collapse"+order.key+"'>"+
+                        "<a class='collapsed' role='button' data-toggle='collapse'"+
+                        // "data-parent='#OrderOnlyPlatformReport'"+
+                        "href='#collapse"+order.key+"' aria-expanded='false' aria-controls='collapse"+order.key+"'>"+
                             "Order Id: "+order.key+
                         "</a>"+
                     "</h4>"+
@@ -116,14 +120,26 @@ var createClientOnlyOrdersReport = function(data) {
               "<tbody>"+
                 "<tr>"+
                   "<th scope='row'>Number Of Orders</th>"+
-                  "<td>"+clientDump.numberOfOrders+"</td>"+
-                  "<td>"+platformDump.numberOfOrders+"</td>"+
-                  "<td>"+Math.abs(clientDump.numberOfOrders - platformDump.numberOfOrders)+"</td>"+
+                  "<td>"+formatIntegerValue(clientDump.numberOfOrders)+"</td>"+
+                  "<td>"+formatIntegerValue(platformDump.numberOfOrders)+"</td>"+
+                  "<td>"+formatIntegerValue(Math.abs(clientDump.numberOfOrders - platformDump.numberOfOrders))+"</td>"+
+                "</tr>"+
+                "<tr>"+
+                  "<th scope='row'>Alone Orders</th>"+
+                  "<td>"+formatIntegerValue(clientDump.onlyOrders.size)+"</td>"+
+                  "<td>"+formatIntegerValue(platformDump.onlyOrders.size)+"</td>"+
+                  "<td>#</td>"+
                 "</tr>"+
                 "<tr>"+
                   "<th scope='row'>Difference in Number of Orders</th>"+
                   "<td>"+percentageOfDiffOfOrderInCliente+"%</td>"+
                   "<td>"+percentageOfDiffOfOrderInPlatform+"%</td>"+
+                  "<td>#</td>"+
+                "</tr>"+
+                "<tr>"+
+                  "<th scope='row'>Alone Orders Representation</th>"+
+                  "<td>"+percentageOfOrderOnlyInCliente+"%</td>"+
+                  "<td>"+percentageOfOrderOnlyInPlatform+"%</td>"+
                   "<td>#</td>"+
                 "</tr>"+
                 "<tr>"+
@@ -136,18 +152,6 @@ var createClientOnlyOrdersReport = function(data) {
                   "<th scope='row'>Difference in Amount of Orders</th>"+
                   "<td>"+percentageOfDifferenceOfAmountInClient+"%</td>"+
                   "<td>"+percentageOfDifferenceOfAmountInPlatform+"%</td>"+
-                  "<td>#</td>"+
-                "</tr>"+
-                "<tr>"+
-                  "<th scope='row'>Alone Orders</th>"+
-                  "<td>"+clientDump.onlyOrders.size+"</td>"+
-                  "<td>"+platformDump.onlyOrders.size+"</td>"+
-                  "<td>#</td>"+
-                "</tr>"+
-                "<tr>"+
-                  "<th scope='row'>Alone Orders Representation</th>"+
-                  "<td>"+percentageOfOrderOnlyInCliente+"%</td>"+
-                  "<td>"+percentageOfOrderOnlyInPlatform+"%</td>"+
                   "<td>#</td>"+
                 "</tr>"+
                 "<tr>"+
@@ -192,7 +196,7 @@ var createClientOnlyOrdersReport = function(data) {
     },
 
     createTestedOrdersResultReport = function(data) {
-        $("#accordion-test-results-header").text("Common Orders - "+data.errorOrders+" Errors - "+data.warningOrders+" Warnings - "+data.successOrders+" Success");
+        $("#accordion-test-results-header").text("Common Orders - "+formatIntegerValue(data.errorOrders)+" Errors - "+formatIntegerValue(data.warningOrders)+" Warnings - "+formatIntegerValue(data.successOrders)+" Success");
         $("#tested-orders-result").empty();
         for(teste of data.results) {
 
@@ -217,7 +221,7 @@ var createClientOnlyOrdersReport = function(data) {
                                 "'>"+formatCurrencyValue(order.price)+"</td>"+
                                 "<td class='"+
                                 checkSuccess(testeProduct.quantityPassed)+
-                                "'>"+order.quantity+"</td>"+
+                                "'>"+formatIntegerValue(order.quantity)+"</td>"+
                             "</tr>";
                     }
                 }
@@ -241,16 +245,18 @@ var createClientOnlyOrdersReport = function(data) {
                                 "'>"+formatCurrencyValue(order.price)+"</td>"+
                                 "<td class='"+
                                 checkSuccess(testeProduct.quantityPassed)+
-                                "'>"+order.quantity+"</td>"+
+                                "'>"+formatIntegerValue(order.quantity)+"</td>"+
                             "</tr>";
                     }
                 }
             }
 
-            $("#tested-orders-result").append("<div class='panel panel-"+checkSuccess(isOrderOk(teste))+"'>"+
+            $("#tested-orders-result").append("<div class='panel panel-"+checkSuccess(newIsOrderOk(teste))+"'>"+
                 "<div class='panel-heading' role='tab' id='heading"+order.oid+"'>"+
                     "<h4 class='panel-title'>"+
-                        "<a class='collapsed' role='button' data-toggle='collapse' data-parent='#tested-orders-result' href='#collapse"+teste.oid+"' aria-expanded='false' aria-controls='collapse"+teste.oid+"'>"+
+                        "<a class='collapsed' role='button' data-toggle='collapse'"+
+                        // "data-parent='#tested-orders-result'"+
+                        "href='#collapse"+teste.oid+"' aria-expanded='false' aria-controls='collapse"+teste.oid+"'>"+
                             "Order Id: "+teste.oid+
                         "</a>"+
                         "<div class='pull-right'>"+productsTestResults(teste)+"</span></div>"+
@@ -337,13 +343,98 @@ var createClientOnlyOrdersReport = function(data) {
 
     productsTestResults = function(teste) {
         var result = "";
-        if (!teste.uidPassed) result += "<span class='glyphicon glyphicon-user'></span>";
-        if (!teste.timestampPassed) result += "<span class='glyphicon glyphicon-calendar'></span>";
+        // if (!teste.uidPassed) result += "<span class='glyphicon glyphicon-user'></span>";
+        // if (!teste.timestampPassed) result += "<span class='glyphicon glyphicon-calendar'></span>";
+        // if (!teste.productsPidPassed){
+        //     result += "<span class='glyphicon glyphicon-shopping-cart'></span>";
+        //     return result;
+        // }
+        // if (!teste.productsSkuPassed) result += "<span class='glyphicon glyphicon-tag'></span>";
+        // if (!teste.productsAmountPassed) result += "<span class='glyphicon glyphicon-usd'></span>";
+
+        // if (!teste.uidPassed) result += "<span class='label label-danger'>User</span>";
+        // if (!teste.timestampPassed) result += "<span class='label label-danger'>Timestamp</span>";
+        // if (!teste.productsPidPassed){
+        //     result += "<span class='label label-danger'>Product</span>";
+        //     return result;
+        // }
+        // if (!teste.productsSkuPassed) result += "<span class='label label-warning'>Sku</span>";
+        // if (!teste.productsAmountPassed) result += "<span class='label label-warning'>Price/Quantity</span>";
+
+        if (!teste.uidPassed) result += "<span class='label label-danger'><span class='glyphicon glyphicon-user'></span>User</span>";
+        if (!teste.timestampPassed) result += "<span class='label label-danger'><span class='glyphicon glyphicon-calendar'></span>Timestamp</span>";
         if (!teste.productsPidPassed){
-            result += "<span class='glyphicon glyphicon-shopping-cart'></span>";
+            result += "<span class='label label-danger'><span class='glyphicon glyphicon-shopping-cart'></span>Product</span>";
             return result;
         }
-        if (!teste.productsSkuPassed) result += "<span class='glyphicon glyphicon-tag'></span>";
-        if (!teste.productsAmountPassed) result += "<span class='glyphicon glyphicon-usd'></span>";
+        if (!teste.productsSkuPassed) result += "<span class='label label-warning'><span class='glyphicon glyphicon-tag'></span>Sku</span>";
+        if (!teste.productsAmountPassed) result += "<span class='label label-warning'><span class='glyphicon glyphicon-usd'></span>Price/Quantity</span>";
+
         return result;
+    },
+
+    toggleErrors = function() {
+        var self = $("#error-filter");
+        if (self.hasClass("label-danger")){
+            self.removeClass("label-danger");
+            self.addClass("label-default");
+        } else {
+            self.removeClass("label-default");
+            self.addClass("label-danger");
+        }
+        if (teste.errorOrders === 0) return false;
+        $("#tested-orders-result > div").each(function() {
+            var self = $(this);
+            if(self.hasClass("panel-danger")){
+                if(self.hasClass("hidden")){
+                    self.removeClass("hidden");
+                } else {
+                    self.addClass("hidden");
+                }
+            }
+        });
+    },
+
+    toggleWarnings = function() {
+        var self = $("#warning-filter");
+        if (self.hasClass("label-warning")){
+            self.removeClass("label-warning");
+            self.addClass("label-default");
+        } else {
+            self.removeClass("label-default");
+            self.addClass("label-warning");
+        }
+        if (teste.errorOrders === 0) return false;
+        $("#tested-orders-result > div").each(function() {
+            var self = $(this);
+            if(self.hasClass("panel-warning")){
+                if(self.hasClass("hidden")){
+                    self.removeClass("hidden");
+                } else {
+                    self.addClass("hidden");
+                }
+            }
+        });
+    },
+
+    toggleSuccess = function() {
+        var self = $("#success-filter");
+        if (self.hasClass("label-success")){
+            self.removeClass("label-success");
+            self.addClass("label-default");
+        } else {
+            self.removeClass("label-default");
+            self.addClass("label-success");
+        }
+        if (teste.errorOrders === 0) return false;
+        $("#tested-orders-result > div").each(function() {
+            var self = $(this);
+            if(self.hasClass("panel-success")){
+                if(self.hasClass("hidden")){
+                    self.removeClass("hidden");
+                } else {
+                    self.addClass("hidden");
+                }
+            }
+        });
     };

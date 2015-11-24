@@ -135,6 +135,20 @@ var testOrder = function(clientOrders, platformOrders) {
         return retorno;
     },
 
+    newIsOrderOk = function(teste) {
+        var retorno = -1;
+        if (teste.timestampPassed && teste.uidPassed) {
+            if(teste.productsPidPassed){
+                if (teste.productsSkuPassed && teste.productsAmountPassed) {
+                    retorno = 1;
+                } else {
+                    retorno = 0;
+                }
+            }
+        }
+        return retorno;
+    }
+
     isProductOk = function(productTest) {
         if(productTest.pidPassed){
             if (productTest.skuPassed && productTest.pricePassed && productTest.quantityPassed) {
