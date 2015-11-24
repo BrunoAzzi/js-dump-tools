@@ -143,7 +143,7 @@ var createClientOnlyOrdersReport = function(data) {
                   "<td>#</td>"+
                 "</tr>"+
                 "<tr>"+
-                  "<th scope='row'>Amount Of Orders+</th>"+
+                  "<th scope='row'>Amount Of Orders</th>"+
                   "<td>"+formatCurrencyValue(clientDump.amountTotal.toFixed(2))+"</td>"+
                   "<td>"+formatCurrencyValue(platformDump.amountTotal.toFixed(2))+"</td>"+
                   "<td>"+formatCurrencyValue(Math.abs(clientDump.amountTotal.toFixed(2) - platformDump.amountTotal.toFixed(2)))+"</td>"+

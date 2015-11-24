@@ -18,6 +18,8 @@ var testOrder = function(clientOrders, platformOrders) {
             obj.clientProductsPassed = testProduct(clientOrders, platformOrders, obj);
             obj.platformProductsPassed = testProduct(platformOrders, clientOrders, obj);
 
+            // testDuplicates(clientOrders)
+
             // console.log(obj);
 
         return obj;
@@ -159,4 +161,14 @@ var testOrder = function(clientOrders, platformOrders) {
         } else {
             return -1;
         }
+    },
+
+    testDuplicates = function(products) {
+        var results = [];
+        for (var i = 0, len = products.length - 1; i < len; i++) {
+            if((results.indexOf(arr[i]) == -1) && (arr.indexOf(arr[i], i + 1) != -1)) {
+                results.push(arr[i]);
+            }
+        }
+        return results;
     };

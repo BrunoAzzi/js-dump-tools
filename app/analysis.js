@@ -177,15 +177,16 @@ var clientFileName,
     createDateSlider = function(minDate, maxDate) {
 
         var beginDate = new Date(minDate.toDate());
-        beginDate.setHours(0);
-        beginDate.setMinutes(0);
-        beginDate.setSeconds(0);
-        beginDate.setDate(beginDate.getDate()+1);
+        // beginDate.setHours(0);
+        // beginDate.setMinutes(0);
+        // beginDate.setSeconds(1);
+        // beginDate.setDate(beginDate.getDate()-1);
 
         var endDate = new Date(maxDate.toDate());
-        endDate.setHours(0);
-        endDate.setMinutes(0);
-        endDate.setSeconds(1);
+        // endDate.setHours(0);
+        // endDate.setMinutes(0);
+        // endDate.setSeconds(1);
+        // endDate.setDate(endDate.getDate()+1);
 
         var formattedBeginDate = beginDate.getDate()+"/"+(beginDate.getMonth()+1)+"/"+beginDate.getFullYear(),
             formattedEndDate = endDate.getDate()+"/"+(endDate.getMonth()+1)+"/"+endDate.getFullYear();
@@ -206,13 +207,16 @@ var clientFileName,
             formatter:function(val){
                 var days = val.getDate(),
                     month = val.getMonth() + 1,
-                    year = val.getFullYear();
-                return days + "/" + month + "/" + year ;
+                    year = val.getFullYear(),
+                    hour = val.getHours(),
+                    minute = val.getMinutes(),
+                    second = val.getSeconds();
+                return days + "/" + month + "/" + year +" "+ hour + ":" + minute + ":" + second;
             },
             range:{
                 min: {days: 1}
-            },
-            step: {days: 1}
+            }
+            // step: {days: 1}
         });
 
         $("#slider").bind("valuesChanged", function(e, data){
