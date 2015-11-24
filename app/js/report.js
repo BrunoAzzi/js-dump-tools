@@ -192,7 +192,7 @@ var createClientOnlyOrdersReport = function(data) {
     },
 
     createTestedOrdersResultReport = function(data) {
-        $("#accordion-test-results-header").text("Common Orders - Errors: "+data.errorOrders+" - Warnings: "+data.warningOrders+" - Success: "+data.successOrders);
+        $("#accordion-test-results-header").text("Common Orders - "+data.errorOrders+" Errors - "+data.warningOrders+" Warnings - "+data.successOrders+" Success");
         $("#tested-orders-result").empty();
         for(teste of data.results) {
 
@@ -328,7 +328,7 @@ var createClientOnlyOrdersReport = function(data) {
             if (orderPercentage >= 5 && amountPercentage >= 5) {
                 return "<div class='alert alert-warning'><b>Difference of Orders on "+diff.apiKey+"</b> or <b>Difference of Amount on "+diff.apiKey+"</b> are close to the max percentage (Between 5% and 10%) - We need to take make some tests</div>";
             } else {
-                return "<div class='alert alert-danger'><b>Difference of Orders on "+diff.apiKey+"</b> or <b>Difference of Amount on "+diff.apiKey+"</b> are less than a half of the max percentage - We are Ok</div>";
+                return "<div class='alert alert-success'><b>Difference of Orders on "+diff.apiKey+"</b> or <b>Difference of Amount on "+diff.apiKey+"</b> are less than a half of the max percentage - We are Ok</div>";
             }
         } else {
             return "<div class='alert alert-danger'><b>Difference of Orders on "+diff.apiKey+"</b> or <b>Difference of Amount on "+diff.apiKey+"</b> are above of the max percentage (10%)</div>";
