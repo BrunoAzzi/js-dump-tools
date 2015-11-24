@@ -1,5 +1,4 @@
-var diff = {},
-    clientFileName,
+var clientFileName,
     xhttp = new XMLHttpRequest(),
 
     publishRelatory = function(){
@@ -52,30 +51,18 @@ var diff = {},
         var apiKey = $("#api-key-input").val();
         var activationDate = $("#activation-date-input").val();
 
-        if (apiKey && activationDate) {
+        if (apiKey) {
             diff.apiKey = apiKey;
             diff.activationDate = activationDate;
             $("#api-key-input-wrapper").addClass("hidden");
 
             $("#client-title").text("Report of "+diff.apiKey);
-            $("#client-title-wrapper").removeClass("hidden");
+            $("#the-client-file-input-label").text(diff.apiKey+" Dump");
+            $("#the-platform-file-input-label").text(diff.platformName+" Dump");
 
             $("#client-file-chooser-wrapper").removeClass("hidden");
         } else {
-            if(apiKey){
-                $("#activation-date-form-group").removeClass("has-error");
-                $("#api-key-form-group").addClass("has-success");
-            } else {
-                $("#activation-date-form-group").removeClass("has-success");
-                $("#api-key-form-group").addClass("has-error");
-            }
-            if(activationDate){
-                $("#activation-date-form-group").removeClass("has-error");
-                $("#activation-date-form-group").addClass("has-success");
-            } else {
-                $("#activation-date-form-group").removeClass("has-success");
-                $("#activation-date-form-group").addClass("has-error");
-            }
+            $("#api-key-form-group").addClass("has-error");
         }
     },
 
@@ -87,12 +74,12 @@ var diff = {},
     showInfo = function() {
         $("#platform-file-chooser-wrapper").addClass("hidden");
         $("#client-file-chooser-wrapper").addClass("hidden");
+        $("#client-title-wrapper").removeClass("hidden");
 
         var platformDateInterval = filterByDateInterval(diff.platformDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
             clientDateInterval = filterByDateInterval(diff.clientDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
             groupedClientInterval = groupByOrders(clientDateInterval),
-            groupedPlatformInterval = groupByOrders(platformDateInterval),
-            teste = {};
+            groupedPlatformInterval = groupByOrders(platformDateInterval);
 
         diff.inconsistentOrders = 0;
 
@@ -117,7 +104,7 @@ var diff = {},
 
             result = testOrder(clientOrder, platformOrder);
             // console.log(result);
-            orderResult = isOrderOk(result);
+            orderResult = newIsOrderOk(result);
 
             if(orderResult < 0) teste.errorOrders++;
             if(orderResult == 0) teste.warningOrders++;
@@ -175,8 +162,8 @@ var diff = {},
             innerData = diffAmountsByDay(clientData, platformData);
 
         for (summary of innerData) {
-            clientTotal += summary.client;
-            platformTotal += summary.platform;
+            clientTotal += summary[diff.apiKey];
+            platformTotal += summary[diff.platformName];
         }
 
         diff.clientDump.amountTotal = clientTotal;
@@ -223,7 +210,7 @@ var diff = {},
                 return days + "/" + month + "/" + year ;
             },
             range:{
-                min: {days: 4}
+                min: {days: 1}
             },
             step: {days: 1}
         });
@@ -255,7 +242,10 @@ $("#the-client-file-input").change(function() {
                     console.log(result.errors[i]);
                 }
             }
-            var filteredResult = filterResultByActivationDate(result.data, diff.activationDate);
+            var filteredResult = result.data;
+            if(diff.activationDate){
+                filteredResult = filterResultByActivationDate(result.data, diff.activationDate);
+            }
             setupClient(filteredResult);
             $("#platform-file-chooser-wrapper").removeClass("hidden");
             $("#client-warning-tip").addClass("hidden");
@@ -288,7 +278,10 @@ $("#the-platform-file-input").change(function() {
           console.log(result.errors[i]);
         }
       }
-      var filteredResult = filterResultByActivationDate(result.data, diff.activationDate);
+      var filteredResult = result.data;
+      if(diff.activationDate){
+          filteredResult = filterResultByActivationDate(result.data, diff.activationDate);
+      }
       setupPlatform(filteredResult);
       $("#date-range-slider-wrapper").removeClass("hidden");
       $("#platform-warning-tip").addClass("hidden");
