@@ -4,6 +4,8 @@ var clientFileName,
     publishRelatory = function(){
         $('#date-range-slider-wrapper').addClass('hidden');
         $('#publish-report-button').addClass('hidden');
+        $('#interval-wrapper').removeClass('hidden');
+        console.log($('#interval-wrapper').attr("class"));
 
         var createObjectURL = (window.URL || window.webkitURL || {}).createObjectURL || function(){};
         var blob = null;
@@ -29,6 +31,7 @@ var clientFileName,
         a.attr("href", url);
         a.attr("download", "js-dump-report-"+diff.apiKey+"-"+now.getDate()+"/"+now.getMonth()+"/"+now.getFullYear()+".html");
 
+        $('#interval-wrapper').addClass("hidden");
         $('#publish-report-button').removeClass('hidden');
         $('#date-range-slider-wrapper').removeClass('hidden');
     },
@@ -75,6 +78,8 @@ var clientFileName,
         $("#platform-file-chooser-wrapper").addClass("hidden");
         $("#client-file-chooser-wrapper").addClass("hidden");
         $("#client-title-wrapper").removeClass("hidden");
+
+        if($("#showBlackboard").val() === "Show info") $("#showBlackboard").val("Update")
 
         resetFilters();
 
@@ -129,7 +134,7 @@ var clientFileName,
         $("#report-progress").css('width','100%');
         $("#report-progress-bar").addClass("hidden");
         $("#publish-report-button").removeClass("hidden");
-
+        $("#interval").text(moment(diff.clientDump.extentDays[0]).format('YYYY/MM/DD')+" to "+moment(diff.clientDump.extentDays[1]).format('YYYY/MM/DD'));
 
     },
 

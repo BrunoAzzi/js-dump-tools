@@ -173,10 +173,10 @@ var createClientOnlyOrdersReport = function(data) {
             "<div id='alerts' class='col-md-12'>"+
                 // checkMaxPercentage(percentageOfOrderOnlyInCliente, "Orders only in client")+
                 // checkMaxPercentage(percentageOfOrderOnlyInPlatform, "Orders only in platform")+
-                summarizeReport(percentageOfDiffOfOrderInCliente, percentageOfDifferenceOfAmountInClient)+
-                // checkMaxPercentage(percentageOfDiffOfOrderInPlatform, "Diff of Orders in platform")+
+                // summarizeReport(percentageOfDiffOfOrderInCliente, percentageOfDifferenceOfAmountInClient)+
+                checkMaxPercentage(percentageOfDiffOfOrderInCliente, "Difference of Orders in "+diff.apiKey)+
                 //
-                // checkMaxPercentage(percentageOfDifferenceOfAmountInClient, "Diff of Orders in platform")+
+                checkMaxPercentage(percentageOfDifferenceOfAmountInClient, "Difference of Amount in "+diff.platformName)+
                 // checkMaxPercentage(percentageOfDifferenceOfAmountInPlatform, "Diff of Orders in platform")+
                 // checkMaxPercentage(percentageOfInconsistentOrdersInClient, "Diff of Orders in platform")+
                 // checkMaxPercentage(percentageOfInconsistentOrdersInPlatform, "Diff of Orders in platform")+
@@ -320,12 +320,12 @@ var createClientOnlyOrdersReport = function(data) {
     checkMaxPercentage = function(value, title){
         if (value < 10) {
             if (value >= 5) {
-                return "<div class='alert alert-warning'><b>"+title+"</b> is close to the max percentage (Between 5% and 10%) - We need to take make some tests</div>";
+                return "<div class='alert alert-warning'><b>"+title+"</b> is close to the max percentage (Between 5% and 10%) - We need to take make some tests!</div>";
             } else {
                 return "<div class='alert alert-success'><b>"+title+"</b> is less than a half of the max percentage - We are Ok</div>";
             }
         } else {
-            return "<div class='alert alert-danger'><b>"+title+"</b> is above of the max percentage - We are loosing more than 10% of Orders!</div>";
+            return "<div class='alert alert-danger'><b>"+title+"</b> is above of the max percentage - The percentage is below of 10%!</div>";
         }
     },
 

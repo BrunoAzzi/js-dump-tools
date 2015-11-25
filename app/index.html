@@ -14,7 +14,7 @@
             <div class="container">
                 <div class="col-md-12">
                     <div class="col-md-8">
-                        <h2>js-dump-tools</h2>
+                        <h1>js-dump-tools</h1>
                     </div>
                     <div id="publish-button-wrapper" class="col-md-4">
                         <a id="publish-report-button" class="btn btn-danger pull-right hidden" onMouseDown="publishRelatory();">Download Report</a>
@@ -41,19 +41,13 @@
             </div>
         </div>
 
-        <div class="container">
-            <div class="row">
-                <div class='col-sm-6'>
-
-                </div>
-            </div>
-        </div>
-
         <div id="client-title-wrapper" class="row hidden">
             <div class="container">
                 <div class="col-md-12">
                     <!-- <a id="api-key-edit-button" class="btn btn-primary" onclick="editApiKey()"><span class="glyphicon glyphicon-edit"></span></a> -->
-                    <h2 id="client-title"></h2>
+                    <div class="col-md-12">
+                        <h2 id="client-title"></h2>
+                    </div>
                 </div>
             </div>
         </div>
@@ -111,6 +105,16 @@
             </div>
         </div>
 
+        <div id="interval-wrapper" class="row hidden">
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="col-md-12">
+                        <h3 id="interval"></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="date-range-slider-wrapper" class="row hidden">
             <div class="container panel panel-default wrapper-panel">
                 <label for="slider" class="col-md-12">Choose a date interval for report:</label>
@@ -130,7 +134,7 @@
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <input id="showBlackboard" class="btn btn-success" type="button" onclick="showInfo()" value="show info">
+                    <input id="showBlackboard" class="btn btn-success" type="button" onclick="showInfo()" value="Show info">
                 </div>
                 <div class="col-md-12">
                     <div id="report-progress-bar" class="progress">
@@ -204,7 +208,7 @@
 
                                 </a>
                                 <div class="pull-right">
-                                    Filter you report: 
+                                    Filter you report:
                                     <a id="error-filter" class="btn label label-danger" onclick="toggleErrors()">Errors</a>
                                     <a id="warning-filter" class="btn label label-warning" onclick="toggleWarnings()">Warnings</a>
                                     <a id="success-filter" class="btn label label-success" onclick="toggleSuccess()">Success</a>
