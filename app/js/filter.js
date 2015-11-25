@@ -1,6 +1,7 @@
 var filterByDateInterval = function(data, beginDate, endDate) {
         return data.filter(function(row) {
-            return row.timestamp.isBetween(beginDate, endDate);
+            return row.timestamp.isBetween(beginDate, endDate, 'day');
+            // || row.timestamp.isSame(beginDate, 'day') || row.timestamp.isSame(endDate, 'day');
         });
     },
 

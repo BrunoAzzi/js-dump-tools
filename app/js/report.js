@@ -19,7 +19,7 @@ var createClientOnlyOrdersReport = function(data) {
                     "<a class='collapsed' role='button' data-toggle='collapse'"+
                     // "data-parent='#OrderOnlyClientReport'"+
                     "href='#collapse"+order.key+"' aria-expanded='false' aria-controls='collapse"+order.key+"'>"+
-                        "Order Id: "+order.key+
+                        "Order Id: "+order.key+" - "+order.values[0].timestamp.format('YYYY/MM/DD HH:mm:ss')+
                     "</a>"+
                 "</h4>"+
             "</div>"+
@@ -68,7 +68,7 @@ var createClientOnlyOrdersReport = function(data) {
                         "<a class='collapsed' role='button' data-toggle='collapse'"+
                         // "data-parent='#OrderOnlyPlatformReport'"+
                         "href='#collapse"+order.key+"' aria-expanded='false' aria-controls='collapse"+order.key+"'>"+
-                            "Order Id: "+order.key+
+                            "Order Id: "+order.key+" - "+order.values[0].timestamp.format('YYYY/MM/DD HH:mm:ss')+
                         "</a>"+
                     "</h4>"+
                 "</div>"+
@@ -257,7 +257,7 @@ var createClientOnlyOrdersReport = function(data) {
                         "<a class='collapsed' role='button' data-toggle='collapse'"+
                         // "data-parent='#tested-orders-result'"+
                         "href='#collapse"+teste.oid+"' aria-expanded='false' aria-controls='collapse"+teste.oid+"'>"+
-                            "Order Id: "+teste.oid+
+                            "Order Id: "+teste.oid+" - "+teste.clientOrder.values[0].timestamp.format('YYYY/MM/DD HH:mm:ss')+
                         "</a>"+
                         "<div class='pull-right'>"+productsTestResults(teste)+"</span></div>"+
                     "</h4>"+
@@ -437,4 +437,13 @@ var createClientOnlyOrdersReport = function(data) {
                 }
             }
         });
-    };
+    },
+
+    resetFilters = function() {
+        var successFilter = $("#success-filter"),
+            warningFilter = $("#warning-filter"),
+            errorFilter = $("#error-filter");
+        successFilter.attr("class","label label-success");
+        warningFilter.attr("class","label label-warning");
+        errorFilter.attr("class","label label-danger");
+    }

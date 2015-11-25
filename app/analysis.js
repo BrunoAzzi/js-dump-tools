@@ -76,6 +76,8 @@ var clientFileName,
         $("#client-file-chooser-wrapper").addClass("hidden");
         $("#client-title-wrapper").removeClass("hidden");
 
+        resetFilters();
+
         var platformDateInterval = filterByDateInterval(diff.platformDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
             clientDateInterval = filterByDateInterval(diff.clientDump.data, diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]),
             groupedClientInterval = groupByOrders(clientDateInterval),
@@ -176,13 +178,12 @@ var clientFileName,
 
     createDateSlider = function(minDate, maxDate) {
 
-        var beginDate = new Date(minDate.toDate());
+        var beginDate = new Date(minDate.year(), minDate.month(), minDate.date());
         // beginDate.setHours(0);
         // beginDate.setMinutes(0);
         // beginDate.setSeconds(1);
         // beginDate.setDate(beginDate.getDate()-1);
-
-        var endDate = new Date(maxDate.toDate());
+        var endDate = new Date(maxDate.year(), maxDate.month(), maxDate.date());
         // endDate.setHours(0);
         // endDate.setMinutes(0);
         // endDate.setSeconds(1);
@@ -207,16 +208,14 @@ var clientFileName,
             formatter:function(val){
                 var days = val.getDate(),
                     month = val.getMonth() + 1,
-                    year = val.getFullYear(),
-                    hour = val.getHours(),
-                    minute = val.getMinutes(),
-                    second = val.getSeconds();
-                return days + "/" + month + "/" + year +" "+ hour + ":" + minute + ":" + second;
+                    year = val.getFullYear();
+                return days + "/" + month + "/" + year;
+                // "+ hour + ":" + minute + ":" + second;
             },
             range:{
-                min: {days: 1}
-            }
-            // step: {days: 1}
+                min: {days: 2}
+            },
+            step: {days: 1}
         });
 
         $("#slider").bind("valuesChanged", function(e, data){
