@@ -54,53 +54,130 @@
 
         <div id="client-file-chooser-wrapper" class="row hidden">
             <div class="container">
-                <label id="the-client-file-input-label" for="the-client-file-input">Client Dump</label>
-                <div class="input-group">
-                    <span class="input-group-btn">
-                        <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input id="the-client-file-input" type="file" >
-                        </span>
-                    </span>
-                    <input type="text" class="form-control" readonly>
-                </div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a id="client-csv-tab" href="#client-csv" aria-controls="client-csv" role="tab" data-toggle="tab">CSV</a></li>
+                    <li role="presentation"><a id="client-json-tab" class="hidden" href="#client-json" aria-controls="client-json" role="tab" data-toggle="tab">JSON</a></li>
+                </ul>
 
-                <span class="help-block">
-                    Choose your client dump file. (CSV)
-                </span>
-                <div id="client-progress-bar" class="progress">
-                    <div id="client-progress" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
-                </div>
-                <div id="client-warning-tip" class="alert alert-warning">
-                    Tip: If is taking too much time to load this file go make some stuff, then come back here, just dont close this page or the browser.
-                </div>
-                <div id="client-success-tip" class="alert alert-success hidden">
-                    Parsing complete!
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="client-csv">
+                        <div class="panel panel-body panel-default tabs-panel">
+                            <label class="the-client-file-input-label" for="the-client-csv-file-input">Client Dump</label>
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-primary btn-file">
+                                        Browse&hellip; <input id="the-client-csv-file-input" type="file" >
+                                    </span>
+                                </span>
+                                <input type="text" class="form-control" readonly>
+                            </div>
+
+                            <span class="help-block">
+                                Choose your client dump file. (CSV)
+                            </span>
+                            <div id="client-csv-progress-bar" class="progress">
+                                <div id="client-csv-progress" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+                            </div>
+                            <div id="client-csv-warning-tip" class="alert alert-warning">
+                                Tip: If is taking too much time to load this file go make some stuff, then come back here, just dont close this page or the browser.
+                            </div>
+                            <div id="client-csv-success-tip" class="alert alert-success hidden">
+                                Parsing complete!
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="client-json">
+                        <div class="panel panel-body panel-default tabs-panel">
+                            <label class="the-client-file-input-label" for="the-client-json-file-input">Client Dump</label>
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-primary btn-file">
+                                        Browse&hellip; <input id="the-client-json-file-input" type="file" >
+                                    </span>
+                                </span>
+                                <input type="text" class="form-control" readonly>
+                            </div>
+
+                            <span class="help-block">
+                                Choose your client dump file. (JSON)
+                            </span>
+                            <div id="client-json-progress-bar" class="progress">
+                                <div id="client-progress" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+                            </div>
+                            <div id="client-json-warning-tip" class="alert alert-warning">
+                                Tip: If is taking too much time to load this file go make some stuff, then come back here, just dont close this page or the browser.
+                            </div>
+                            <div id="client-json-success-tip" class="alert alert-success hidden">
+                                Parsing complete!
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div id="platform-file-chooser-wrapper" class="row hidden">
             <div class="container">
-                <label id="the-platform-file-input-label" for="the-platform-file-input">Platform Dump</label>
-                <div class="input-group">
-                    <span class="input-group-btn">
-                        <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input id="the-platform-file-input" type="file" >
-                        </span>
-                    </span>
-                    <input type="text" class="form-control" readonly>
-                </div>
-                <span class="help-block">
-                    Choose your platform dump file. (CSV)
-                </span>
-                <div id="platform-progress-bar" class="progress">
-                    <div id="platform-progress" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
-                </div>
-                <div id="platform-warning-tip" class="alert alert-warning">
-                    Tip: If is taking too much time to load this file go make some stuff, then come back here, just dont close this page or the browser.
-                </div>
-                <div id="platform-success-tip" class="alert alert-success hidden">
-                    Parsing complete!
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a id="platform-csv-tab" href="#platform-csv" aria-controls="platform-csv" role="tab" data-toggle="tab">CSV</a></li>
+                    <li role="presentation"><a id="platform-json-tab" href="#platform-json" aria-controls="platform-json" role="tab" data-toggle="tab">JSON</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="platform-csv">
+                        <div class="panel panel-body panel-default tabs-panel">
+                            <label class="the-platform-file-input-label" for="the-platform-csv-file-input">Platform Dump</label>
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-primary btn-file">
+                                        Browse&hellip; <input id="the-platform-csv-file-input" type="file" >
+                                    </span>
+                                </span>
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                            <span class="help-block">
+                                Choose your platform dump file. (CSV)
+                            </span>
+                            <div id="platform-csv-progress-bar" class="progress">
+                                <div id="platform-csv-progress" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+                            </div>
+                            <div id="platform-csv-warning-tip" class="alert alert-warning">
+                                Tip: If is taking too much time to load this file go make some stuff, then come back here, just dont close this page or the browser.
+                            </div>
+                            <div id="platform-csv-success-tip" class="alert alert-success hidden">
+                                Parsing complete!
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="platform-json">
+                        <div class="panel panel-body panel-default tabs-panel">
+                            <label class="the-platform-file-input-label" for="the-platform-file-input">Platform Dump</label>
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-primary btn-file">
+                                        Browse&hellip; <input id="the-platform-json-file-input" type="file" >
+                                    </span>
+                                </span>
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                            <span class="help-block">
+                                Choose your platform dump file. (JSON)
+                            </span>
+                            <div id="platform-json-progress-bar" class="progress">
+                                <div id="platform-json-progress" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+                            </div>
+                            <div id="platform-json-warning-tip" class="alert alert-warning">
+                                Tip: If is taking too much time to load this file go make some stuff, then come back here, just dont close this page or the browser.
+                            </div>
+                            <div id="platform-json-success-tip" class="alert alert-success hidden">
+                                Parsing complete!
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -235,6 +312,7 @@
         <script src="components/d3/d3.min.js"></script>
         <script src="components/numeral/min/numeral.min.js"></script>
         <script src="components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+        <script src="components/oboe/dist/oboe-browser.min.js"></script>
 
         <script src="js/main.js"></script>
         <script src="js/charts.js"></script>

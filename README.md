@@ -21,17 +21,11 @@ You can get The Platform Dump in a bunch of ways, but the easyest is from [s3 we
 
 Ok, if you clicked in the link above, now you are in `s3://platform-dumps-virginia/allBuyOrders/`, choose the latest date folder, and them download the <API_KEY>.gz (ex: carrodemola.gz) file that you want;
 
-### The JsonToCsvConverter
+## The Future has come! 😃
 
-In the future this tool will have an option to accept dumps in json, but for now you need to convert the file inside <API_KEY>.gz (ex: carrodemola) in a csv file. You can use the [JsonToCsvConverter](./JsonToCsvConverter) for it, just follow the instructions in the documentation of the tool to install it.
+Now you don't have to convert your platform dump to csv. Just click on the "JSON" tab when a platform dump is requested.
 
-Rename the file to include his extension: carrodemola -> carrodemola.json;
-
-Now you just need to go to the folder of JsonToCsvConverter with terminal and:
-
-```bash
-./transactions.py <API_KEY>.json
-```
+In the future will be a feature that just by selecting the client API_KEY the tool will download the platform dump for you, but for now you need to this by yourself;
 
 ### The real usage
 

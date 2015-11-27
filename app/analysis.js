@@ -60,8 +60,8 @@ var clientFileName,
             $("#api-key-input-wrapper").addClass("hidden");
 
             $("#client-title").text("Report of "+diff.apiKey);
-            $("#the-client-file-input-label").text(diff.apiKey+" Dump");
-            $("#the-platform-file-input-label").text(diff.platformName+" Dump");
+            $(".the-client-file-input-label").text(diff.apiKey+" Dump");
+            $(".the-platform-file-input-label").text(diff.platformName+" Dump");
 
             $("#client-file-chooser-wrapper").removeClass("hidden");
         } else {
@@ -230,7 +230,7 @@ var clientFileName,
         });
     };
 
-$("#the-client-file-input").change(function() {
+$("#the-client-csv-file-input").change(function() {
     clientFileName = this.files[0].name;
     Papa.parse(this.files[0], {
         header: true,
@@ -256,18 +256,70 @@ $("#the-client-file-input").change(function() {
             }
             setupClient(filteredResult);
             $("#platform-file-chooser-wrapper").removeClass("hidden");
-            $("#client-warning-tip").addClass("hidden");
-            $("#client-success-tip").removeClass("hidden");
-            $("#client-progress-bar").addClass("hidden");
+            $("#client-csv-warning-tip").addClass("hidden");
+            $("#client-csv-success-tip").removeClass("hidden");
+            $("#client-csv-progress-bar").addClass("hidden");
+            $("#client-json-tab").addClass("hidden");
         }
  });
 
-  $("#client-progress").attr('aria-valuenow','100');
-  $("#client-progress").css('width','100%');
+  $("#client-csv-progress").attr('aria-valuenow','100');
+  $("#client-csv-progress").css('width','100%');
 
 });
 
-$("#the-platform-file-input").change(function() {
+function lengthInUtf8Bytes(str) {
+  // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+  // var m = encodeURIComponent(str).match(/%[89ABab]/g);
+  // return str.length + (m ? m.length : 0);
+  return encodeURI(str).split(/%..|./).length - 1;
+}
+
+
+$("#the-client-json-file-input").change(function() {
+    var URL = window.URL || window.webkitURL ;
+    var url = URL.createObjectURL(this.files[0]);
+    var size = 0;
+
+    diff.clientData = [];
+
+    oboe(url)
+    .done(function(things){
+        var teste="";
+        for(item of things.items) {
+           diff.clientData.push({oid: +things.id,
+                uid: +things.userId,
+                timestamp: things.date,
+                pid: +item.product.id,
+                sku: +item.product.sku,
+                price: +item.product.price,
+                quantity: +item.quantity
+            });
+            if(item.quantity) teste += ".0";
+        }
+        teste += JSON.stringify(things)+"\n";
+        size += teste.length;
+
+        if(size >= this.header('Content-Length') | size >= (this.header('Content-Length')-1)){
+            var filteredResult = diff.clientData;
+            if(diff.activationDate){
+                filteredResult = filterResultByActivationDate(diff.clientData, diff.activationDate);
+            }
+            setupClient(filteredResult);
+            $("#platform-file-chooser-wrapper").removeClass("hidden");
+            $("#client-json-warning-tip").addClass("hidden");
+            $("#client-json-success-tip").removeClass("hidden");
+            $("#client-json-progress-bar").addClass("hidden");
+            $("#client-csv-tab").addClass("hidden");
+        }
+    });
+
+    $("#client-json-progress").attr('aria-valuenow','100');
+    $("#client-json-progress").css('width','100%');
+});
+
+
+$("#the-platform-csv-file-input").change(function() {
   Papa.parse(this.files[0], {
     header: true,
     dynamicTyping: true,
@@ -292,15 +344,58 @@ $("#the-platform-file-input").change(function() {
       }
       setupPlatform(filteredResult);
       $("#date-range-slider-wrapper").removeClass("hidden");
-      $("#platform-warning-tip").addClass("hidden");
-      $("#platform-success-tip").removeClass("hidden");
-      $("#platform-progress-bar").addClass("hidden");
+      $("#platform-csv-warning-tip").addClass("hidden");
+      $("#platform-csv-success-tip").removeClass("hidden");
+      $("#platform-csv-progress-bar").addClass("hidden");
+      $("#platform-json-tab").addClass("hidden");
       createDateSlider(diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
     }
   });
 
-  $("#platform-progress").attr('aria-valuenow','100');
-  $("#platform-progress").css('width','100%');
+  $("#platform-csv-progress").attr('aria-valuenow','100');
+  $("#platform-csv-progress").css('width','100%');
+});
+
+$("#the-platform-json-file-input").change(function() {
+    var URL = window.URL || window.webkitURL ;
+    var url = URL.createObjectURL(this.files[0]);
+    var size = 0;
+
+    diff.clientData = [];
+
+    oboe(url)
+    .done(function(things){
+        var teste="";
+        for(item of things.items) {
+           diff.clientData.push({oid: +things.id,
+                uid: +things.userId,
+                timestamp: things.date,
+                pid: +item.product.id,
+                sku: +item.product.sku,
+                price: +item.product.price,
+                quantity: +item.quantity
+            });
+            if(item.quantity) teste += ".0";
+        }
+        teste += JSON.stringify(things)+"\n";
+        size += teste.length;
+
+        if(size >= this.header('Content-Length') | size >= (this.header('Content-Length')-1)){
+            var filteredResult = diff.clientData;
+            if(diff.activationDate){
+                filteredResult = filterResultByActivationDate(diff.clientData, diff.activationDate);
+            }
+            setupPlatform(filteredResult);
+            $("#date-range-slider-wrapper").removeClass("hidden");
+            $("#platform-json-warning-tip").addClass("hidden");
+            $("#platform-json-success-tip").removeClass("hidden");
+            $("#platform-json-progress-bar").addClass("hidden");
+            $("#platform-csv-tab").addClass("hidden");
+            createDateSlider(diff.clientDump.extentDays[0], diff.clientDump.extentDays[1]);
+        }
+    });
+    $("#platform-json-progress").attr('aria-valuenow','100');
+    $("#platform-json-progress").css('width','100%');
 });
 
 $('#activation-date-input').datetimepicker({
