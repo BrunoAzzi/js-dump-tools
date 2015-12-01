@@ -13,7 +13,7 @@ To use this tools you will need some things:
 
 The Client Dump can be found in the [integration page](http://integracao.chaordic.com.br/), or you can get it with the TAM.
 
-If the client, or you download the dump file in a .xsl or .xsls format you can just open with [libreOffice](https://www.libreoffice.org/download/libreoffice-fresh/) and save as `.csv` file.
+If the client, or you download the dump file in a .xls or .xlsx format you can just open with [libreOffice](https://www.libreoffice.org/download/libreoffice-fresh/) and save as `.csv` file.
 
 ### The Platform Dump
 

@@ -223,6 +223,7 @@ var createClientOnlyOrdersReport = function(data) {
                                 checkSuccess(testeProduct.quantityPassed)+
                                 "'>"+formatIntegerValue(order.quantity)+"</td>"+
                             "</tr>";
+                            break;
                     }
                 }
             }
@@ -247,6 +248,7 @@ var createClientOnlyOrdersReport = function(data) {
                                 checkSuccess(testeProduct.quantityPassed)+
                                 "'>"+formatIntegerValue(order.quantity)+"</td>"+
                             "</tr>";
+                            break;
                     }
                 }
             }
@@ -257,7 +259,7 @@ var createClientOnlyOrdersReport = function(data) {
                         "<a class='collapsed' role='button' data-toggle='collapse'"+
                         // "data-parent='#tested-orders-result'"+
                         "href='#collapse"+teste.oid+"' aria-expanded='false' aria-controls='collapse"+teste.oid+"'>"+
-                            "Order Id: "+teste.oid+" - "+teste.clientOrder.values[0].timestamp.format('YYYY/MM/DD HH:mm:ss')+
+                            "Order Id: "+teste.oid+" - "+teste.clientOrder.values[0].timestamp.format('YYYY/MM/DD HH:mm:ss')+" - Products (C vs P) : "+teste.clientOrder.values.length+" vs "+teste.platformOrder.values.length+
                         "</a>"+
                         "<div class='pull-right'>"+productsTestResults(teste)+"</span></div>"+
                     "</h4>"+

@@ -65,7 +65,7 @@ var clientFileName,
 
             $("#client-file-chooser-wrapper").removeClass("hidden");
         } else {
-            $("#api-key-form-group").addClass("has-error");
+            $("#api-key-input-group").addClass("has-error");
         }
     },
 
@@ -182,19 +182,9 @@ var clientFileName,
     },
 
     createDateSlider = function(minDate, maxDate) {
-
-        var beginDate = new Date(minDate.year(), minDate.month(), minDate.date());
-        // beginDate.setHours(0);
-        // beginDate.setMinutes(0);
-        // beginDate.setSeconds(1);
-        // beginDate.setDate(beginDate.getDate()-1);
-        var endDate = new Date(maxDate.year(), maxDate.month(), maxDate.date());
-        // endDate.setHours(0);
-        // endDate.setMinutes(0);
-        // endDate.setSeconds(1);
-        // endDate.setDate(endDate.getDate()+1);
-
-        var formattedBeginDate = beginDate.getDate()+"/"+(beginDate.getMonth()+1)+"/"+beginDate.getFullYear(),
+        var beginDate = new Date(minDate.year(), minDate.month(), minDate.date()),
+            endDate = new Date(maxDate.year(), maxDate.month(), maxDate.date()),
+            formattedBeginDate = beginDate.getDate()+"/"+(beginDate.getMonth()+1)+"/"+beginDate.getFullYear(),
             formattedEndDate = endDate.getDate()+"/"+(endDate.getMonth()+1)+"/"+endDate.getFullYear();
 
         $("#beginDate").text(formattedBeginDate);
@@ -268,14 +258,6 @@ $("#the-client-csv-file-input").change(function() {
 
 });
 
-function lengthInUtf8Bytes(str) {
-  // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
-  // var m = encodeURIComponent(str).match(/%[89ABab]/g);
-  // return str.length + (m ? m.length : 0);
-  return encodeURI(str).split(/%..|./).length - 1;
-}
-
-
 $("#the-client-json-file-input").change(function() {
     var URL = window.URL || window.webkitURL ;
     var url = URL.createObjectURL(this.files[0]);
@@ -287,15 +269,14 @@ $("#the-client-json-file-input").change(function() {
     .done(function(things){
         var teste="";
         for(item of things.items) {
-           diff.clientData.push({oid: +things.id,
-                uid: +things.userId,
+           diff.clientData.push({oid: things.id,
+                uid: things.userId,
                 timestamp: things.date,
-                pid: +item.product.id,
-                sku: +item.product.sku,
+                pid: item.product.id,
+                sku: item.product.sku,
                 price: +item.product.price,
                 quantity: +item.quantity
             });
-            if(item.quantity) teste += ".0";
         }
         teste += JSON.stringify(things)+"\n";
         size += teste.length;
@@ -317,7 +298,6 @@ $("#the-client-json-file-input").change(function() {
     $("#client-json-progress").attr('aria-valuenow','100');
     $("#client-json-progress").css('width','100%');
 });
-
 
 $("#the-platform-csv-file-input").change(function() {
   Papa.parse(this.files[0], {
@@ -367,11 +347,11 @@ $("#the-platform-json-file-input").change(function() {
     .done(function(things){
         var teste="";
         for(item of things.items) {
-           diff.clientData.push({oid: +things.id,
-                uid: +things.userId,
+           diff.clientData.push({oid: things.id,
+                uid: things.userId,
                 timestamp: things.date,
-                pid: +item.product.id,
-                sku: +item.product.sku,
+                pid: item.product.id,
+                sku: item.product.sku,
                 price: +item.product.price,
                 quantity: +item.quantity
             });
@@ -380,7 +360,7 @@ $("#the-platform-json-file-input").change(function() {
         teste += JSON.stringify(things)+"\n";
         size += teste.length;
 
-        if(size >= this.header('Content-Length') | size >= (this.header('Content-Length')-1)){
+        if(size >= this.header('Content-Length') | size >= (this.header('Content-Length')-6)){
             var filteredResult = diff.clientData;
             if(diff.activationDate){
                 filteredResult = filterResultByActivationDate(diff.clientData, diff.activationDate);

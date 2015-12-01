@@ -23,14 +23,36 @@
             </div>
         </div>
 
+        <div id="platform-access-input-wrapper" class="row hidden">
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="alert alert-warning">
+                        <p>If you do not have access to platform API but you know the client API key, try the tool in public mode!</p>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-default" type="button" onclick="publicMode()">Public mode</button>
+                    <button class="btn btn-success" type="button" onclick="platformLogin()">Platform login</button>
+                </div>
+            </div>
+        </div>
+
         <div id="api-key-input-wrapper" class="row">
             <div class="container panel panel-default wrapper-panel">
                 <div class="col-md-6">
-                    <div id="api-key-form-group" class="form-group">
-                        <label class="control-label" for="api-key-input">Client Api Key : </label>
-                        <input id="api-key-input" type="text" class="form-control" value="">
+
+                    <div id="api-key-input-group" class="form-group">
+                        <label class="control-label" for="api-key-input">Client Api Key* : </label>
+                        <input id="api-key-input" class="form-control" type="text"  value="">
                     </div>
-                    <a id="api-key-confirm-button" class="btn btn-success" onclick="confirmApiKey()">Confirm</a>
+
+                    <div id="api-key-select-group" class="form-group hidden">
+                        <label class="control-label" for="api-key-select">Client Api Key* : </label>
+                        <select id="api-key-select" class="form-control"></select>
+                    </div>
+
+                    <button id="api-key-confirm-button" type="button" class="btn btn-success" onclick="confirmApiKey()">Confirm</button>
                 </div>
                 <div class="col-md-6">
                     <div id="activation-date-form-group" class="form-group">
@@ -57,7 +79,7 @@
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a id="client-csv-tab" href="#client-csv" aria-controls="client-csv" role="tab" data-toggle="tab">CSV</a></li>
-                    <li role="presentation"><a id="client-json-tab" class="hidden" href="#client-json" aria-controls="client-json" role="tab" data-toggle="tab">JSON</a></li>
+                    <li role="presentation"><a id="client-json-tab" class="" href="#client-json" aria-controls="client-json" role="tab" data-toggle="tab">VTEX</a></li>
                 </ul>
 
                 <!-- Tab panes -->
@@ -122,13 +144,13 @@
             <div class="container">
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a id="platform-csv-tab" href="#platform-csv" aria-controls="platform-csv" role="tab" data-toggle="tab">CSV</a></li>
-                    <li role="presentation"><a id="platform-json-tab" href="#platform-json" aria-controls="platform-json" role="tab" data-toggle="tab">JSON</a></li>
+                    <li role="presentation"><a id="platform-csv-tab" href="#platform-csv" aria-controls="platform-csv" role="tab" data-toggle="tab">CSV</a></li>
+                    <li role="presentation" class="active"><a id="platform-json-tab" href="#platform-json" aria-controls="platform-json" role="tab" data-toggle="tab">JSON</a></li>
                 </ul>
 
                 <!-- Tab panes -->
                 <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" id="platform-csv">
+                    <div role="tabpanel" class="tab-pane" id="platform-csv">
                         <div class="panel panel-body panel-default tabs-panel">
                             <label class="the-platform-file-input-label" for="the-platform-csv-file-input">Platform Dump</label>
                             <div class="input-group">
@@ -153,7 +175,7 @@
                             </div>
                         </div>
                     </div>
-                    <div role="tabpanel" class="tab-pane" id="platform-json">
+                    <div role="tabpanel" class="tab-pane active" id="platform-json">
                         <div class="panel panel-body panel-default tabs-panel">
                             <label class="the-platform-file-input-label" for="the-platform-file-input">Platform Dump</label>
                             <div class="input-group">
@@ -286,7 +308,12 @@
                                 </a>
                                 <div class="pull-right">
                                     Filter you report:
+                                    <!-- <a id="user-filter" class="btn label label-danger" onclick="toggleUser()">User</a> -->
+                                    <!-- <a id="timestamp-filter" class="btn label label-danger" onclick="toggleTimestamp()">Timestamp</a> -->
+                                    <!-- <a id="product-filter" class="btn label label-danger" onclick="toggleProduct()">Product</a> -->
                                     <a id="error-filter" class="btn label label-danger" onclick="toggleErrors()">Errors</a>
+                                    <!-- <a id="amount-filter" class="btn label label-warning" onclick="toggleAmount()">Price</a> -->
+                                    <!-- <a id="sku-filter" class="btn label label-warning" onclick="toggleSku()">Sku</a> -->
                                     <a id="warning-filter" class="btn label label-warning" onclick="toggleWarnings()">Warnings</a>
                                     <a id="success-filter" class="btn label label-success" onclick="toggleSuccess()">Success</a>
                                 </div>
@@ -322,6 +349,7 @@
         <script src="js/helper.js"></script>
         <script src="js/report.js"></script>
         <script src="js/newTeste.js"></script>
+        <script src="js/login.js"></script>
         <script src="analysis.js"></script>
 
     </body>
