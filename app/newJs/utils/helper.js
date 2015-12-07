@@ -27,16 +27,16 @@ var diffAmountsByDay = function(clientData, platformData) {
             day: clientRow.date,
             // client: clientRow.data,
             // platform: 0
-            [diff.apiKey]: clientRow.data,
-            [diff.platformName]: 0
+            [dumpTools.client.name]: clientRow.data,
+            [dumpTools.platform.name]: 0
         };
         for (platformRow of innerPlatform) {
             if(clientRow.date === platformRow.date){
                 innerObject.day = clientRow.date;
                 // innerObject.client = clientRow.data;
                 // innerObject.platform = platformRow.data;
-                innerObject[diff.apiKey] = clientRow.data;
-                innerObject[diff.platformName] = platformRow.data;
+                innerObject[dumpTools.client.name] = clientRow.data;
+                innerObject[dumpTools.platform.name] = platformRow.data;
                 return innerObject;
             }
         }
@@ -48,8 +48,8 @@ var diffAmountsByDay = function(clientData, platformData) {
             day: clientRow.key,
             // client: clientRow.values,
             // platform: 0
-            [diff.apiKey]: clientRow.values,
-            [diff.platformName]: 0
+            [dumpTools.client.name]: clientRow.values,
+            [dumpTools.platform.name]: 0
         };
 
         for (platformRow of innerPlatform) {
@@ -57,8 +57,8 @@ var diffAmountsByDay = function(clientData, platformData) {
                 innerObject.day = clientRow.key;
                 // innerObject.client = clientRow.values;
                 // innerObject.platform = platformRow.values;
-                innerObject[diff.apiKey] = clientRow.values;
-                innerObject[diff.platformName] = platformRow.values;
+                innerObject[dumpTools.client.name] = clientRow.values;
+                innerObject[dumpTools.platform.name] = platformRow.values;
                 return innerObject;
             }
         }
@@ -111,4 +111,11 @@ var diffAmountsByDay = function(clientData, platformData) {
 
     formatIntegerValue = function(value) {
         return numeral(value).format('0,0');
-    }
+    },
+
+    encode = function(string) {
+		// URL-encode some more characters to avoid issues when using permalink URLs in Markdown
+		return encodeURIComponent(string).replace(/['()_*]/g, function(character) {
+			return '%' + character.charCodeAt().toString(16);
+		});
+	};

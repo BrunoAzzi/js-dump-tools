@@ -36,8 +36,8 @@ var getOrderById = function(oid, groupedData) {
             clientDifference = new Set([...a].filter(x => !b.has(x))),
             platformDifference = new Set([...b].filter(x => !a.has(x)));
 
-        diff.platformDump.onlyOrders = platformDifference;
-        diff.clientDump.onlyOrders = clientDifference;
+        dumpTools.platform.aloneOrders = platformDifference;
+        dumpTools.client.aloneOrders = clientDifference;
     },
 
     getOrdersIntersection = function(groupedClientData, groupedPlatformData) {

@@ -97,10 +97,7 @@ var clientFileName,
 
         showCharts(clientDateInterval, platformDateInterval);
 
-        caculateAmountTotals(clientDateInterval, platformDateInterval);
 
-        calculateDumpNumberOfTransactions(diff.clientDump, groupedClientInterval);
-        calculateDumpNumberOfTransactions(diff.platformDump, groupedPlatformInterval);
 
         getOrdersDifference(groupedClientInterval, groupedPlatformInterval);
 
@@ -163,7 +160,7 @@ var clientFileName,
         return object;
     }
 
-    caculateAmountTotals = function(clientData, platformData) {
+    calculateAmountTotals = function(clientData, platformData) {
         var clientTotal = 0,
             platformTotal = 0,
             innerData = diffAmountsByDay(clientData, platformData);

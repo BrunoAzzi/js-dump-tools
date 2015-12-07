@@ -1,0 +1,18 @@
+in: " in "
+difference:
+    title: "Difference"
+    orders: "Difference of orders"
+    amount: "Difference of amount"
+    numberOfOrders: "Difference in number of orders"
+    amountOfOrders: "Difference in amount of Orders"
+orders:
+    numberOfOrders: "Number of orders"
+    aloneOrders: "Alone orders"
+    amountOfOrders: "Amount of orders"
+aloneOrdersRepresentation: "Alone orders representation"
+averageTicket: "Average ticket"
+inconsistentOrdersInCommomOrders: "Inconsistent orders in commom orders"
+alert:
+    warning: " is close to the max percentage (Between 5% and 10%) - We need to take make some tests!"
+    error: " is above of the max percentage - The percentage is below of 10%!"
+    success: " is less than a half of the max percentage - We are Ok"

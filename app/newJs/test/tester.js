@@ -1,5 +1,9 @@
 var testOrder = function(clientOrders, platformOrders) {
-        var obj = {};
+        var obj = {
+            client: {},
+            platform: {},
+            
+        };
 
             obj.clientOrder = clientOrders;
             obj.platformOrder = platformOrders;
@@ -19,8 +23,6 @@ var testOrder = function(clientOrders, platformOrders) {
             obj.platformProductsPassed = testProduct(platformOrders, clientOrders, obj);
 
             // testDuplicates(clientOrders)
-
-            // console.log(obj);
 
         return obj;
     },
