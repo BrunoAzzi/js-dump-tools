@@ -12,9 +12,9 @@ var showInfo = function() {
         groupedClientInterval = groupByOrders(clientDateInterval),
         groupedPlatformInterval = groupByOrders(platformDateInterval);
 
-    getOrdersDifference(groupedClientInterval, groupedPlatformInterval);
-
     showCharts(clientDateInterval, platformDateInterval);
+
+    getOrdersDifference(groupedClientInterval, groupedPlatformInterval);
 
     calculateAmountTotals(clientDateInterval, platformDateInterval);
 
@@ -23,31 +23,28 @@ var showInfo = function() {
 
     showSummary(dumpTools.client, dumpTools.platform);
 
-    // for(orderId of getOrdersIntersection(groupedClientInterval, groupedPlatformInterval)){
-    //
-    //     var clientOrder = getOrderById(orderId, groupedClientInterval);
-    //     var platformOrder = getOrderById(orderId, groupedPlatformInterval);
-    //
-    //     result = testOrder(clientOrder, platformOrder);
-    //     // console.log(result);
-    //     orderResult = newIsOrderOk(result);
-    //
-    //     if(orderResult < 0) teste.errorOrders++;
-    //     if(orderResult == 0) teste.warningOrders++;
-    //     if(orderResult > 0) teste.successOrders++;
-    //
-    //     teste.results.push(result);
-    // }
+    showAloneOrdersReport(groupedClientInterval, groupedPlatformInterval);
 
-    // showReport(diff.clientDump, diff.platformDump);
+    for(orderId of getOrdersIntersection(groupedClientInterval, groupedPlatformInterval)){
 
-    createClientOnlyOrdersReport(getAllOrdersById(dumpTools.client.aloneOrders, groupedClientInterval));
-    // createPlatformOnlyOrdersReport(getAllOrdersById(diff.platformDump.onlyOrders, groupedPlatformInterval));
-    // createTestedOrdersResultReport(teste);
+        var clientOrder = getOrderById(orderId, groupedClientInterval);
+        var platformOrder = getOrderById(orderId, groupedPlatformInterval);
 
-    // $("#order-only-on-client").removeClass("hidden");
-    // $("#publish-report-button").removeClass("hidden");
-    // $("#interval").text(moment(dumpTools.client.extentDays[0]).format('YYYY/MM/DD')+" to "+moment(dumpTools.client.extentDays[1]).format('YYYY/MM/DD'));
+        result = testOrder(clientOrder, platformOrder);
+        // console.log(result);
+        orderResult = newIsOrderOk(result);
+
+        if(orderResult < 0) dumpTools.tests.summary.errors++;
+        if(orderResult == 0) dumpTools.tests.summary.warnings++;
+        if(orderResult > 0) dumpTools.tests.summary.successes++;
+
+        dumpTools.tests.results.push(result);
+    }
+
+    createTestedOrdersResultReport(dumpTools.tests);
+
+    $("#publish-report-button").removeClass("hidden");
+    $("#interval").text(moment(dumpTools.client.extentDays[0]).format('YYYY/MM/DD')+" to "+moment(dumpTools.client.extentDays[1]).format('YYYY/MM/DD'));
 },
 
 calculateAmountTotals = function(client, platform) {

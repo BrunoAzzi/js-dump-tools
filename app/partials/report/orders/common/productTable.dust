@@ -1,0 +1,7 @@
+<tr>
+    <th scope='row' class="{#isProductOkDust/}">#</th>
+    <td class="{#isProductOkDust/}">{pid}</td>
+    <td class="{#isProductOkDust/}">{sku}</td>
+    <td class="{#isProductOkDust/}">{price}</td>
+    <td class="{#isProductOkDust/}">{quantity}</td>
+</tr>

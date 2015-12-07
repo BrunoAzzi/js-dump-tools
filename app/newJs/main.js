@@ -68,7 +68,7 @@ dumpTools.client = {
 };
 
 dumpTools.tests = {
-    orders: [],
+    results: [],
     summary: {
         errors: 0,
         warnings: 0,

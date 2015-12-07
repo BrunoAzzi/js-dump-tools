@@ -2,7 +2,7 @@ var testOrder = function(clientOrders, platformOrders) {
         var obj = {
             client: {},
             platform: {},
-            
+
         };
 
             obj.clientOrder = clientOrders;
