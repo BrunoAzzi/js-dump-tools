@@ -267,7 +267,7 @@ $("#the-client-json-file-input").change(function() {
 
     oboe(url)
     .done(function(things){
-        var teste="";
+        var stringResult = JSON.stringify(things);
         for(item of things.items) {
            diff.clientData.push({oid: things.id,
                 uid: things.userId,
@@ -278,8 +278,10 @@ $("#the-client-json-file-input").change(function() {
                 quantity: +item.quantity
             });
         }
-        teste += JSON.stringify(things)+"\n";
-        size += teste.length;
+        //the line break byte val
+        size += 1;
+        if(stringResult.match(/\//g)) size += stringResult.match(/\//g).length
+        size += utf8.encode(stringResult).length;
 
         if(size >= this.header('Content-Length') | size >= (this.header('Content-Length')-1)){
             var filteredResult = diff.clientData;
@@ -345,7 +347,7 @@ $("#the-platform-json-file-input").change(function() {
 
     oboe(url)
     .done(function(things){
-        var teste="";
+        var stringResult = JSON.stringify(things);
         for(item of things.items) {
            diff.clientData.push({oid: things.id,
                 uid: things.userId,
@@ -355,12 +357,15 @@ $("#the-platform-json-file-input").change(function() {
                 price: +item.product.price,
                 quantity: +item.quantity
             });
-            if(item.quantity) teste += ".0";
+            //ths .0 in the quantity
+            if(item.quantity) size += 2;
         }
-        teste += JSON.stringify(things)+"\n";
-        size += teste.length;
+        //the line break between two lines
+        size += 1;
+        if(stringResult.match(/\//g)) size += stringResult.match(/\//g).length;
+        size += utf8.encode(stringResult).length;
 
-        if(size >= this.header('Content-Length') | size >= (this.header('Content-Length')-6)){
+        if(size >= this.header('Content-Length') | size >= (this.header('Content-Length')-1)){
             var filteredResult = diff.clientData;
             if(diff.activationDate){
                 filteredResult = filterResultByActivationDate(diff.clientData, diff.activationDate);
