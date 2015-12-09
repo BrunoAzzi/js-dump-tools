@@ -1,1 +1,0 @@
-(function(dust){dust.register("partials\/report\/summary\/alert",body_0);function body_0(chk,ctx){return chk.w("<div class='alert alert-").f(ctx.get(["type"], false),ctx,"h").w("'}><b>").f(ctx.get(["tittle"], false),ctx,"h").w("</b>").f(ctx.get(["text"], false),ctx,"h").w("</div>");}body_0.__dustBody=!0;return body_0}(dust));

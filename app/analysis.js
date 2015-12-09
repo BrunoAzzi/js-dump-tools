@@ -136,9 +136,9 @@ var clientFileName,
     },
 
     setupPlatform = function(data) {
-        data.forEach(function(row) {
+        for (row of data) {
             row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]);
-        });
+        }
 
         diff.platformDump = makeDump(data);
     },

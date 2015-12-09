@@ -1,0 +1,58 @@
+{#tests.results}
+<div class='panel panel-{#newIsOrderOkDust /}'>
+    <div class='panel-heading' role='tab' id='heading{oid}'>
+        <h4 class='panel-title'>
+            <a class='collapsed' role='button' data-toggle='collapse'
+            href='#collapse{oid}' aria-expanded='false' aria-controls='collapse{oid}'>
+                Order Id: {oid} - {#clientOrder.values}{@first}{timestamp|formatDate}{/first}{/clientOrder.values} - Products (C vs P) : {clientOrder.values.length} vs {platformOrder.values.length}
+            </a>
+            <div class='pull-right'>{>"report/orders/common/orderIcons.dust"/}</span></div>
+        </h4>
+    </div>
+    <div id='collapse{oid}' class='panel-collapse collapse' role='tabpanel' aria-labelledby='heading{oid}'>
+        <div class='panel-body'>
+            <div class='col-md-6'>
+                <h3>{clientName}</h3>
+                <p class='text-{?uidPassed}success{:else}danger{/uidPassed}'>User Id: {#clientOrder.values}{@first}{uid}{/first}{/clientOrder.values}<p>
+                <p class='text-{?timestampPassed}success{:else}danger{/timestampPassed}'>Timestamp: {#clientOrder.values}{@first}{timestamp|formatDate}{/first}{/clientOrder.values}<p>
+
+                <table class='table table-bordered'>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product Id</th>
+                            <th>SKU</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#clientOrder.values}{#clientProductsPassed order=.}{>"report/orders/common/productTable.dust"/}{/clientProductsPassed}{/clientOrder.values}
+                    </tbody>
+                </table>
+
+            </div>
+            <div class='col-md-6'>
+                <h3>{platformName}</h3>
+                <p class='text-{?uidPassed}success{:else}danger{/uidPassed}'>User Id: {#clientOrder.values}{@first}{uid}{/first}{/clientOrder.values}<p>
+                <p class='text-{?timestampPassed}success{:else}danger{/timestampPassed}'>Timestamp: {#platformOrder.values}{@first}{timestamp|formatDate}{/first}{/platformOrder.values}<p>
+
+                <table class='table table-bordered'>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product Id</th>
+                            <th>SKU</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#platformOrder.values}{#platformProductsPassed order=.}{>"report/orders/common/productTable.dust"/}{/platformProductsPassed}{/platformOrder.values}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{/tests.results}

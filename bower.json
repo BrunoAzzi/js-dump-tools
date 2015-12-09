@@ -1,7 +1,7 @@
 {
   "name": "js-dump-tools",
-  "description": "a dump-diff tool in javascript",
-  "main": "app/index.html",
+  "description": "A dump-diff tool in javascript",
+  "main": "dist/index.html",
   "authors": [
     "Bruno Azzi"
   ],
@@ -14,8 +14,7 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests",
-    "app/components"
+    "tests"
   ],
   "dependencies": {
     "d3": "~3.5.6",
