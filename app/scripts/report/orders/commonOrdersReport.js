@@ -1,23 +1,29 @@
 var createTestedOrdersResultReport = function(tests) {
-            var config = {
-                tests: tests,
-                platformName: dumpTools.platform.name,
-                clientName: dumpTools.client.name,
-                checkSuccess: checkSuccess,
-                productsTestResults: productsTestResults,
-                newIsOrderOkDust: IsOrderOkDust,
-                isProductOkDust: isProductOkDust
-            };
+        for (test of tests.results) { test.clientOrder.values = test.clientOrder.values.sort(compareProductArray); }
+        // for (test of tests){ test.clientProductsPassed = test.clientProductsPassed.sort(compareProductArray); }
 
-            dust.render("report/orders/common/orderPanel.dust", config, function(err, out) {
-                $("#tested-orders-result").empty();
-                $("#accordion-test-results-header").text("Common Orders - "+
-                    formatIntegerValue(dumpTools.tests.summary.errors)+" Errors - "+
-                    formatIntegerValue(dumpTools.tests.summary.warnings)+" Warnings - "+
-                    formatIntegerValue(dumpTools.tests.summary.successes)+" Success");
-                $("#tested-orders-result").append(out);
-            });
-        },
+        for (test of tests.results){ test.platformOrder.values = test.platformOrder.values.sort(compareProductArray); }
+        // for (test of tests){ test.platformProductsPassed = test.platformProductsPassed.sort(compareProductArray); }
+
+        var config = {
+            tests: tests,
+            platformName: dumpTools.platform.name,
+            clientName: dumpTools.client.name,
+            checkSuccess: checkSuccess,
+            productsTestResults: productsTestResults,
+            newIsOrderOkDust: IsOrderOkDust,
+            isProductOkDust: isProductOkDust
+        };
+
+        dust.render("report/orders/common/orderPanel.dust", config, function(err, out) {
+            $("#tested-orders-result").empty();
+            $("#accordion-test-results-header").text("Common Orders - "+
+                formatIntegerValue(dumpTools.tests.summary.errors)+" Errors - "+
+                formatIntegerValue(dumpTools.tests.summary.warnings)+" Warnings - "+
+                formatIntegerValue(dumpTools.tests.summary.successes)+" Success");
+            $("#tested-orders-result").append(out);
+        });
+    },
 
     checkSuccess = function(chunk, context, bodies, params){
         var value = dust.helpers.tap(params.value, chunk, context);

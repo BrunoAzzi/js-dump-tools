@@ -312,30 +312,26 @@ calculateDumpNumberOfTransactions = function(dump, groupedData) {
 
 var testOrder = function(clientOrders, platformOrders) {
         var obj = {
-            client: {},
-            platform: {},
-
+            clientOrder: clientOrders,
+            platformOrder: platformOrders,
+            oid: clientOrders.key,
+            timestampPassed: true,
+            uidPassed: true,
+            productsPidPassed: true,
+            productsSkuPassed: true,
+            productsAmountPassed: true,
+            hasDuplicatedValues: false
         };
 
-            obj.clientOrder = clientOrders;
-            obj.platformOrder = platformOrders;
-            obj.oid = clientOrders.key;
+        if (hasDuplicatedValues(clientOrders.values) || hasDuplicatedValues(platformOrders.values)) {
+            obj.hasDuplicatedValues = true;
+        }
 
-            obj.timestampPassed = true;
-            obj.uidPassed = true;
+        obj.clientProductsPassed = testProduct(clientOrders, platformOrders, obj);
+        obj.platformProductsPassed = testProduct(platformOrders, clientOrders, obj);
 
-            obj.productsPidPassed = true;
-            obj.productsSkuPassed = true;
-            obj.productsAmountPassed = true;
-
-            isOrderUserIdAndTimestampValid(clientOrders, platformOrders, obj);
-            // isOrderTimestampValid(clientOrders, platformOrders, obj);
-
-            obj.clientProductsPassed = testProduct(clientOrders, platformOrders, obj);
-            obj.platformProductsPassed = testProduct(platformOrders, clientOrders, obj);
-
-            // testDuplicates(clientOrders)
-
+        isOrderUserIdAndTimestampValid(clientOrders, platformOrders, obj);
+        // isOrderTimestampValid(clientOrders, platformOrders, obj);
         return obj;
     },
 
@@ -355,7 +351,6 @@ var testOrder = function(clientOrders, platformOrders) {
                 }
             });
         });
-        // return true;
     },
 
     testProduct = function(reference, comparativeArray, teste) {
@@ -374,7 +369,7 @@ var testOrder = function(clientOrders, platformOrders) {
 
             comparativeArray.values.forEach( function (innerOrder) {
                 if (!innerObj.pidPassed) {
-                    if (order.pid == innerOrder.pid && order.sku == innerOrder.sku){
+                    if (order.pid === innerOrder.pid && order.sku === innerOrder.sku){
                         innerObj.pidPassed = true;
                     }
                 }
@@ -386,7 +381,7 @@ var testOrder = function(clientOrders, platformOrders) {
                 // }
 
                 if (!innerObj.pricePassed) {
-                    if (order.price == innerOrder.price && innerObj.pidPassed){
+                    if (order.price === innerOrder.price && order.pid === innerOrder.pid && order.sku === innerOrder.sku){
                         if (order.price > 0 && innerOrder.price > 0) {
                             innerObj.pricePassed = true;
                         }
@@ -394,7 +389,7 @@ var testOrder = function(clientOrders, platformOrders) {
                 }
 
                 if (!innerObj.quantityPassed) {
-                    if (order.quantity == innerOrder.quantity && innerObj.pidPassed){
+                    if (order.quantity === innerOrder.quantity && order.pid === innerOrder.pid && order.sku === innerOrder.sku){
                         if (order.quantity > 0 && innerOrder.quantity > 0) {
                             innerObj.quantityPassed = true;
                         }
@@ -491,7 +486,24 @@ var testOrder = function(clientOrders, platformOrders) {
     },
 
     hasDuplicatedValues = function(array) {
-        array.sort(compareProductArray);
+        teste = array.sort(compareProductArray);
+        var retorno = !isProductArrayUnique(teste.map(function(row){return row.oid + "" + row.sku}));
+        debugger;
+        return retorno;
+    },
+
+    isProductArrayUnique = function(array) {
+        var uniq = [];
+        var result = array.slice(0).every(function(item, index, arr) {
+            if (uniq.indexOf(item) > -1) {
+                arr.length = 0;
+                return false;
+            } else {
+                uniq.push(item);
+                return true;
+            }
+        });
+        return result;
     };
 
 var filterByDateInterval = function(data, beginDate, endDate) {
@@ -1072,6 +1084,7 @@ var reusableDiffChart = function(preparedData, title) {
 }
 
 var createClientAloneOrdersReport = function(data) {
+    for (order of data) order.values = order.values.sort(compareProductArray);
         dust.render("report/orders/alone/orderPanel.dust", {order: data}, function(err, out) {
             $("#OrderOnlyClientReport").empty();
             $("#orders-only-in-client-header").text("Orders only in "+dumpTools.client.name+" - "+data.length);
@@ -1080,25 +1093,31 @@ var createClientAloneOrdersReport = function(data) {
     };
 
 var createTestedOrdersResultReport = function(tests) {
-            var config = {
-                tests: tests,
-                platformName: dumpTools.platform.name,
-                clientName: dumpTools.client.name,
-                checkSuccess: checkSuccess,
-                productsTestResults: productsTestResults,
-                newIsOrderOkDust: IsOrderOkDust,
-                isProductOkDust: isProductOkDust
-            };
+        for (test of tests.results) { test.clientOrder.values = test.clientOrder.values.sort(compareProductArray); }
+        // for (test of tests){ test.clientProductsPassed = test.clientProductsPassed.sort(compareProductArray); }
 
-            dust.render("report/orders/common/orderPanel.dust", config, function(err, out) {
-                $("#tested-orders-result").empty();
-                $("#accordion-test-results-header").text("Common Orders - "+
-                    formatIntegerValue(dumpTools.tests.summary.errors)+" Errors - "+
-                    formatIntegerValue(dumpTools.tests.summary.warnings)+" Warnings - "+
-                    formatIntegerValue(dumpTools.tests.summary.successes)+" Success");
-                $("#tested-orders-result").append(out);
-            });
-        },
+        for (test of tests.results){ test.platformOrder.values = test.platformOrder.values.sort(compareProductArray); }
+        // for (test of tests){ test.platformProductsPassed = test.platformProductsPassed.sort(compareProductArray); }
+
+        var config = {
+            tests: tests,
+            platformName: dumpTools.platform.name,
+            clientName: dumpTools.client.name,
+            checkSuccess: checkSuccess,
+            productsTestResults: productsTestResults,
+            newIsOrderOkDust: IsOrderOkDust,
+            isProductOkDust: isProductOkDust
+        };
+
+        dust.render("report/orders/common/orderPanel.dust", config, function(err, out) {
+            $("#tested-orders-result").empty();
+            $("#accordion-test-results-header").text("Common Orders - "+
+                formatIntegerValue(dumpTools.tests.summary.errors)+" Errors - "+
+                formatIntegerValue(dumpTools.tests.summary.warnings)+" Warnings - "+
+                formatIntegerValue(dumpTools.tests.summary.successes)+" Success");
+            $("#tested-orders-result").append(out);
+        });
+    },
 
     checkSuccess = function(chunk, context, bodies, params){
         var value = dust.helpers.tap(params.value, chunk, context);
@@ -1208,6 +1227,7 @@ var showAloneOrdersReport = function(groupedClientInterval, groupedPlatformInter
     };
 
 var createPlatformAloneOrdersReport = function(data) {
+    for (order of data) order.values = order.values.sort(compareProductArray);
         dust.render("report/orders/alone/orderPanel.dust", {order: data}, function(err, out) {
             $("#OrderOnlyPlatformReport").empty();
             $("#orders-only-in-platform-header").text("Orders only in "+dumpTools.platform.name+" - "+data.length);
@@ -1329,5 +1349,9 @@ dust.filters.formatIntegerValue = function(value) {
 },
 
 dust.filters.formatDate = function(value) {
-    return moment(value).format('YYYY-MM-DD HH:mm:SS');         
+    return moment(value).format('YYYY-MM-DD HH:mm:SS');
+},
+
+dust.filters.sortProductArray = function(value) {
+    return value.sort(compareProductArray);
 };

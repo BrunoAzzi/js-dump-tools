@@ -1,29 +1,25 @@
 var testOrder = function(clientOrders, platformOrders) {
         var obj = {
-            client: {},
-            platform: {},
-
+            clientOrder: clientOrders,
+            platformOrder: platformOrders,
+            oid: clientOrders.key,
+            timestampPassed: true,
+            uidPassed: true,
+            productsPidPassed: true,
+            productsSkuPassed: true,
+            productsAmountPassed: true,
+            hasDuplicatedValues: false
         };
 
-            obj.clientOrder = clientOrders;
-            obj.platformOrder = platformOrders;
-            obj.oid = clientOrders.key;
+        if (hasDuplicatedValues(clientOrders.values) || hasDuplicatedValues(platformOrders.values)) {
+            obj.hasDuplicatedValues = true;
+        }
 
-            obj.timestampPassed = true;
-            obj.uidPassed = true;
+        obj.clientProductsPassed = testProduct(clientOrders, platformOrders, obj);
+        obj.platformProductsPassed = testProduct(platformOrders, clientOrders, obj);
 
-            obj.productsPidPassed = true;
-            obj.productsSkuPassed = true;
-            obj.productsAmountPassed = true;
-
-            isOrderUserIdAndTimestampValid(clientOrders, platformOrders, obj);
-            // isOrderTimestampValid(clientOrders, platformOrders, obj);
-
-            obj.clientProductsPassed = testProduct(clientOrders, platformOrders, obj);
-            obj.platformProductsPassed = testProduct(platformOrders, clientOrders, obj);
-
-            // testDuplicates(clientOrders)
-
+        isOrderUserIdAndTimestampValid(clientOrders, platformOrders, obj);
+        // isOrderTimestampValid(clientOrders, platformOrders, obj);
         return obj;
     },
 
@@ -43,7 +39,6 @@ var testOrder = function(clientOrders, platformOrders) {
                 }
             });
         });
-        // return true;
     },
 
     testProduct = function(reference, comparativeArray, teste) {
@@ -62,7 +57,7 @@ var testOrder = function(clientOrders, platformOrders) {
 
             comparativeArray.values.forEach( function (innerOrder) {
                 if (!innerObj.pidPassed) {
-                    if (order.pid == innerOrder.pid && order.sku == innerOrder.sku){
+                    if (order.pid === innerOrder.pid && order.sku === innerOrder.sku){
                         innerObj.pidPassed = true;
                     }
                 }
@@ -74,7 +69,7 @@ var testOrder = function(clientOrders, platformOrders) {
                 // }
 
                 if (!innerObj.pricePassed) {
-                    if (order.price == innerOrder.price && innerObj.pidPassed){
+                    if (order.price === innerOrder.price && order.pid === innerOrder.pid && order.sku === innerOrder.sku){
                         if (order.price > 0 && innerOrder.price > 0) {
                             innerObj.pricePassed = true;
                         }
@@ -82,7 +77,7 @@ var testOrder = function(clientOrders, platformOrders) {
                 }
 
                 if (!innerObj.quantityPassed) {
-                    if (order.quantity == innerOrder.quantity && innerObj.pidPassed){
+                    if (order.quantity === innerOrder.quantity && order.pid === innerOrder.pid && order.sku === innerOrder.sku){
                         if (order.quantity > 0 && innerOrder.quantity > 0) {
                             innerObj.quantityPassed = true;
                         }
@@ -179,5 +174,22 @@ var testOrder = function(clientOrders, platformOrders) {
     },
 
     hasDuplicatedValues = function(array) {
-        array.sort(compareProductArray);
+        teste = array.sort(compareProductArray);
+        var retorno = !isProductArrayUnique(teste.map(function(row){return row.oid + "" + row.sku}));
+        debugger;
+        return retorno;
+    },
+
+    isProductArrayUnique = function(array) {
+        var uniq = [];
+        var result = array.slice(0).every(function(item, index, arr) {
+            if (uniq.indexOf(item) > -1) {
+                arr.length = 0;
+                return false;
+            } else {
+                uniq.push(item);
+                return true;
+            }
+        });
+        return result;
     };
