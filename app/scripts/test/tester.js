@@ -176,7 +176,6 @@ var testOrder = function(clientOrders, platformOrders) {
     hasDuplicatedValues = function(array) {
         teste = array.sort(compareProductArray);
         var retorno = !isProductArrayUnique(teste.map(function(row){return row.oid + "" + row.sku}));
-        debugger;
         return retorno;
     },
 

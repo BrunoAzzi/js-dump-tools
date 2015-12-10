@@ -5,6 +5,8 @@ var showInfo = function() {
 
     if(showReportButton.val() === "Show info") changeReportButtonToUpdate();
 
+    hideInputs();
+
     resetFilters();
 
     var platformDateInterval = filterByDateInterval(dumpTools.platform.data, dumpTools.client.extentDays[0], dumpTools.client.extentDays[1]),
