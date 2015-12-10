@@ -206,6 +206,41 @@ var checkMaxPercentage = function(value, tittle, lang){
 
     changeReportButtonToUpdate = function() {
         $("#showBlackboard").val("Update");
+    },
+
+    publishRelatory = function(){
+        $('#date-range-slider-wrapper').addClass('hidden');
+        $('#publish-report-button').addClass('hidden');
+        $('#interval-wrapper').removeClass('hidden');
+        console.log($('#interval-wrapper').attr("class"));
+
+        var createObjectURL = (window.URL || window.webkitURL || {}).createObjectURL || function(){};
+        var blob = null;
+        var content = document.documentElement.outerHTML;
+        var mimeString = "application/octet-stream";
+        window.BlobBuilder = window.BlobBuilder ||
+                             window.WebKitBlobBuilder ||
+                             window.MozBlobBuilder ||
+                             window.MSBlobBuilder;
+
+
+        if(window.BlobBuilder){
+           var bb = new BlobBuilder();
+           bb.append(content);
+           blob = bb.getBlob(mimeString);
+        }else{
+           blob = new Blob([content], {type : mimeString});
+        }
+
+        var url = createObjectURL(blob);
+        var now = new Date();
+        var a = $("#publish-report-button");
+        a.attr("href", url);
+        a.attr("download", "js-dump-report-"+dumpTools.client.name+"-"+now.getDate()+"/"+now.getMonth()+"/"+now.getFullYear()+".html");
+
+        $('#interval-wrapper').addClass("hidden");
+        $('#publish-report-button').removeClass('hidden');
+        $('#date-range-slider-wrapper').removeClass('hidden');
     };
 
 var showInfo = function() {
@@ -328,28 +363,30 @@ var testOrder = function(clientOrders, platformOrders) {
         var innerObj = {};
 
         reference.values.forEach( function (order) {
-            innerObj = {};
-            innerObj.pid = order.pid;
-            innerObj.pidPassed = false;
-            innerObj.skuPassed = false;
-            innerObj.pricePassed = false;
-            innerObj.quantityPassed = false;
-            comparativeArray.values.forEach( function (innerOrder) {
+            innerObj = {
+                pid: order.pid,
+                sku: order.sku,
+                pidPassed: false,
+                skuPassed: false,
+                pricePassed: false,
+                quantityPassed: false
+            };
 
+            comparativeArray.values.forEach( function (innerOrder) {
                 if (!innerObj.pidPassed) {
-                    if (order.pid == innerOrder.pid){
+                    if (order.pid == innerOrder.pid && order.sku == innerOrder.sku){
                         innerObj.pidPassed = true;
                     }
                 }
 
-                if (!innerObj.skuPassed) {
-                    if (order.sku == innerOrder.sku && order.pid == innerOrder.pid){
-                        innerObj.skuPassed = true;
-                    }
-                }
+                // if (!innerObj.skuPassed) {
+                //     if (order.sku == innerOrder.sku && innerObj.pidPassed){
+                //         innerObj.skuPassed = true;
+                //     }
+                // }
 
                 if (!innerObj.pricePassed) {
-                    if (order.price == innerOrder.price && order.pid == innerOrder.pid){
+                    if (order.price == innerOrder.price && innerObj.pidPassed){
                         if (order.price > 0 && innerOrder.price > 0) {
                             innerObj.pricePassed = true;
                         }
@@ -357,7 +394,7 @@ var testOrder = function(clientOrders, platformOrders) {
                 }
 
                 if (!innerObj.quantityPassed) {
-                    if (order.quantity == innerOrder.quantity && order.pid == innerOrder.pid){
+                    if (order.quantity == innerOrder.quantity && innerObj.pidPassed){
                         if (order.quantity > 0 && innerOrder.quantity > 0) {
                             innerObj.quantityPassed = true;
                         }
@@ -369,9 +406,9 @@ var testOrder = function(clientOrders, platformOrders) {
                 teste.productsPidPassed = false;
             }
 
-            if (!innerObj.skuPassed) {
-                teste.productsSkuPassed = false;
-            }
+            // if (!innerObj.skuPassed) {
+            //     teste.productsSkuPassed = false;
+            // }
 
             if (!innerObj.quantityPassed || !innerObj.pricePassed) {
                 teste.productsAmountPassed = false;
@@ -387,7 +424,7 @@ var testOrder = function(clientOrders, platformOrders) {
         if (teste.timestampPassed && teste.uidPassed) {
             teste.clientProductsPassed.forEach( function (product) {
                 if (product.pidPassed) {
-                    if (product.skuPassed && product.pricePassed && product.quantityPassed) {
+                    if (product.pricePassed && product.quantityPassed) {
                         retorno = 1;
                     } else {
                         retorno = 0;
@@ -398,7 +435,7 @@ var testOrder = function(clientOrders, platformOrders) {
             });
             teste.platformProductsPassed.forEach( function (product) {
                 if (product.pidPassed) {
-                    if (product.skuPassed && product.pricePassed && product.quantityPassed) {
+                    if (product.pricePassed && product.quantityPassed) {
                         if (retorno === 1) {
                             retorno = 1;
                         }
@@ -421,7 +458,7 @@ var testOrder = function(clientOrders, platformOrders) {
         var retorno = -1;
         if (teste.timestampPassed && teste.uidPassed) {
             if(teste.productsPidPassed){
-                if (teste.productsSkuPassed && teste.productsAmountPassed) {
+                if (teste.productsAmountPassed) {
                     retorno = 1;
                 } else {
                     retorno = 0;
@@ -433,7 +470,7 @@ var testOrder = function(clientOrders, platformOrders) {
 
     isProductOk = function(productTest) {
         if(productTest.pidPassed){
-            if (productTest.skuPassed && productTest.pricePassed && productTest.quantityPassed) {
+            if (productTest.pricePassed && productTest.quantityPassed) {
                 return 1;
             } else {
                 return 0;
@@ -451,6 +488,10 @@ var testOrder = function(clientOrders, platformOrders) {
             }
         }
         return results;
+    },
+
+    hasDuplicatedValues = function(array) {
+        array.sort(compareProductArray);
     };
 
 var filterByDateInterval = function(data, beginDate, endDate) {
@@ -558,7 +599,7 @@ var groupOrdersByDay = function(data) {
             .map(data);
     }
 
-var diffAmountsByDay = function(clientData, platformData) {
+var diffAmountsByDay = function (clientData, platformData) {
         var innerClient = summarizeOrdersAmountsByDay(clientData),
             innerPlatform = summarizeOrdersAmountsByDay(platformData),
             object = new Array();
@@ -570,7 +611,7 @@ var diffAmountsByDay = function(clientData, platformData) {
         return object;
     },
 
-    diffOrdersByDay = function(clientData, platformData) {
+    diffOrdersByDay = function (clientData, platformData) {
         var innerClient = summarizeOrdersByDay(clientData),
             innerPlatform = summarizeOrdersByDay(platformData),
             object = new Array();
@@ -582,7 +623,7 @@ var diffAmountsByDay = function(clientData, platformData) {
         return object;
     },
 
-    diffOrdersByDayHelper = function(clientRow, innerPlatform) {
+    diffOrdersByDayHelper = function (clientRow, innerPlatform) {
         innerObject = {
             day: clientRow.date,
             [dumpTools.client.name]: clientRow.data,
@@ -599,7 +640,7 @@ var diffAmountsByDay = function(clientData, platformData) {
         return innerObject;
     },
 
-    diffOrdersAmountByDayHelper = function(clientRow, innerPlatform) {
+    diffOrdersAmountByDayHelper = function (clientRow, innerPlatform) {
         innerObject = {
             day: clientRow.key,
             [dumpTools.client.name]: clientRow.values,
@@ -617,7 +658,7 @@ var diffAmountsByDay = function(clientData, platformData) {
         return innerObject;
     },
 
-    summarizeOrdersByDay = function(data) {
+    summarizeOrdersByDay = function (data) {
         innerData = groupOrdersByDay(data);
 
         var object = new Array();
@@ -632,7 +673,7 @@ var diffAmountsByDay = function(clientData, platformData) {
         return object;
     },
 
-    summarizeOrdersAmountsByDay = function(data) {
+    summarizeOrdersAmountsByDay = function (data) {
         innerData = groupOrdersByDay(data);
 
         var object = new Array();
@@ -650,19 +691,64 @@ var diffAmountsByDay = function(clientData, platformData) {
         });
 
         var expensesAvgAmount = d3.nest()
-            .key(function(d) { return d.date; })
-            .rollup(function(v) { return d3.sum(v, function(d) { return d.value; }); })
+            .key(function (d) { return d.date; })
+            .rollup(function (v) { return d3.sum(v, function (d) { return d.value; }); })
             .entries(object);
 
         return expensesAvgAmount;
     },
 
-    formatCurrencyValue = function(value) {
+    formatCurrencyValue = function (value) {
         return numeral(value).format('$0,0.00');
     },
 
-    formatIntegerValue = function(value) {
+    formatIntegerValue = function (value) {
         return numeral(value).format('0,0');
+    },
+
+    compareProductArray = function (a, b) {
+        var parsedA = parseInt(a.pid, 10),
+            parsedB = parseInt(b.pid, 10);
+        if (parsedA > 0 && parsedB > 0) {
+            return compareNumber(parsedA, parsedB);
+        } else {
+            return naturalSort(a.pid, b.pid);
+        }
+    },
+
+    compareNumber = function (a, b) {
+        return a - b;
+    },
+
+    naturalSort = function (a, b) {
+        function chunkify(t) {
+            var tz = [], x = 0, y = -1, n = 0, i, j;
+
+            while (i = (j = t.charAt(x++)).charCodeAt(0)) {
+                var m = (i == 46 || (i >=48 && i <= 57));
+                if (m !== n) {
+                    tz[++y] = "";
+                    n = m;
+                }
+                tz[y] += j;
+            }
+            return tz;
+        }
+
+        var aa = chunkify(a);
+        var bb = chunkify(b);
+
+        for (x = 0; aa[x] && bb[x]; x++) {
+            if (aa[x] !== bb[x]) {
+                var c = Number(aa[x]), d = Number(bb[x]);
+                if (c == aa[x] && d == bb[x]) {
+                    return c - d;
+                } else {
+                    return (aa[x] > bb[x]) ? 1 : -1;
+                }
+            }
+        }
+        return aa.length - bb.length;
     };
 
 var parseClientCSVFile = function (file, activationDate, parseConfiguration) {
@@ -1197,14 +1283,14 @@ var IsOrderOkDust = function(chunk, context, bodies, params) {
     var teste = {
         timestampPassed: context.get("timestampPassed", true),
         uidPassed: context.get("uidPassed", true),
-        productsSkuPassed: context.get("productsSkuPassed", true),
+        // productsSkuPassed: context.get("productsSkuPassed", true),
         productsPidPassed: context.get("productsPidPassed", true),
         productsAmountPassed: context.get("productsAmountPassed", true)
     };
     var retorno = "danger";
     if (teste.timestampPassed && teste.uidPassed) {
         if(teste.productsPidPassed){
-            if (teste.productsSkuPassed && teste.productsAmountPassed) {
+            if (teste.productsAmountPassed) {
                 retorno = "success";
             } else {
                 retorno = "warning";
@@ -1217,13 +1303,13 @@ var IsOrderOkDust = function(chunk, context, bodies, params) {
 isProductOkDust = function(chunk, context, bodies, params) {
     var object = "";
     var productTest = {
-        skuPassed: context.get("timestampPassed", true),
+        // skuPassed: context.get("timestampPassed", true),
         pricePassed: context.get("uidPassed", true),
         quantityPassed: context.get("productsSkuPassed", true),
         pidPassed: context.get("productsPidPassed", true)
     };
     if(productTest.pidPassed){
-        if (productTest.skuPassed && productTest.pricePassed && productTest.quantityPassed) {
+        if (productTest.pricePassed && productTest.quantityPassed) {
             object = "success";
         } else {
             object = "warning";

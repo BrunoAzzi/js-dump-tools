@@ -51,28 +51,30 @@ var testOrder = function(clientOrders, platformOrders) {
         var innerObj = {};
 
         reference.values.forEach( function (order) {
-            innerObj = {};
-            innerObj.pid = order.pid;
-            innerObj.pidPassed = false;
-            innerObj.skuPassed = false;
-            innerObj.pricePassed = false;
-            innerObj.quantityPassed = false;
-            comparativeArray.values.forEach( function (innerOrder) {
+            innerObj = {
+                pid: order.pid,
+                sku: order.sku,
+                pidPassed: false,
+                skuPassed: false,
+                pricePassed: false,
+                quantityPassed: false
+            };
 
+            comparativeArray.values.forEach( function (innerOrder) {
                 if (!innerObj.pidPassed) {
-                    if (order.pid == innerOrder.pid){
+                    if (order.pid == innerOrder.pid && order.sku == innerOrder.sku){
                         innerObj.pidPassed = true;
                     }
                 }
 
-                if (!innerObj.skuPassed) {
-                    if (order.sku == innerOrder.sku && order.pid == innerOrder.pid){
-                        innerObj.skuPassed = true;
-                    }
-                }
+                // if (!innerObj.skuPassed) {
+                //     if (order.sku == innerOrder.sku && innerObj.pidPassed){
+                //         innerObj.skuPassed = true;
+                //     }
+                // }
 
                 if (!innerObj.pricePassed) {
-                    if (order.price == innerOrder.price && order.pid == innerOrder.pid){
+                    if (order.price == innerOrder.price && innerObj.pidPassed){
                         if (order.price > 0 && innerOrder.price > 0) {
                             innerObj.pricePassed = true;
                         }
@@ -80,7 +82,7 @@ var testOrder = function(clientOrders, platformOrders) {
                 }
 
                 if (!innerObj.quantityPassed) {
-                    if (order.quantity == innerOrder.quantity && order.pid == innerOrder.pid){
+                    if (order.quantity == innerOrder.quantity && innerObj.pidPassed){
                         if (order.quantity > 0 && innerOrder.quantity > 0) {
                             innerObj.quantityPassed = true;
                         }
@@ -92,9 +94,9 @@ var testOrder = function(clientOrders, platformOrders) {
                 teste.productsPidPassed = false;
             }
 
-            if (!innerObj.skuPassed) {
-                teste.productsSkuPassed = false;
-            }
+            // if (!innerObj.skuPassed) {
+            //     teste.productsSkuPassed = false;
+            // }
 
             if (!innerObj.quantityPassed || !innerObj.pricePassed) {
                 teste.productsAmountPassed = false;
@@ -110,7 +112,7 @@ var testOrder = function(clientOrders, platformOrders) {
         if (teste.timestampPassed && teste.uidPassed) {
             teste.clientProductsPassed.forEach( function (product) {
                 if (product.pidPassed) {
-                    if (product.skuPassed && product.pricePassed && product.quantityPassed) {
+                    if (product.pricePassed && product.quantityPassed) {
                         retorno = 1;
                     } else {
                         retorno = 0;
@@ -121,7 +123,7 @@ var testOrder = function(clientOrders, platformOrders) {
             });
             teste.platformProductsPassed.forEach( function (product) {
                 if (product.pidPassed) {
-                    if (product.skuPassed && product.pricePassed && product.quantityPassed) {
+                    if (product.pricePassed && product.quantityPassed) {
                         if (retorno === 1) {
                             retorno = 1;
                         }
@@ -144,7 +146,7 @@ var testOrder = function(clientOrders, platformOrders) {
         var retorno = -1;
         if (teste.timestampPassed && teste.uidPassed) {
             if(teste.productsPidPassed){
-                if (teste.productsSkuPassed && teste.productsAmountPassed) {
+                if (teste.productsAmountPassed) {
                     retorno = 1;
                 } else {
                     retorno = 0;
@@ -156,7 +158,7 @@ var testOrder = function(clientOrders, platformOrders) {
 
     isProductOk = function(productTest) {
         if(productTest.pidPassed){
-            if (productTest.skuPassed && productTest.pricePassed && productTest.quantityPassed) {
+            if (productTest.pricePassed && productTest.quantityPassed) {
                 return 1;
             } else {
                 return 0;
@@ -174,4 +176,8 @@ var testOrder = function(clientOrders, platformOrders) {
             }
         }
         return results;
+    },
+
+    hasDuplicatedValues = function(array) {
+        array.sort(compareProductArray);
     };

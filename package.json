@@ -9,6 +9,7 @@
     "gulp-add-src": "^0.2.0",
     "gulp-babel": "^6.1.1",
     "gulp-cached": "^1.1.0",
+    "gulp-clean": "^0.3.1",
     "gulp-concat": "^2.6.0",
     "gulp-dust": "^2.1.0",
     "gulp-filter": "^3.0.1",

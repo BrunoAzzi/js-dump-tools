@@ -1,4 +1,4 @@
-var diffAmountsByDay = function(clientData, platformData) {
+var diffAmountsByDay = function (clientData, platformData) {
         var innerClient = summarizeOrdersAmountsByDay(clientData),
             innerPlatform = summarizeOrdersAmountsByDay(platformData),
             object = new Array();
@@ -10,7 +10,7 @@ var diffAmountsByDay = function(clientData, platformData) {
         return object;
     },
 
-    diffOrdersByDay = function(clientData, platformData) {
+    diffOrdersByDay = function (clientData, platformData) {
         var innerClient = summarizeOrdersByDay(clientData),
             innerPlatform = summarizeOrdersByDay(platformData),
             object = new Array();
@@ -22,7 +22,7 @@ var diffAmountsByDay = function(clientData, platformData) {
         return object;
     },
 
-    diffOrdersByDayHelper = function(clientRow, innerPlatform) {
+    diffOrdersByDayHelper = function (clientRow, innerPlatform) {
         innerObject = {
             day: clientRow.date,
             [dumpTools.client.name]: clientRow.data,
@@ -39,7 +39,7 @@ var diffAmountsByDay = function(clientData, platformData) {
         return innerObject;
     },
 
-    diffOrdersAmountByDayHelper = function(clientRow, innerPlatform) {
+    diffOrdersAmountByDayHelper = function (clientRow, innerPlatform) {
         innerObject = {
             day: clientRow.key,
             [dumpTools.client.name]: clientRow.values,
@@ -57,7 +57,7 @@ var diffAmountsByDay = function(clientData, platformData) {
         return innerObject;
     },
 
-    summarizeOrdersByDay = function(data) {
+    summarizeOrdersByDay = function (data) {
         innerData = groupOrdersByDay(data);
 
         var object = new Array();
@@ -72,7 +72,7 @@ var diffAmountsByDay = function(clientData, platformData) {
         return object;
     },
 
-    summarizeOrdersAmountsByDay = function(data) {
+    summarizeOrdersAmountsByDay = function (data) {
         innerData = groupOrdersByDay(data);
 
         var object = new Array();
@@ -90,17 +90,62 @@ var diffAmountsByDay = function(clientData, platformData) {
         });
 
         var expensesAvgAmount = d3.nest()
-            .key(function(d) { return d.date; })
-            .rollup(function(v) { return d3.sum(v, function(d) { return d.value; }); })
+            .key(function (d) { return d.date; })
+            .rollup(function (v) { return d3.sum(v, function (d) { return d.value; }); })
             .entries(object);
 
         return expensesAvgAmount;
     },
 
-    formatCurrencyValue = function(value) {
+    formatCurrencyValue = function (value) {
         return numeral(value).format('$0,0.00');
     },
 
-    formatIntegerValue = function(value) {
+    formatIntegerValue = function (value) {
         return numeral(value).format('0,0');
+    },
+
+    compareProductArray = function (a, b) {
+        var parsedA = parseInt(a.pid, 10),
+            parsedB = parseInt(b.pid, 10);
+        if (parsedA > 0 && parsedB > 0) {
+            return compareNumber(parsedA, parsedB);
+        } else {
+            return naturalSort(a.pid, b.pid);
+        }
+    },
+
+    compareNumber = function (a, b) {
+        return a - b;
+    },
+
+    naturalSort = function (a, b) {
+        function chunkify(t) {
+            var tz = [], x = 0, y = -1, n = 0, i, j;
+
+            while (i = (j = t.charAt(x++)).charCodeAt(0)) {
+                var m = (i == 46 || (i >=48 && i <= 57));
+                if (m !== n) {
+                    tz[++y] = "";
+                    n = m;
+                }
+                tz[y] += j;
+            }
+            return tz;
+        }
+
+        var aa = chunkify(a);
+        var bb = chunkify(b);
+
+        for (x = 0; aa[x] && bb[x]; x++) {
+            if (aa[x] !== bb[x]) {
+                var c = Number(aa[x]), d = Number(bb[x]);
+                if (c == aa[x] && d == bb[x]) {
+                    return c - d;
+                } else {
+                    return (aa[x] > bb[x]) ? 1 : -1;
+                }
+            }
+        }
+        return aa.length - bb.length;
     };
