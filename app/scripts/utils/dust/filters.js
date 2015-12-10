@@ -7,5 +7,9 @@ dust.filters.formatIntegerValue = function(value) {
 },
 
 dust.filters.formatDate = function(value) {
-    return moment(value).format('YYYY-MM-DD HH:mm:SS');         
+    return moment(value).format('YYYY-MM-DD HH:mm:SS');
+},
+
+dust.filters.sortProductArray = function(value) {
+    return value.sort(compareProductArray);
 };
