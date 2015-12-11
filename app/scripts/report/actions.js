@@ -31,14 +31,18 @@ var checkMaxPercentage = function(value, tittle, lang){
     },
 
     changeReportButtonToUpdate = function() {
-        $("#showBlackboard").val("Update");
+        $("#showBlackboard").val(lang.buttons.update);
+    },
+
+    showDowloadButton = function () {
+        $("#publish-report-button").text(lang.buttons.download);
+        $("#publish-report-button").removeClass("hidden");
     },
 
     publishRelatory = function(){
         $('#date-range-slider-wrapper').addClass('hidden');
         $('#publish-report-button').addClass('hidden');
         $('#interval-wrapper').removeClass('hidden');
-        console.log($('#interval-wrapper').attr("class"));
 
         var createObjectURL = (window.URL || window.webkitURL || {}).createObjectURL || function(){};
         var blob = null;

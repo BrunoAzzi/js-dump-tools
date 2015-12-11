@@ -46,32 +46,51 @@ var dumpTools = {
             "warning": " is close to the max percentage (Between 5% and 10%) - We need to take make some tests!",
             "error": " is above of the max percentage - The percentage is below of 10%!",
             "success": " is less than a half of the max percentage - We are Ok"
+        },
+        "date": {
+            "choose": "Choose a date interval for report: ",
+            "intervalIndicator": " to "
+        },
+        "buttons": {
+            "download": "Download",
+            "showInfo": "Generate",
+            "update": "Update"
         }
     },
     ptBr = {
         "in": " em ",
         "difference": {
-          "title": "Diferença",
-          "orders": "Diferença de transações",
-          "amount": "Diferença de valor",
-          "numberOfOrders": "Diferença na quantidade das transações",
-          "amountOfOrders": "Diferença no valor das transações"
+            "title": "Diferença",
+            "orders": "Diferença de transações",
+            "amount": "Diferença de valor",
+            "numberOfOrders": "Diferença na quantidade das transações",
+            "amountOfOrders": "Diferença no valor das transações"
         },
         "orders": {
-          "numberOfOrders": "Número de transações",
-          "aloneOrders": "Transações sozinhas",
-          "amountOfOrders": "Valor das transações"
+            "title": "Transações",
+            "numberOfOrders": "Número de transações",
+            "aloneOrders": "Transações sozinhas",
+            "amountOfOrders": "Valor das transações"
         },
         "aloneOrdersRepresentation": "Representação das transações sozinhas",
         "averageTicket": "Ticket médio",
         "inconsistentOrdersInCommomOrders": "Transações inconsistentes",
         "alert": {
-          "warning": " está perto da porcentagem máxima (entre 5% e 10%) - Precisamos fazer mais testes!",
-          "error": " está acima da porcentagem máxima - A porcentagem está acima de 10%!",
-          "success": " é menos que a metade da porcentagem máxima - Estamos bem"
+            "warning": " está perto da porcentagem máxima (entre 5% e 10%) - Precisamos fazer mais testes!",
+            "error": " está acima da porcentagem máxima - A porcentagem está acima de 10%!",
+            "success": " é menos que a metade da porcentagem máxima - Estamos bem"
+        },
+        "date": {
+            "choose": "Escolha um intervalo de datas: ",
+            "intervalIndicator": " até "
+        },
+        "buttons": {
+            "download": "Baixar",
+            "showInfo": "Gerar relatório",
+            "update": "Atualizar"
         }
     },
-    lang = ptBr;
+    lang = en;
 
 $(document).on('change', '.btn-file :file', function() {
   var input = $(this),

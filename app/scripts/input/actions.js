@@ -51,6 +51,7 @@ var confirmApiKey = function () {
 
     showDateSlider = function () {
         $("#date-range-slider-wrapper").removeClass("hidden");
+        $("#showBlackboard").attr("value",lang.buttons.showInfo);
         createDateSlider(dumpTools.client.extentDays[0], dumpTools.client.extentDays[1]);
     },
 

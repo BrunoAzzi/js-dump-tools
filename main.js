@@ -1,3 +1,8 @@
+var gulp = global.gulp  = require('gulp');
+require('./gulpfile.js');
+
+gulp.start('build');
+
 var express = require('express');
 var fs = require('fs');
 var bodyParser = require('body-parser');

@@ -1,9 +1,6 @@
 var showInfo = function() {
-    var showReportButton = $("#showBlackboard");
 
-    // $("#report-loading-gif").removeClass("hidden");
-
-    if(showReportButton.val() === "Show info") changeReportButtonToUpdate();
+    if($("#showBlackboard").val() === lang.buttons.showInfo) changeReportButtonToUpdate();
 
     hideInputs();
 
@@ -45,8 +42,12 @@ var showInfo = function() {
 
     createTestedOrdersResultReport(dumpTools.tests);
 
-    $("#publish-report-button").removeClass("hidden");
-    $("#interval").text(moment(dumpTools.client.extentDays[0]).format('YYYY/MM/DD')+" to "+moment(dumpTools.client.extentDays[1]).format('YYYY/MM/DD'));
+    showDowloadButton();
+    $("#interval").text(moment(dumpTools.client.extentDays[0]).format('YYYY/MM/DD')+lang.date.intervalIndicator+moment(dumpTools.client.extentDays[1]).format('YYYY/MM/DD'));
+},
+
+showGif = function () {
+    $("#report-loading-gif").removeClass("hidden");
 },
 
 calculateAmountTotals = function(client, platform) {

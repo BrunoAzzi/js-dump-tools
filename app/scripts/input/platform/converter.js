@@ -1,17 +1,17 @@
-var parsePlatformCSVFile = function(file, activationDate, parseConfiguration) {
+var parsePlatformCSVFile = function (file, activationDate, parseConfiguration) {
 
-            parseConfiguration.error = function(err, reason){
+            parseConfiguration.error = function (err, reason) {
                 console.log(err, reason);
             };
 
-            parseConfiguration.step = function(row) {
+            parseConfiguration.step = function (row) {
                 dumpTools.platform.data.push(row.data[0]);
             }
 
-            parseConfiguration.complete = function() {
+            parseConfiguration.complete = function () {
                 var filteredResult = filterResultByActivationDate(dumpTools.platform.data, activationDate);
 
-                filteredResult.forEach( function(row) { row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]); });
+                filteredResult.forEach( function (row) { row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]); });
                 dumpTools.platform = setupPlatform(filteredResult);
                 showResults("csv", "platform");
                 showDateSlider();
@@ -24,7 +24,7 @@ var parsePlatformCSVFile = function(file, activationDate, parseConfiguration) {
             $("#platform-json-tab").addClass("hidden");
         },
 
-    parsePlatformJSONFile = function(fileUrl, activationDate) {
+    parsePlatformJSONFile = function (fileUrl, activationDate) {
         var size = 0,
             data = [];
 
@@ -38,7 +38,7 @@ var parsePlatformCSVFile = function(file, activationDate, parseConfiguration) {
                 context: "platform"
             });
 
-        	myWorker.onmessage = function(event) {
+        	myWorker.onmessage = function (event) {
                 var things = event.data;
                 if(event.data.end) things = event.data.things;
 
@@ -56,14 +56,14 @@ var parsePlatformCSVFile = function(file, activationDate, parseConfiguration) {
                 if(event.data.end){
                     var filteredResult = filterResultByActivationDate(data, activationDate);
 
-                    filteredResult.forEach( function(row) { row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]); });
+                    filteredResult.forEach(function (row) { row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]); });
                     dumpTools.platform = setupPlatform(filteredResult);
                     showResults("json", "platform");
                     showDateSlider();
                 }
             };
 
-            myWorker.onerror = function(e) {
+            myWorker.onerror = function (event) {
         		console.log('Message received from worker with error');
         	};
         }
@@ -71,7 +71,7 @@ var parsePlatformCSVFile = function(file, activationDate, parseConfiguration) {
         $("#platform-csv-tab").addClass("hidden");
     },
 
-    setupPlatform = function(data) {
+    setupPlatform = function (data) {
         return {
             data: data,
             name: dumpTools.platform.name,

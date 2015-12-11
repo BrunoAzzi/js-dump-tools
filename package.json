@@ -52,10 +52,11 @@
   "author": "Bruno Azzi",
   "license": "MIT",
   "dependencies": {
-    "bower": "^1.6.3",
     "body-parser": "^1.14.0",
+    "bower": "^1.6.3",
     "express": "^4.13.3",
-    "fs": "0.0.2"
+    "fs": "0.0.2",
+    "gulp": "^3.9.0"
   },
   "description": "A dump-diff tool in javascript"
 }

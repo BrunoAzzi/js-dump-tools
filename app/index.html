@@ -3,12 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>Teste</title>
-        <!-- <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css" media="screen" title="no title" charset="utf-8"> -->
-        <!-- <link rel="stylesheet" href="css/main.css" media="screen" title="no title" charset="utf-8"> -->
-        <!-- <link rel="stylesheet" href="css/iThing-min.css" media="screen" title="no title" charset="utf-8"> -->
-        <!-- <link rel="stylesheet" href="../bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" /> -->
         <link rel="stylesheet" href="css/main.css" media="screen" title="no title" charset="utf-8">
-
     </head>
     <body>
 
@@ -68,7 +63,6 @@
         <div id="client-title-wrapper" class="row hidden">
             <div class="container">
                 <div class="col-md-12">
-                    <!-- <a id="api-key-edit-button" class="btn btn-primary" onclick="editApiKey()"><span class="glyphicon glyphicon-edit"></span></a> -->
                     <div class="col-md-12">
                         <h2 id="client-title"></h2>
                     </div>
@@ -218,7 +212,7 @@
 
         <div id="date-range-slider-wrapper" class="row hidden">
             <div class="container panel panel-default wrapper-panel">
-                <label for="slider" class="col-md-12">Choose a date interval for report:</label>
+                <label id="date-range-slider-label" for="slider" class="col-md-12">Choose a date interval for report:</label>
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="col-sm-2 hidden-xs">
                         <h3 class="text-right dateSlider-label">
@@ -235,7 +229,7 @@
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <input id="showBlackboard" class="btn btn-success" type="button" onclick="showInfo()" value="Show info">
+                    <input id="showBlackboard" class="btn btn-success" type="button" onclick="showGif;showInfo();" value="Show info">
                 </div>
                 <div class="col-md-12">
                     <div id="report-loading-gif" class="hidden">
@@ -310,12 +304,7 @@
                                 </a>
                                 <div class="pull-right">
                                     Filter you report:
-                                    <!-- <a id="user-filter" class="btn label label-danger" onclick="toggleUser()">User</a> -->
-                                    <!-- <a id="timestamp-filter" class="btn label label-danger" onclick="toggleTimestamp()">Timestamp</a> -->
-                                    <!-- <a id="product-filter" class="btn label label-danger" onclick="toggleProduct()">Product</a> -->
                                     <a id="error-filter" class="btn label label-danger" onclick="toggleErrors()">Errors</a>
-                                    <!-- <a id="amount-filter" class="btn label label-warning" onclick="toggleAmount()">Price</a> -->
-                                    <!-- <a id="sku-filter" class="btn label label-warning" onclick="toggleSku()">Sku</a> -->
                                     <a id="warning-filter" class="btn label label-warning" onclick="toggleWarnings()">Warnings</a>
                                     <a id="success-filter" class="btn label label-success" onclick="toggleSuccess()">Success</a>
                                 </div>
@@ -332,74 +321,11 @@
             </div>
         </div>
 
-
-        <!-- <script src="../bower_components/d3/d3.min.js"></script>
-
-        <script src="../bower_components/dustjs-linkedin/dist/dust-core.min.js"></script>
-
-        <script src="../bower_components/dustjs-helpers/dist/dust-helpers.min.js"></script>
-
-        <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-
-        <script src="../bower_components/jquery-ui/jquery-ui.min.js"></script>
-
-        <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-
-
-        <script src="../bower_components/moment/min/moment.min.js"></script>
-
-        <script src="../bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
-
-        <script src="../bower_components/numeral/min/numeral.min.js"></script>
-
-        <script src="../bower_components/oboe/dist/oboe-browser.min.js"></script>
-
-        <script src="../bower_components/papaparse/papaparse.min.js"></script>
-
-        <script src="js/app.js"></script>
-
-        <script src="js/input/actions.js"></script>
-
-        <script src="js/input/client/importer.js"></script>
-        <script src="js/input/client/converter.js"></script>
-
-        <script src="js/input/platform/importer.js"></script>
-        <script src="js/input/platform/converter.js"></script>
-
-        <script src="js/report/actions.js"></script>
-        <script src="js/report/main.js"></script>
-
-        <script src="js/report/chart/actions.js"></script>
-        <script src="js/report/chart/charts.js"></script>
-
-        <script src="js/report/summary/actions.js"></script>
-
-        <script src="js/report/orders/filters.js"></script>
-        <script src="js/report/orders/main.js"></script>
-        <script src="js/report/orders/commonOrdersReport.js"></script>
-        <script src="js/report/orders/clientOnlyOrdersReport.js"></script>
-        <script src="js/report/orders/platformOnlyOrdersReport.js"></script>
-
-        <script src="js/test/tester.js"></script>
-
-        <script src="js/utils/filters.js"></script>
-        <script src="js/utils/getters.js"></script>
-        <script src="js/utils/groupers.js"></script>
-        <script src="js/utils/helpers.js"></script>
-
-        <script src="js/utils/dust/contextHelpers.js"></script>
-        <script src="js/utils/dust/filters.js"></script>
-
-        <script src="lib/jQDateRangeSlider-min.js"></script>
-        <script src="lib/utf8.js"></script> -->
-
         <script src="js/lib/main.js"></script>
         <script src="templates/compiled.js"></script>
         <script src="js/lib/oboe-browser.js"></script>
         <script src="js/lib/papaparse.js"></script>
         <script src="js/lib/utf8.js"></script>
-
-
         <script src="js/app.js"></script>
 
     </body>
