@@ -149,7 +149,7 @@ var testOrder = function(clientOrders, platformOrders) {
             }
         }
         return retorno;
-    }
+    },
 
     isProductOk = function(productTest) {
         if(productTest.pidPassed){
