@@ -1,3 +1,5 @@
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var diffAmountsByDay = function (clientData, platformData) {
         var innerClient = summarizeOrdersAmountsByDay(clientData),
             innerPlatform = summarizeOrdersAmountsByDay(platformData),
@@ -22,14 +24,49 @@ var diffAmountsByDay = function (clientData, platformData) {
         return object;
     },
 
+    // diffOrdersByDayHelper = function (clientRow, innerPlatform) {
+    //     innerObject = {
+    //         day: clientRow.date,
+    //         [dumpTools.client.name]: clientRow.data,
+    //         [dumpTools.platform.name]: 0
+    //     };
+    //     innerPlatform.forEach( function (platformRow) {
+    //         if(clientRow.date === platformRow.date){
+    //             innerObject.day = clientRow.date;
+    //             innerObject[dumpTools.client.name] = clientRow.data;
+    //             innerObject[dumpTools.platform.name] = platformRow.data;
+    //             return innerObject;
+    //         }
+    //     });
+    //     return innerObject;
+    // },
+    //
+    // diffOrdersAmountByDayHelper = function (clientRow, innerPlatform) {
+    //     innerObject = {
+    //         day: clientRow.key,
+    //         [dumpTools.client.name]: clientRow.values,
+    //         [dumpTools.platform.name]: 0
+    //     };
+    //
+    //     innerPlatform.forEach( function (platformRow) {
+    //         if(clientRow.key === platformRow.key){
+    //             innerObject.day = clientRow.key;
+    //             innerObject[dumpTools.client.name] = clientRow.values;
+    //             innerObject[dumpTools.platform.name] = platformRow.values;
+    //             return innerObject;
+    //         }
+    //     });
+    //     return innerObject;
+    // },
+
     diffOrdersByDayHelper = function (clientRow, innerPlatform) {
-        innerObject = {
-            day: clientRow.date,
-            [dumpTools.client.name]: clientRow.data,
-            [dumpTools.platform.name]: 0
-        };
-        innerPlatform.forEach( function (platformRow) {
-            if(clientRow.date === platformRow.date){
+        var _innerObject;
+
+        innerObject = (_innerObject = {
+            day: clientRow.date
+        }, _defineProperty(_innerObject, dumpTools.client.name, clientRow.data), _defineProperty(_innerObject, dumpTools.platform.name, 0), _innerObject);
+        innerPlatform.forEach(function (platformRow) {
+            if (clientRow.date === platformRow.date) {
                 innerObject.day = clientRow.date;
                 innerObject[dumpTools.client.name] = clientRow.data;
                 innerObject[dumpTools.platform.name] = platformRow.data;
@@ -40,14 +77,14 @@ var diffAmountsByDay = function (clientData, platformData) {
     },
 
     diffOrdersAmountByDayHelper = function (clientRow, innerPlatform) {
-        innerObject = {
-            day: clientRow.key,
-            [dumpTools.client.name]: clientRow.values,
-            [dumpTools.platform.name]: 0
-        };
+        var _innerObject2;
 
-        innerPlatform.forEach( function (platformRow) {
-            if(clientRow.key === platformRow.key){
+        innerObject = (_innerObject2 = {
+            day: clientRow.key
+        }, _defineProperty(_innerObject2, dumpTools.client.name, clientRow.values), _defineProperty(_innerObject2, dumpTools.platform.name, 0), _innerObject2);
+
+        innerPlatform.forEach(function (platformRow) {
+            if (clientRow.key === platformRow.key) {
                 innerObject.day = clientRow.key;
                 innerObject[dumpTools.client.name] = clientRow.values;
                 innerObject[dumpTools.platform.name] = platformRow.values;
