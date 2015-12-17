@@ -30,8 +30,11 @@ var parseClientCSVFile = function (file, activationDate, parseConfiguration) {
             }
         };
         resetInput("client", "csv");
-        showLoadingGif("client", "csv");
-        Papa.parse(file, parseConfiguration);
+        
+        if (file) {
+            showLoadingGif("client", "csv");
+            Papa.parse(file, parseConfiguration);
+        }
     },
 
     parseClientJSONFile = function (fileUrl, activationDate) {

@@ -20,7 +20,7 @@ var parsePlatformCSVFile = function (file, activationDate, parseConfiguration) {
                     row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]);
                 }
 
-                dumpTools.platform = setupClient(filteredResult);
+                dumpTools.platform = setupPlatform(filteredResult);
 
                 hideLoadingGif("platform", "csv");
                 hideTab("platform", "json");
@@ -30,8 +30,11 @@ var parsePlatformCSVFile = function (file, activationDate, parseConfiguration) {
             }
         };
         resetInput("platform", "csv");
-        showLoadingGif("platform", "csv");
-        Papa.parse(file, parseConfiguration);
+
+        if (file) {
+            showLoadingGif("platform", "csv");
+            Papa.parse(file, parseConfiguration);
+        }
     },
 
     parsePlatformJSONFile = function (fileUrl, activationDate) {
