@@ -22,10 +22,11 @@ var gulp = require('gulp'),
         images: ['images/**/*.png', 'images/**/*.gif'],
         bootstrap: {
             fonts: ['bower_components/bootstrap/dist/fonts/*']
-        }
+        },
+        favicons: ['images/favicons/*']
     };
 
-    gulp.task('build', ['templates', 'lib2', 'styles', 'assets', 'workers', 'scripts', 'clean'], function() {
+    gulp.task('build', ['templates', 'lib2', 'styles', 'assets', 'workers', 'scripts', 'favicons', 'clean'], function() {
         return gulp.src(paths.html, {cwd: bases.app})
             .pipe(gulp.dest(bases.dist));
     });
@@ -172,4 +173,9 @@ var gulp = require('gulp'),
             .pipe(plugins.addSrc(paths.libs.utf8, {cwd: bases.app}))
             .pipe(plugins.flatten())
     		.pipe(gulp.dest(bases.dist + 'js/lib'));
+    });
+
+    gulp.task('favicons', ['clean'], function () {
+        gulp.src(paths.favicons, {cwd: bases.app})
+    		.pipe(gulp.dest(bases.dist + 'images/favicons'));
     });
