@@ -4,24 +4,34 @@ var parseClientCSVFile = function (file, activationDate, parseConfiguration) {
             console.log(err, reason);
         };
 
-        parseConfiguration.step = function (row) {
-            dumpTools.client.data.push(row.data[0]);
+        parseConfiguration.step = function (results) {
+            dumpTools.client.data.push(results.data[0]);
         };
 
         parseConfiguration.complete = function () {
-            var filteredResult = filterResultByActivationDate(dumpTools.client.data, activationDate);
+            if(dumpTools.client.data.length <= 0){
+                hideLoadingGif("client", "csv");
+                cleanAlerts("client", "csv");
+                showAlert("client", "csv", "danger", "Invalid File!");
+            } else {
+                var filteredResult = filterResultByActivationDate(dumpTools.client.data, activationDate);
 
-            for (row of filteredResult) { row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]); }
-            dumpTools.client = setupClient(filteredResult);
-            showResults("csv", "client");
-            showPlatformInput();
+                for (row of filteredResult) {
+                    row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]);
+                }
+
+                dumpTools.client = setupClient(filteredResult);
+
+                hideLoadingGif("client", "csv");
+                hideTab("client", "json");
+                cleanAlerts("client", "csv");
+                showAlert("client", "csv", "success", "Parse Complete.");
+                showPlatformInput();
+            }
         };
-
-        $("#client-csv-loading-gif").removeClass("hidden");
-
+        resetInput("client", "csv");
+        showLoadingGif("client", "csv");
         Papa.parse(file, parseConfiguration);
-
-        $("#client-json-tab").addClass("hidden");
     },
 
     parseClientJSONFile = function (fileUrl, activationDate) {

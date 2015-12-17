@@ -4,24 +4,34 @@ var parsePlatformCSVFile = function (file, activationDate, parseConfiguration) {
                 console.log(err, reason);
             };
 
-            parseConfiguration.step = function (row) {
-                dumpTools.platform.data.push(row.data[0]);
+            parseConfiguration.step = function (results) {
+                dumpTools.platform.data.push(results.data[0]);
             }
 
             parseConfiguration.complete = function () {
-                var filteredResult = filterResultByActivationDate(dumpTools.platform.data, activationDate);
+                if(dumpTools.platform.data.length <= 0){
+                    hideLoadingGif("platform", "csv");
+                    cleanAlerts("platform", "csv");
+                    showAlert("platform", "csv", "danger", "Invalid File!");
+                } else {
+                    var filteredResult = filterResultByActivationDate(dumpTools.platform.data, activationDate);
 
-                filteredResult.forEach( function (row) { row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]); });
-                dumpTools.platform = setupPlatform(filteredResult);
-                showResults("csv", "platform");
-                showDateSlider();
+                    for (row of filteredResult) {
+                        row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]);
+                    }
+
+                    dumpTools.platform = setupClient(filteredResult);
+
+                    hideLoadingGif("platform", "csv");
+                    hideTab("platform", "json");
+                    cleanAlerts("platform", "csv");
+                    showAlert("platform", "csv", "success", "Parse Complete.");
+                    showDateSlider();
+                }
             };
-
-            $("#platform-csv-loading-gif").removeClass("hidden");
-
+            resetInput("platform", "csv");
+            showLoadingGif("platform", "csv");
             Papa.parse(file, parseConfiguration);
-
-            $("#platform-json-tab").addClass("hidden");
         },
 
     parsePlatformJSONFile = function (fileUrl, activationDate) {

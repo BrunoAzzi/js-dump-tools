@@ -71,4 +71,49 @@ var confirmApiKey = function () {
 
     showPlatformInput = function () {
         $("#platform-file-chooser-wrapper").removeClass("hidden");
+    },
+
+    showTab = function (context, name) {
+        $("#" + context + "-" + name + "-tab").removeClass('hidden');
+    },
+
+    hideTab = function (context, name) {
+        $("#" + context + "-" + name + "-tab").addClass('hidden');
+    },
+
+    showLoadingGif = function (context, name) {
+        $("#" + context + "-" + name + "-loading-gif").removeClass('hidden');
+    },
+
+    hideLoadingGif = function (context, name) {
+        $("#" + context + "-" + name + "-loading-gif").addClass('hidden');
+    },
+
+    cleanAlerts = function (context, name) {
+        $("#" + context + "-" + name + "-alerts-wrapper").empty();
+    },
+
+    showAlert =  function (context, name, type, message) {
+        dust.render('alerts/default.dust', {alert: {type: type, message: message}}, function (err, out) {
+            $("#" + context + "-" + name + "-alerts-wrapper").append(out);
+        });
+    },
+
+    resetAlerts = function (context, name) {
+        var alertMessage = "Tip: If is taking too much time to load this file go make some stuff, then come back here, just dont close this page or the browser.";
+        cleanAlerts(context, name);
+        showAlert(context, name, "warning", alertMessage);
+    },
+
+    showInput = function (context) {
+        $("#" + context + "-file-chooser-wrapper").removeClass("hidden");
+    },
+
+    hideInput = function (context, name) {
+        $("#" + context + "-file-chooser-wrapper").addClass("hidden");
+    },
+
+    resetInput = function (context, name) {
+        hideLoadingGif(context, name);
+        resetAlerts(context, name);
     };
