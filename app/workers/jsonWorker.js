@@ -22,11 +22,12 @@ onmessage = function(event) {
             });
             close();
         } else {
-            postMessage(things);
+            postMessage({things: things});
         }
 
     })
     .fail(function() {
-        console.log("FAIL");
+        postMessage({error: true});
+        close();
     });
 }

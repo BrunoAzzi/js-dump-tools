@@ -37,58 +37,67 @@ var parseClientCSVFile = function (file, activationDate, parseConfiguration) {
     parseClientJSONFile = function (fileUrl, activationDate) {
         var data = [];
 
-        $("#client-json-loading-gif").removeClass("hidden");
+        resetInput("client", "json");
 
         if (window.Worker) {
-            myWorker = new Worker("js/workers/jsonWorker.js");
+            var myWorker = new Worker("js/workers/jsonWorker.js");
 
-            myWorker.postMessage({
-                fileUrl: fileUrl,
-                context: "client"
-            });
+            if (fileUrl) {
+                showLoadingGif("client", "json");
+
+                myWorker.postMessage({
+                    fileUrl: fileUrl,
+                    context: "client"
+                });
+            }
 
             myWorker.onmessage = function (event) {
-                var things = event.data;
-                if (event.data.end) {
-                    things = event.data.things;
-                }
+                if(event.data.error){
+                    hideLoadingGif("client", "json");
+                    cleanAlerts("client", "json");
+                    showAlert("client", "json", "danger", "Invalid File!");
+                } else {
+                    var things = event.data.things || {};
 
-                things.items.forEach(function (item) {
-                    data.push({
-                        oid: things.id,
-                        uid: things.userId,
-                        timestamp: things.date,
-                        pid: item.product.id,
-                        sku: item.product.sku,
-                        price: +item.product.price,
-                        quantity: +item.quantity
+                    things.items.forEach(function (item) {
+                        data.push({
+                            oid: things.id,
+                            uid: things.userId,
+                            timestamp: things.date,
+                            pid: item.product.id,
+                            sku: item.product.sku,
+                            price: +item.product.price,
+                            quantity: +item.quantity
+                        });
                     });
-                });
 
-                if (event.data.end) {
-                    filteredResult = filterResultByActivationDate(data, activationDate);
+                    if (event.data.end) {
+                        var filteredResult = filterResultByActivationDate(data, activationDate);
 
-                    for (row of filteredResult) { row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]); }
-                    dumpTools.client = setupClient(filteredResult);
-                    showResults("json", "client");
-                    showPlatformInput();
+                        filteredResult.forEach(function (row) { row.timestamp = moment(row.timestamp, ["YYYY-MM-DD HH:mm:ss"]); });
+                        dumpTools.client = setupClient(filteredResult);
+                        hideLoadingGif("client", "json");
+                        cleanAlerts("client", "json");
+                        showAlert("client", "json", "success", "Parse complete.")
+                        hideTab("client", "csv");
+                        showPlatformInput();
+                    }
                 }
             };
 
             myWorker.onerror = function (e) {
         		console.log('Message received from worker with error');
             };
+        } else {
+            console.log("Worker alternative");
         }
-
-        $("#client-csv-tab").addClass("hidden");
     },
 
     setupClient = function (data) {
-        var object = {
+        return {
             data: data,
             name: $("#api-key-input").val(),
             productsTotal: data.length,
             extentDays: d3.extent(data, function (row) { return row.timestamp })
         };
-        return object;
     };
