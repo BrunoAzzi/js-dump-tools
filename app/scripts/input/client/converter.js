@@ -4,14 +4,22 @@ var parseClientCSVFile = function (file, activationDate, parseConfiguration) {
             console.log(err, reason);
         };
 
-        parseConfiguration.step = function (results) {
+        parseConfiguration.step = function (results, parser) {
+            if (results.meta && results.meta.fields) {
+                var correctHeaders = ["oid", "uid", "pid", "sku", "price", "quantity", "timestamp"];
+                var intersection = results.meta.fields.intersection(correctHeaders);
+                if (intersection.size < correctHeaders.length) {
+                    var difference  = correctHeaders.difference(intersection);
+                    showAlert("client", "csv", "danger", "The header(s) " + difference.print() + "is/are missing!");
+                    parser.abort();
+                }
+            }
             dumpTools.client.data.push(results.data[0]);
         };
 
         parseConfiguration.complete = function () {
             if(dumpTools.client.data.length <= 0){
                 hideLoadingGif("client", "csv");
-                cleanAlerts("client", "csv");
                 showAlert("client", "csv", "danger", "Invalid File!");
             } else {
                 var filteredResult = filterResultByActivationDate(dumpTools.client.data, activationDate);
@@ -24,15 +32,15 @@ var parseClientCSVFile = function (file, activationDate, parseConfiguration) {
 
                 hideLoadingGif("client", "csv");
                 hideTab("client", "json");
-                cleanAlerts("client", "csv");
                 showAlert("client", "csv", "success", "Parse Complete.");
                 showPlatformInput();
             }
         };
         resetInput("client", "csv");
-        
+
         if (file) {
             showLoadingGif("client", "csv");
+            cleanAlerts("client", "csv");
             Papa.parse(file, parseConfiguration);
         }
     },

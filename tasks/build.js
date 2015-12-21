@@ -20,13 +20,14 @@ var gulp = require('gulp'),
         styles: ['styles/**/*.css'],
         html: ['index.html', '404.html'],
         images: ['images/**/*.png', 'images/**/*.gif'],
+        fonts: ['bower_components/bootstrap/dist/fonts/*', 'bower_compoentes/components-font-awesome/fonts/*'],
         bootstrap: {
             fonts: ['bower_components/bootstrap/dist/fonts/*']
         },
         favicons: ['images/favicons/*']
     };
 
-    gulp.task('build', ['templates', 'lib2', 'styles', 'assets', 'workers', 'scripts', 'favicons', 'clean'], function() {
+    gulp.task('build', ['templates', 'lib', 'styles', 'assets', 'workers', 'scripts', 'favicons', 'clean'], function() {
         return gulp.src(paths.html, {cwd: bases.app})
             .pipe(gulp.dest(bases.dist));
     });
@@ -34,7 +35,8 @@ var gulp = require('gulp'),
     gulp.task('styles', ['clean'], function() {
         var bowerConfig = {
                 overrides: {
-                    "bootstrap": { main: ['./dist/css/bootstrap.min.css'] }
+                    "bootstrap": { main: ['./dist/css/bootstrap.min.css'] },
+                    "components-font-awesome": { main: ['./css/font-awesome.min.css'] }
                 }
             }
         var filterJS = plugins.filter(['**/*.min.css','*.min.css'], { restore: true });
@@ -46,35 +48,6 @@ var gulp = require('gulp'),
     		.pipe(plugins.concat('main.css'))
     		.pipe(plugins.uglifycss())
     		.pipe(gulp.dest(bases.dist + 'css/'));
-    });
-
-    gulp.task('lib', ['clean'], function() {
-        var bowerConfig = {
-                overrides: {
-                    "bootstrap": { main: ['./dist/js/bootstrap.min.js'] },
-                    "d3": { main: ['./d3.min.js'] },
-                    "jquery": { main: ['./dist/jquery.min.js'] },
-                    "dustjs-helpers": { main: ['./dist/dust-helpers.min.js'] },
-                    "dustjs-linkedin": { main: ['./dist/dust-core.min.js'] },
-                    "eonasdan-bootstrap-datetimepicker": { main: ['./build/js/bootstrap-datetimepicker.min.js'] },
-                    "jquery-ui": { main: ['./jquery-ui.min.js'] },
-                    "moment": { main: ['./min/moment.min.js'] },
-                    "moment-timezone": { main: ['builds/moment-timezone-with-data-2010-2020.min.js'] },
-                    "numeral": { main: ['./min/numeral.min.js'] },
-                    "oboe": { ignore: true },
-                    "papaparse": { ignore: true }
-                }
-            }
-
-        gulp.src('./bower.json')
-            .pipe(plugins.mainBowerFiles(bowerConfig))
-            .pipe(plugins.addSrc('app/lib/jQDateRangeSlider-min.js'))
-    		.pipe(plugins.concat('main.js'))
-            // .pipe(plugins.babel({
-            //     presets: ['es2015']
-            // }))
-    		// .pipe(plugins.uglify())
-    		.pipe(gulp.dest('dist/js/lib'));
     });
 
     gulp.task('templates', ['clean'], function() {
@@ -90,32 +63,6 @@ var gulp = require('gulp'),
     		.pipe(gulp.dest('dist/js/workers/'));
     });
 
-    gulp.task('special-libs', ['clean'], function () {
-        var bowerConfig = {
-                overrides: {
-                    "bootstrap": { ignore: true  },
-                    "d3": { ignore: true  },
-                    "jquery": { ignore: true  },
-                    "dustjs-helpers": { ignore: true  },
-                    "dustjs-linkedin": { ignore: true  },
-                    "eonasdan-bootstrap-datetimepicker": { ignore: true  },
-                    "jquery-ui": { ignore: true  },
-                    "moment": { ignore: true  },
-                    "moment-timezone": { ignore: true  },
-                    "numeral": { ignore: true  },
-                    "oboe": { main: ['./dist/oboe-browser.js'] },
-                    "papaparse": { main: ['./papaparse.js'] }
-                }
-            }
-
-        gulp.src('./bower.json')
-            .pipe(plugins.mainBowerFiles(bowerConfig))
-            .pipe(plugins.addSrc('app/lib/utf8.js'))
-            .pipe(plugins.flatten())
-    		// .pipe(plugins.concat('main.js'))
-    		.pipe(gulp.dest('dist/js/lib'));
-    });
-
     gulp.task('clean', function() {
         return gulp.src(bases.dist)
             .pipe(plugins.clean());
@@ -125,7 +72,7 @@ var gulp = require('gulp'),
         gulp.src(paths.images, {cwd: bases.app})
             .pipe(gulp.dest(bases.dist + 'images/'));
 
-        gulp.src(paths.bootstrap.fonts)
+        gulp.src(paths.fonts)
             .pipe(gulp.dest(bases.dist + 'fonts/'));
     });
 
@@ -135,8 +82,9 @@ var gulp = require('gulp'),
     		.pipe(gulp.dest(bases.dist + 'js/'));
     });
 
-    gulp.task('lib2', ['clean'], function() {
+    gulp.task('lib', ['clean'], function() {
         var filterSpecialLibs = plugins.filter(['**/oboe-browser.js', '**/papaparse.js'], { restore: true }),
+            filterJS = plugins.filter(['**/*.js', '**/*.min.js'], { restore: true }),
             bowerConfig = {
                 overrides: {
                     "bootstrap": { main: ['./dist/js/bootstrap.min.js'] },
@@ -157,6 +105,7 @@ var gulp = require('gulp'),
         gulp.src('./bower.json')
             .pipe(plugins.mainBowerFiles(bowerConfig))
             .pipe(plugins.addSrc(paths.libs.dateRangeSlider, {cwd: bases.app}))
+            .pipe(filterJS)
     		.pipe(plugins.concat('main.js'))
             // .pipe(plugins.babel({
             //     presets: ['es2015']

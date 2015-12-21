@@ -27,6 +27,7 @@
     "eonasdan-bootstrap-datetimepicker": "~4.17.37",
     "oboe": "~2.1.2",
     "dustjs-linkedin": "~2.7.2",
-    "dustjs-helpers": "~1.7.3"
+    "dustjs-helpers": "~1.7.3",
+    "components-font-awesome": "~4.5.0"
   }
 }

@@ -51,36 +51,67 @@ var getOrderById = function (oid, groupedData) {
     // };
 
     getOrdersDifference = function getOrdersDifference(groupedClientData, groupedPlatformData) {
-    var clientOrders = groupedClientData.map(function (row) {
-        return row.key;
-    }),
-        platformOrders = groupedPlatformData.map(function (row) {
-        return row.key;
-    }),
-        a = new Set(clientOrders),
-        b = new Set(platformOrders),
-        clientDifference = new Set([].concat(_toConsumableArray(a)).filter(function (x) {
-        return !b.has(x);
-    })),
-        platformDifference = new Set([].concat(_toConsumableArray(b)).filter(function (x) {
-        return !a.has(x);
-    }));
+        var clientOrders = groupedClientData.map(function (row) {
+            return row.key;
+        }),
+            platformOrders = groupedPlatformData.map(function (row) {
+            return row.key;
+        }),
+            a = new Set(clientOrders),
+            b = new Set(platformOrders),
+            clientDifference = new Set([].concat(_toConsumableArray(a)).filter(function (x) {
+            return !b.has(x);
+        })),
+            platformDifference = new Set([].concat(_toConsumableArray(b)).filter(function (x) {
+            return !a.has(x);
+        }));
 
-    dumpTools.platform.aloneOrders = platformDifference;
-    dumpTools.client.aloneOrders = clientDifference;
-},
+        dumpTools.platform.aloneOrders = platformDifference;
+        dumpTools.client.aloneOrders = clientDifference;
+    },
+
     getOrdersIntersection = function getOrdersIntersection(groupedClientData, groupedPlatformData) {
-    var clientOrders = groupedClientData.map(function (row) {
-        return row.key;
-    }),
-        platformOrders = groupedPlatformData.map(function (row) {
-        return row.key;
-    }),
-        a = new Set(clientOrders),
-        b = new Set(platformOrders),
-        intersection = new Set([].concat(_toConsumableArray(a)).filter(function (x) {
-        return b.has(x);
-    }));
+        var clientOrders = groupedClientData.map(function (row) {
+                return row.key;
+            }),
+            platformOrders = groupedPlatformData.map(function (row) {
+                return row.key;
+            }),
 
-    return intersection;
-};
+            a = new Set(clientOrders),
+            b = new Set(platformOrders),
+
+            intersection = new Set([]
+                .concat(_toConsumableArray(a))
+                .filter(function (x) {
+                        return b.has(x);
+                })
+            );
+
+        return intersection;
+    };
+
+    Array.prototype.intersection = function (array) {
+        var a = new Set(this),
+            b = new Set(array),
+
+            intersection = new Set([]
+                .concat(_toConsumableArray(a))
+                .filter(function (x) {
+                        return b.has(x);
+                })
+            );
+
+        return intersection;
+    };
+
+    Array.prototype.difference = function (array) {
+        var a = new Set(this),
+            b = new Set(array),
+
+            difference = new Set([].concat(_toConsumableArray(a)).filter(function (x) {
+                return !b.has(x);
+            }));
+
+        return difference;
+    };

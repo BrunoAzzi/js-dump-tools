@@ -186,3 +186,12 @@ var diffAmountsByDay = function (clientData, platformData) {
         }
         return aa.length - bb.length;
     };
+
+    Set.prototype.print = function () {
+        var retorno = "";
+        this.forEach(function (value) {
+            retorno += value.toString()+", ";
+        });
+
+        return retorno;
+    };

@@ -5,13 +5,21 @@ var parsePlatformCSVFile = function (file, activationDate, parseConfiguration) {
         };
 
         parseConfiguration.step = function (results) {
+            if (results.meta && results.meta.fields) {
+                var correctHeaders = ["oid", "uid", "pid", "sku", "price", "quantity", "timestamp"];
+                var intersection = results.meta.fields.intersection(correctHeaders);
+                if (intersection.size < correctHeaders.length) {
+                    var difference  = correctHeaders.difference(intersection);
+                    showAlert("platform", "csv", "danger", "The header(s) " + difference.print() + "is/are missing!");
+                    parser.abort();
+                }
+            }
             dumpTools.platform.data.push(results.data[0]);
         }
 
         parseConfiguration.complete = function () {
             if(dumpTools.platform.data.length <= 0){
                 hideLoadingGif("platform", "csv");
-                cleanAlerts("platform", "csv");
                 showAlert("platform", "csv", "danger", "Invalid File!");
             } else {
                 var filteredResult = filterResultByActivationDate(dumpTools.platform.data, activationDate);
@@ -24,7 +32,6 @@ var parsePlatformCSVFile = function (file, activationDate, parseConfiguration) {
 
                 hideLoadingGif("platform", "csv");
                 hideTab("platform", "json");
-                cleanAlerts("platform", "csv");
                 showAlert("platform", "csv", "success", "Parse Complete.");
                 showDateSlider();
             }
@@ -33,6 +40,7 @@ var parsePlatformCSVFile = function (file, activationDate, parseConfiguration) {
 
         if (file) {
             showLoadingGif("platform", "csv");
+            cleanAlerts("platform", "csv");
             Papa.parse(file, parseConfiguration);
         }
     },
