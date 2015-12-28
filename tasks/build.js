@@ -36,7 +36,7 @@ var gulp = require('gulp'),
         var bowerConfig = {
                 overrides: {
                     "bootstrap": { main: ['./dist/css/bootstrap.min.css'] },
-                    "components-font-awesome": { main: ['./css/font-awesome.min.css'] }
+                    "components-font-awesome": { main: ['./styles/font-awesome.min.css'] }
                 }
             }
         var filterJS = plugins.filter(['**/*.min.css','*.min.css'], { restore: true });
@@ -47,7 +47,7 @@ var gulp = require('gulp'),
             .pipe(plugins.addSrc(paths.styles, {cwd: bases.app}))
     		.pipe(plugins.concat('main.css'))
     		.pipe(plugins.uglifycss())
-    		.pipe(gulp.dest(bases.dist + 'css/'));
+    		.pipe(gulp.dest(bases.dist + 'styles/'));
     });
 
     gulp.task('templates', ['clean'], function() {
@@ -60,7 +60,7 @@ var gulp = require('gulp'),
 
     gulp.task('workers', ['clean'], function () {
         gulp.src('app/workers/*')
-    		.pipe(gulp.dest('dist/js/workers/'));
+    		.pipe(gulp.dest('dist/scripts/workers/'));
     });
 
     gulp.task('clean', function() {
@@ -79,7 +79,7 @@ var gulp = require('gulp'),
     gulp.task('scripts', ['clean'], function () {
         gulp.src(paths.scripts, {cwd: bases.app})
             .pipe(plugins.concat('app.js'))
-    		.pipe(gulp.dest(bases.dist + 'js/'));
+    		.pipe(gulp.dest(bases.dist + 'scripts/'));
     });
 
     gulp.task('lib', ['clean'], function() {
@@ -111,7 +111,7 @@ var gulp = require('gulp'),
             //     presets: ['es2015']
             // }))
     		// .pipe(plugins.uglify())
-    		.pipe(gulp.dest('dist/js/lib'));
+    		.pipe(gulp.dest('dist/scripts/lib'));
 
         bowerConfig.overrides.papaparse = { ingnore: false }
         bowerConfig.overrides.oboe = { ingnore: false }
@@ -121,7 +121,7 @@ var gulp = require('gulp'),
             .pipe(filterSpecialLibs)
             .pipe(plugins.addSrc(paths.libs.utf8, {cwd: bases.app}))
             .pipe(plugins.flatten())
-    		.pipe(gulp.dest(bases.dist + 'js/lib'));
+    		.pipe(gulp.dest(bases.dist + 'scripts/lib'));
     });
 
     gulp.task('favicons', ['clean'], function () {

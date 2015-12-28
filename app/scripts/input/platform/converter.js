@@ -51,7 +51,7 @@ var parsePlatformCSVFile = function (file, activationDate, parseConfiguration) {
         resetInput("platform", "json");
 
         if (window.Worker) {
-	        var myWorker = new Worker("js/workers/jsonWorker.js");
+	        var myWorker = new Worker("scripts/workers/jsonWorker.js");
 
             if (fileUrl) {
                 showLoadingGif("platform", "json");
