@@ -1,0 +1,19 @@
+{@eq key="{order.pid}" value="{pid}"}
+    {@eq key="{order.sku}" value="{sku}"}
+        <tr>
+            <th scope='row' class="">#</th>
+            <td class="{?pidPassed}success{:else}danger{/pidPassed}">
+                {order.pid}
+            </td>
+            <td class="{?pidPassed}success{:else}danger{/pidPassed}">
+                {order.sku}
+            </td>
+            <td class="{?pricePassed}success{:else}danger{/pricePassed}">
+                {order.price|formatCurrencyValue}
+            </td>
+            <td class="{?quantityPassed}success{:else}danger{/quantityPassed}">
+                {order.quantity|formatIntegerValue}
+            </td>
+        </tr>
+    {/eq}
+{/eq}

@@ -1,0 +1,18 @@
+in: " em "
+difference:
+    title: "Diferença"
+    orders: "Diferença de transações"
+    amount: "Diferença de valor"
+    numberOfOrders: "Diferença na quantidade das transações"
+    amountOfOrders: "Diferença no valor das transações"
+orders:
+    numberOfOrders: "Número de transações"
+    aloneOrders: "Transações sozinhas"
+    amountOfOrders: "Valor das transações"
+aloneOrdersRepresentation: "Representação das transações sozinhas"
+averageTicket: "Ticket médio"
+inconsistentOrdersInCommomOrders: "Transações inconsistentes"
+alert:
+    warning: " está perto da porcentagem máxima (entre 5% e 10%) - Precisamos fazer mais testes!"
+    error: " está acima da porcentagem máxima - A porcentagem está acima de 10%!"
+    success: " é menos que a metade da porcentagem máxima - Estamos bem"

@@ -1,0 +1,8 @@
+{?hasDuplicatedValues}<span class='label label-danger'><span class='glyphicon glyphicon-duplicate'></span>Duplicate</span>{/hasDuplicatedValues}
+{^uidPassed}<span class='label label-danger'><span class='glyphicon glyphicon-user'></span>User</span>{/uidPassed}
+{^timestampPassed}<span class='label label-danger'><span class='glyphicon glyphicon-calendar'></span>Timestamp</span>{/timestampPassed}
+{^productsPidPassed}<span class='label label-danger'><span class='glyphicon glyphicon-shopping-cart'></span>Product</span>{/productsPidPassed}
+{?productsPidPassed}
+    {^productsSkuPassed}<span class='label label-warning'><span class='glyphicon glyphicon-tag'></span>Sku</span>{/productsSkuPassed}
+    {^productsAmountPassed}<span class='label label-warning'><span class='glyphicon glyphicon-usd'></span>Price/Quantity</span>{/productsAmountPassed}
+{/productsPidPassed}
