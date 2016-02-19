@@ -48,5 +48,3 @@ npm start
 Then go to http://localhost:8000/app/index.html
 
 The App expects the correct dump with no quotes. It must have the oid, pid, uid, quantity, price and sku columns;
-
-Teste
